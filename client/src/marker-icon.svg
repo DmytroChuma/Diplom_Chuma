@@ -1,0 +1,26 @@
+<svg width="100" height="140" xmlns="http://www.w3.org/2000/svg">
+ <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="142" width="102" y="-1" x="-1"/>
+  <g display="none" overflow="visible" y="0" x="0" height="100%" width="100%" id="canvasGrid">
+   <rect fill="url(#gridpattern)" stroke-width="0" y="1" x="1" height="400" width="580"/>
+  </g>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <metadata transform="matrix(1.0850693616602172,0,0,1.0850693616602172,0,0) " id="svg_17">image/svg+xml</metadata>
+
+  <g stroke="null" id="svg_19">
+   <path stroke="null" fill="#2c5b87" id="svg_16" d="m49.980397,139.057812c-0.311681,-0.757083 -6.786977,-7.08929 -11.423982,-12.843155c-27.472375,-36.474935 -58.101933,-70.365488 -22.336179,-111.55117c15.836313,-15.299977 35.363566,-16.172798 55.438278,-9.041167c56.525209,32.708315 15.600271,86.06606 -11.271506,121.142942l-10.406611,12.29255zm17.003246,-55.910341c37.702225,-26.962934 8.554306,-78.883522 -32.869153,-61.623195c-12.096069,6.44969 -18.097972,17.671862 -18.308174,30.908651c-0.577571,12.876738 6.260901,23.644333 17.097793,30.24038c7.769638,4.228768 11.185291,4.99256 19.982388,4.468372c5.70171,-0.339742 8.987195,-1.270635 14.097146,-3.994208z"/>
+   <path stroke="null" fill="#2c5b87" fill-rule="nonzero" d="m39.682822,95.670369a49.542485,48.366845 0 1 1 1.234732,0.241046" id="svg_15"/>
+   <path stroke="null" opacity="0.340164" fill="#000000" fill-opacity="0" fill-rule="nonzero" d="m44.040725,75.721397a28.643483,23.115801 0 1 1 0.713877,0.115199" id="svg_14"/>
+   <path stroke="null" fill="#000080" fill-opacity="0" fill-rule="nonzero" d="m46.186392,125.443062a18.341879,12.939823 0 1 1 0.457134,0.064526" id="svg_13"/>
+   <path stroke="null" fill="#1e4972" fill-rule="nonzero" d="m42.338672,89.21456a36.809627,37.939875 0 1 1 0.9174,0.189077" id="svg_12"/>
+   <path stroke="null" fill="#ffffff" fill-rule="nonzero" d="m44.937393,76.109222a24.343085,24.876207 0 1 1 0.606696,0.123976" id="svg_11"/>
+  </g>
+  <path id="svg_22" d="m93.564103,119.974359" opacity="0.5" stroke-width="1.5" stroke="#000" fill="#97944B"/>
+  <path id="svg_30" d="m468.241379,263.413793" opacity="0.5" fill-opacity="null" stroke-opacity="null" stroke-width="null" stroke="#000" fill="none"/>
+ </g>
+</svg>
