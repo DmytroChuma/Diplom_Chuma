@@ -64,8 +64,7 @@ function formatDate (date) {
   if (dd < 10) dd = '0' + dd;
   if (mm < 10) mm = '0' + mm;
       
-  const formattedDate = dd + '.' + mm + '.' + yyyy;
-  return formattedDate;
+  return formattedDate = dd + '.' + mm + '.' + yyyy;
 }
 
 function createRealtyArray(rows){
@@ -303,6 +302,7 @@ filter = async (params) => {
       filter += ` AND info.auction ='0'`;
     }
   }
+  // eslint, prettier
   if (params.advertisement && params.advertisement != 'Всі оголошення') {
     if (params.advertisement === 'Продаж') {
       filter += ` AND info.advertisementType = 'Продаж'`;

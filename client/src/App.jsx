@@ -16,6 +16,7 @@ import Cabinet from "./Pages/User/Cabinet";
 
 import store from "./Store/Store";
 import UserLogin from "./Store/ActionsCreators/UserLogin";
+import Chat from "./Pages/User/Chat";
 function App() {
    
   fetch('/auth').then((res) => res.json()).then((data) => {
@@ -37,6 +38,7 @@ function App() {
             <Route exact path="/edit-advertisement/:slug" element={<NewAdvertisement />}></Route>
             <Route exact path="/user/cabinet" element={<Cabinet />}></Route>
             <Route exact path="/user/cabinet/:slug" element={<Cabinet />}></Route>
+            <Route exact path="/user/chat" element={<Chat />}></Route>
             <Route exact path="*" element={<NotFoundPage />} />
         </Routes>
       </Router>

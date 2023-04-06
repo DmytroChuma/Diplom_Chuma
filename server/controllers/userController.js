@@ -7,6 +7,11 @@ exports.createUser = (req, res) => {
     user.create();
 }
 
+
+//access token
+
+//refresh token
+
 exports.login = async (req, res) => {
     let user = await User.login(req.body.login, req.body.password);
     if (user.status != 0) {
@@ -37,7 +42,8 @@ exports.auth = async (req, res) => {
     if (req.session.userId) {
         res.json({
           id: req.session.userId,
-          name: req.session.name
+          name: req.session.name,
+          avatar: req.session.avatar
         });
         return;
     }

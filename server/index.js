@@ -17,6 +17,7 @@ const advertisementController = require('./controllers/advertisementController')
 const realtyController = require('./controllers/realtyController');
 const fileController = require('./controllers/fileController');
 const emailController = require('./controllers/emailController');
+const chatController = require('./controllers/chatController')
 
 const PORT = process.env.PORT || 3001;
 
@@ -38,6 +39,36 @@ app.use(
     saveUninitialized: true}
   )
 );
+
+const server = app.listen(PORT, () => {
+  console.log(`Server listening on ${PORT}`);
+});
+//const io = require('socket.io')(server);
+
+const socketIo = require('socket.io')
+const io = socketIo(server,{ 
+  cors: {
+    origin: 'http://localhost:3000'
+  }
+})  
+io.on('connection',(socket)=>{
+console.log('client connected: ',socket.id)
+
+socket.on('leave_room', (room) => socket.leave(room))
+socket.on('join_room', (room) => socket.join(room))
+//console.log(socket.rooms);
+socket.on('disconnect',(reason)=>{
+  console.log(reason)
+})
+
+socket.on('send_message', (data) => {
+  io.to(data.inbox).emit('receive_message', {message: data.message, date: data.date, avatar: data.avatar, user_id: data.user_id});
+})
+
+})
+ 
+
+
 
 //ADVERTISEMENT
 
@@ -71,6 +102,12 @@ app.post("/add_user", userController.createUser);
 
 app.post("/login", userController.login);
 
+//CHAT
+
+app.get('/chat', chatController.getChats);
+
+app.get('/messages', chatController.getMessages);
+
 //EMAIL
 
 app.post('/email', emailController.send);
@@ -81,7 +118,4 @@ app.post('/delete_file', fileController.deleteFile);
 
 app.post("/upload_file", upload.single("file"), fileController.uploadFile)
 
-app.listen(PORT, () => {
-  console.log(`Server listening on ${PORT}`);
-});
 
