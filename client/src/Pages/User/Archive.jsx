@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import UserAdvertisementCard from '../../Components/Cards/UserAdvertisementCard';
 import CheckBox from '../../Components/Inputs/Checkbox';
 import Select from '../../Components/Inputs/Select';
+import queryString from 'query-string'
 
 import NoResult from '../../Components/NoResult';
 import store from '../../Store/Store';
@@ -61,6 +62,13 @@ export default function Archive() {
 
     function loadItems (success, messageText) {
 
+        let params = queryString.parse(location.search);
+        let page = 1;
+        if (params.page) {
+            setActivePage(params.page)
+            page = params.page
+        }
+
         let all = document.getElementsByName("selectAll");
         if (all[0]) {
             all[0].checked = false;
@@ -73,7 +81,7 @@ export default function Archive() {
 
         setCards(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>);
         setShowPages(false);
-        fetch(`/search?archive=1&user=${user.id}&page=${activePage}`).then((res) => res.json()).then((data) => {
+        fetch(`/search?archive=1&user=${user.id}&page=${page}`).then((res) => res.json()).then((data) => {
             setData(data.realty);
             setCount(data.count);
             setPage(Math.ceil(data.count / 5));

@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const session = require('express-session');
 
 const User = require("../models/User");
 
@@ -18,6 +19,7 @@ exports.login = async (req, res) => {
       req.session.userId = user.id;
       req.session.name = user.name;
       req.session.avatar = user.avatar;
+      req.session.select = user.select_post;
       if (req.body.remember != '') {
         let token = bcrypt.hashSync(`${user.id}${Date.now()}`, 10);
         res.cookie('remember', token, 
@@ -38,14 +40,21 @@ exports.auth = async (req, res) => {
       req.session.userId = user.id;
       req.session.name = user.name;
       req.session.avatar = user.avatar;
+      req.session.select = user.select;
     }
     if (req.session.userId) {
         res.json({
           id: req.session.userId,
           name: req.session.name,
-          avatar: req.session.avatar
+          avatar: req.session.avatar,
+          select: req.session.select
         });
         return;
     }
-    res.json('33');
+    res.json('');
+}
+
+exports.addSelect = async (req, res) => {
+  User.setSelect(req.body.user, req.body.select);
+  res.json({success: 1});
 }

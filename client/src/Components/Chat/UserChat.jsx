@@ -1,11 +1,26 @@
-import React from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
-export default function UserChat(props) {
+ const UserChat = forwardRef((props, ref) => {
+    let mess = props.user.message.split(',')
+    const [message, setMessage] = useState({
+        message: mess[0],
+        date: mess[1],
+        file: mess[2]
+    })
+
+    useEffect(() => {
+        props.socket.on(props.user.inbox_id, (data) => setMessage({message: data.message, date: data.date === null ? message.date : data.date, file: ''}));
+    })
 
     const navigate = useNavigate();
     const location = useLocation();
+
+    function isToday(date) {
+        const today = new Date();
+        return today.toDateString() === date.toDateString() ? true : false;
+      }
 
     const clickHandler = (e) => {
         if (location.hash !== '') props.socket.emit("leave_room", location.hash.replace('#', ''));
@@ -15,21 +30,23 @@ export default function UserChat(props) {
         for (let element of elements){
            element.classList.remove("active");
         }
-        e.target.classList.add("active");;
+        e.target.classList.add("active");
     }
 
     return (
-        <div className="user-chat-card" onClick={clickHandler}>
+        <div ref={ref} className={"user-chat-card " + (props.active ? 'active' : '')} onClick={clickHandler}>
             <div className="user-chat-image">
                 <img className="user-chat-avatar" src={'http://localhost:3001/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt='' />
             </div>
             <div className="user-chat-info">
                 <span className="user-chat-name">{`${props.user.first_name} ${props.user.last_name}`}</span>
                 <div className="user-chat-message-info">
-                    <span className="user-chat-last">{props.last}</span>
-                    <span className="user-chat-time">{props.time}</span>
+                    <span className="user-chat-last">{message.message.length > 25 ? message.message.substring(0, 25) + '...' : message.message}</span>
+                    <span className="user-chat-time">{isToday(new Date(Date.parse(message.date))) ? new Date(Date.parse(message.date)).toLocaleTimeString().substring(0, 5) : new Date(Date.parse(message.date)).toLocaleDateString()}</span>
                 </div>
             </div>
         </div>
     );
-}
+})
+
+export default UserChat

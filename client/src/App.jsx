@@ -16,11 +16,19 @@ import Cabinet from "./Pages/User/Cabinet";
 
 import store from "./Store/Store";
 import UserLogin from "./Store/ActionsCreators/UserLogin";
+import userSelect from "./Store/ActionsCreators/UserSelect";
 import Chat from "./Pages/User/Chat";
+import Select from "./Pages/Select";
+
 function App() {
-   
+  
+  if (!localStorage.getItem('card'))
+    localStorage.setItem('card', 0);
+
   fetch('/auth').then((res) => res.json()).then((data) => {
-    store.dispatch(UserLogin(data));
+    let user = {id: data.id, name: data.name, avatar: data.avatar}
+    store.dispatch(UserLogin(user));
+    store.dispatch(userSelect(data.select))
   });
 
   return (
@@ -32,6 +40,7 @@ function App() {
             <Route exact path="/auth/forget" element={<Forget />} />
             <Route exact path="/auth/registration" element={<Registration />} />
             <Route exact path="/search" element={<Search />}></Route>
+            <Route exact path="/select" element={<Select />}></Route>
             <Route exact path="/search/:params" element={<Search />}></Route>
             <Route exact path="/advertisement/:slug" element={<Advertisement />}></Route>
             <Route exact path="/add-new-advertisement" element={<NewAdvertisement />}></Route>

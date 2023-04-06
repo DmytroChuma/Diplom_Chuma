@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import queryString from 'query-string'
 
 import ListCard from "../Components/Cards/ListCard";
@@ -11,6 +11,10 @@ import NoResult from "../Components/NoResult";
 import Pages from "../Components/Pages";
 import Input from "../Components/Inputs/Input";
 import useInput from "../Hook/useInput";
+import handleSelect from "../Utils/HandleSelect";
+
+import store from "../Store/Store";
+import userSelect from "../Store/ActionsCreators/UserSelect";
 
 export default function Search (){
 
@@ -87,7 +91,16 @@ export default function Search (){
 
         document.title = 'Пошук нерухомості';
 
-       
+        const selectHandler = (id) => {
+          handleSelect(id);
+        }
+        
+        const getSelectHeart = (id) => {
+          if (JSON.parse(localStorage.getItem('select')).includes(id)) {
+            return true;
+          }
+          return false;
+        }
         
         const createItems = (data, type) => {
           if(data.length === 0) {
@@ -97,7 +110,7 @@ export default function Search (){
           if (type === "0") {
             let list = [];
             for (let i = 0 ; i < data.length; i++) {
-              list.push(<ListCard key={i} price={data[i].price} images={data[i] ? data[i].images : ""} date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug} />);
+              list.push(<ListCard key={i} id={data[i].id} selectHandler={selectHandler} price={data[i].price} images={data[i] ? data[i].images : ""} select={getSelectHeart(data[i].id)} date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug} />);
             }
             return(<div className="list-cards-container">
               {list}
@@ -106,7 +119,7 @@ export default function Search (){
           else {
             let table = [];
             for (let i = 0 ; i < data.length; i++) {
-              table.push(<TableCard key={i} price={data[i].price} images={data[i] ? data[i].images : ""} date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug}/>);
+              table.push(<TableCard key={i} id={data[i].id} selectHandler={selectHandler} price={data[i].price} images={data[i] ? data[i].images : ""} select={getSelectHeart(data[i].id)}  date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug}/>);
             }
             return(<div className="table-cards-container">
               {table}
@@ -117,6 +130,9 @@ export default function Search (){
   
           useEffect(() => {
             let params = queryString.parse(location.search);
+            if (params.page) {
+              setActivePage(params.page)
+            }
             setFilterParams(params);
             if (params.realty) {
               if (sortType !== params.sort) {
@@ -534,6 +550,7 @@ export default function Search (){
               <div className="settings-container">
                 <Select class={""} handleData={sort} placeholder="Тип сортування" value={sortType} name='realty' readonly={true} list={["Спочатку нові", "Найдорожчі", "Найдешевші"]} />
                 <div className="btn-check-container">
+                  <Link className="btn link" to="/select">Обрані</Link>
                   <button onClick={(e) => {toggleClass(e); setItems(createItems(data, "0"))}} className={"list-check btn-check " + (localStorage.getItem('card') === "0" ? "activate" : "")}></button>
                   <button onClick={(e) => {toggleClass(e); setItems(createItems(data, "1"))}} className={"table-check btn-check " + (localStorage.getItem('card') === "1" ? "activate" : "")}></button>
                 </div>

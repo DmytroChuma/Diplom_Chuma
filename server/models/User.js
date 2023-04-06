@@ -36,17 +36,18 @@ class User{
     
     static async login(login, password){
         let sql = `
-            SELECT * FROM user WHERE phone = '${login}' OR email = '${login}'
+            SELECT id, first_name, last_name, password, avatar, select_post FROM user WHERE phone = '${login}' OR email = '${login}'
         `;
 
         let res = await con.execute(sql)
-            
+
         if (res.length > 0) {
             if (bcrypt.compareSync(password, res[0].password)) {
                 return {status: 1,
                         id: res[0].id,
                         name: res[0].first_name + " " + res[0].last_name,
-                        avatar: res[0].avatar
+                        avatar: res[0].avatar,
+                        select: res[0].select_post
                         };
             }
         }
@@ -55,14 +56,15 @@ class User{
 
     static async loginAuth (token) {
         let sql = `
-            SELECT * FROM user WHERE remember_token = '${token}'
+            SELECT id, first_name, last_name, avatar, select_post FROM user WHERE remember_token = '${token}'
         `;
         let res = await con.execute(sql)
         if (res.length > 0) {
             return {status: 1,
                 id: res[0].id,
                 name: res[0].first_name + " " + res[0].last_name,
-                avatar: res[0].avatar
+                avatar: res[0].avatar,
+                select: res[0].select_post
                 };
         }
         return {status: 0};
@@ -71,6 +73,13 @@ class User{
     static setToken(id, token){
         let sql = `
             UPDATE user SET remember_token = '${token}' WHERE id = '${id}'
+        `;
+        con.execute(sql);
+    }
+
+    static setSelect (id, select) {
+        let sql = `
+            UPDATE user SET select_post = '${select}' WHERE id = '${id}'
         `;
         con.execute(sql);
     }

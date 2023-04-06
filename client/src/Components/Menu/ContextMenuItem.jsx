@@ -2,9 +2,10 @@ import React from 'react';
 
 import PropTypes from 'prop-types';
 
-export default function ContexMenuItem({ text, operation, icon }) {
+export default function ContexMenuItem({ text, operation, icon = '' }) {
     return (
         <div className={'context-menu-item'} onClick={operation}>
+            <div className={ icon + ' menu-item-icon' }></div>
             {text}
         </div>
     );
@@ -13,5 +14,5 @@ export default function ContexMenuItem({ text, operation, icon }) {
 ContexMenuItem.propTypes = {
     text: PropTypes.string.isRequired,
     operation: PropTypes.func.isRequired,
-    icon: PropTypes.object,
+    icon: PropTypes.string,
 }

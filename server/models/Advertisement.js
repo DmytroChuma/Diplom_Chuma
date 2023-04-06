@@ -107,6 +107,31 @@ class Advertisement {
 
         con.execute(sql);
     }
+
+    static addView(id) {
+        let sql = `
+            UPDATE info SET views = views + 1 WHERE id = '${id}'
+        `;
+        con.execute(sql)
+    }
+
+    static addPhone(id) {
+        let sql = `
+            UPDATE info SET phones = phones + 1 WHERE id = '${id}'
+        `;
+        con.execute(sql)
+    }
+
+    static addSelect (id, type) {
+        let operation = 'info.select + 1';
+        if (type === 0){
+            operation = 'info.select - 1'
+        }
+        let sql = `
+            UPDATE info SET info.select = ${operation} WHERE id = '${id}'
+        `;
+        con.execute(sql)
+    }
 }
 
 module.exports = Advertisement;

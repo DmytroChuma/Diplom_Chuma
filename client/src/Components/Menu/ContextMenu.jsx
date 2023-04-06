@@ -10,7 +10,7 @@ export default function ContextMenu({ children, cX, cY }) {
   };
 
     return(
-      <div className="contex-menu" style={style}>
+      <div className="contex-menu" id="contex-menu" style={style}>
         {children}
       </div>
     )

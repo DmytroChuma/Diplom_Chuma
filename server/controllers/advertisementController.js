@@ -18,6 +18,21 @@ exports.publicate = (req, res) => {
   res.json({success: 1});
 }
 
+exports.addView = (req, res) => {
+  Advertisement.addView(req.body.id)
+  res.json({success: 1})
+}
+
+exports.addPhone = (req, res) => {
+  Advertisement.addPhone(req.body.id)
+  res.json({success: 1})
+}
+
+exports.addSelect = (req, res) => {
+  Advertisement.addSelect(req.body.id, req.body.type)
+  res.json({success: 1});
+}
+
 exports.option = (req, res) => {
   let text = '';
   for (let value of req.body.data) {
@@ -55,25 +70,13 @@ function getFiles (folderPath) {
   return images;
 }
 
-function formatDate (date) {
-  date = new Date(Date.parse(date));
-  const yyyy = date.getFullYear();
-  let mm = date.getMonth() + 1;
-  let dd = date.getDate();
-      
-  if (dd < 10) dd = '0' + dd;
-  if (mm < 10) mm = '0' + mm;
-      
-  return formattedDate = dd + '.' + mm + '.' + yyyy;
-}
-
 function createRealtyArray(rows){
     let realtyArr = [];
     for (let i = 0; i < rows.length; i++) {
   
       let images = getFiles("./public/" + rows[i].slug);
   
-      let formattedDate = formatDate(rows[i].date);
+      let formattedDate = stringHandler.formatDate(rows[i].date);
 
       let params = rows[i].params.split(',');
       let square;
@@ -124,7 +127,7 @@ function createRealtyArray(rows){
   
   function loadAdvertisementInfo (advertisement, realtyParams) {
     let images = getFiles("./public/" + advertisement.slug);
-    let formattedDate = formatDate(advertisement.date);
+    let formattedDate = stringHandler.formatDate(advertisement.date);
 
     let price = advertisement.price;
     let priceinuah = JSON.parse(cours)[1].sale * price;
@@ -159,6 +162,7 @@ function createRealtyArray(rows){
     }
 
     let realty = {
+      id: advertisement.id,
       realtyType: advertisement.realtyType,
       advertisementType: advertisement.advertisementType,
       region: advertisement.region,
@@ -176,7 +180,9 @@ function createRealtyArray(rows){
       date: formattedDate,
       images: images,
       slug: advertisement.slug,
-      parameters: realtyParams
+      parameters: realtyParams,
+      view: advertisement.views,
+      select: advertisement.select
     };
     return realty
   }
@@ -309,6 +315,22 @@ filter = async (params) => {
     }
     else {
       filter += ` AND info.advertisementType != 'Продаж'`;
+    }
+  }
+
+  if (params.select) {
+    if (params.select === '[]') {
+      filter += ` AND (info.id = '0')`;
+    }
+    else {
+      let selectArr = JSON.parse(params.select);
+      filter += ` AND (`;
+      let query = '';
+      for (let id of selectArr) {
+        query += ` OR info.id = '${id}'`;
+      }
+      filter += query.substring(3)
+      filter += `)`;
     }
   }
 
@@ -468,13 +490,19 @@ filter = async (params) => {
     }
   }
 
+  let page = params.page;
+ 
+  if (page === 'undefined'){
+    page = 1;
+  }
+
   let rows = await con.execute(`
   SELECT info.id, info.realtyType, info.city, info.street, info.description, info.price, info.currency, info.auction, info.date, info.slug, info.views, info.phones, info.select, 
       ${realty} as params
     FROM info
     WHERE info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? 'AND info.user = ' + params.user : ''} ${filter} 
     HAVING params IS NOT NULL
-  ` + sort + ` LIMIT ${(params.page-1)*5}, 5`);
+  ` + sort + ` LIMIT ${(page-1)*5}, 5`);
 
   let count = await con.execute(`
   SELECT COUNT(*) as count,
@@ -488,7 +516,7 @@ return {rows: rows, count: count};
 
 exports.loadAdvertisement = async (req, res) => {
     let advertisement = await con.execute(`
-        SELECT info.id, info.realtyType, info.advertisementType, info.city, info.district, info.street, info.position, info.description, info.price, info.currency, info.auction,info.proposition, info.date, info.slug, region.region, user.first_name, user.last_name, user.phone, user.avatar
+        SELECT info.id, info.realtyType, info.advertisementType, info.city, info.district, info.street, info.position, info.description, info.price, info.currency, info.auction,info.proposition, info.date, info.slug, info.views, info.select, region.region, user.first_name, user.last_name, user.phone, user.avatar
         FROM info, region
         INNER JOIN user
         WHERE info.slug = '${req.params.slug}' AND region.id = info.region AND region.id = info.region AND user.id = info.user;

@@ -1,7 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export default function UserCard(props) {
-    console.log(props.user)
+    let phone = `(${props.user.phone.substring(0,3)}) ${props.user.phone.substring(3,6)} ${props.user.phone.substring(6)}`
+    let hidenPhone = `(${props.user.phone.substring(0,3)}) XXX XXXX`
+    const [phoneShow, setPhoneShow] = useState(hidenPhone);
+    const [open, setOpen] = useState(false);
+
+    const clickhandler = () => {
+        setPhoneShow(phone)
+        if (!open) {
+            fetch('/add_phone',
+                {
+                    method: 'POST',
+                    headers: {
+                        Accept: 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    mode: 'cors',
+                    body: JSON.stringify({id: props.id})
+                })
+        }
+        setOpen(true);
+    }
+
     return(
         <div className='user-card'>
             <span className='user-card-text'>Контактні дані продавця</span>
@@ -14,7 +35,7 @@ export default function UserCard(props) {
                 </div>
             </div>
             <div className='separator'></div>
-            <button className='btn'>{props.user.phone}</button>
+            <button className='btn' onClick={clickhandler}>{phoneShow}</button>
             <button className='btn'>Написати</button>
         </div>
     );

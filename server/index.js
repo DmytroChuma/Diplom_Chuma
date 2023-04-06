@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const cors = require("cors");
-const multer = require("multer")
+//const multer = require("multer")
 const path = require('path');
 request = require('request')
 const cookieParser = require('cookie-parser');
@@ -17,7 +17,9 @@ const advertisementController = require('./controllers/advertisementController')
 const realtyController = require('./controllers/realtyController');
 const fileController = require('./controllers/fileController');
 const emailController = require('./controllers/emailController');
-const chatController = require('./controllers/chatController')
+const chatController = require('./controllers/chatController');
+const Chat = require('./models/Chat');
+const stringHandler = require('./handlers/StringHandler');
 
 const PORT = process.env.PORT || 3001;
 
@@ -52,23 +54,40 @@ const io = socketIo(server,{
   }
 })  
 io.on('connection',(socket)=>{
-console.log('client connected: ',socket.id)
+  console.log('client connected: ',socket.id)
 
-socket.on('leave_room', (room) => socket.leave(room))
-socket.on('join_room', (room) => socket.join(room))
-//console.log(socket.rooms);
-socket.on('disconnect',(reason)=>{
-  console.log(reason)
+  socket.on('leave_room', (room) => socket.leave(room))
+  socket.on('join_room', (room) => socket.join(room))
+  //console.log(socket.rooms);
+  socket.on('disconnect',(reason)=>{
+    console.log(reason)
+  })
+
+  socket.on('send_message', async (data) => {
+    let id = await Chat.createMessage(data.user_id, data.message, data.inbox, data.answear)
+  
+    io.to(data.inbox).emit('receive_message', {message: data.message, date: data.date, avatar: data.avatar, user_id: data.user_id, id: id, answear: data.answear, a_message: data.a_message});
+    socket.emit(data.inbox, {message: data.message, date: data.date})
+  })
+
+  socket.on('delete_message', (data) => {
+    Chat.deleteMessage(data.id);
+    io.to(data.inbox).emit('delete_message', {id: data.id, inbox: data.inbox});
+  })
+
+ socket.on('last_mess', (data) => {
+  socket.emit(data.inbox, {message: data.message, date: data.date});
+ })
+
+  socket.on('edit_message', (data) => {
+    Chat.updateMessage(data.message, data.id);
+    io.to(data.inbox).emit('edit_message', {id: data.id, message: data.message})
+    if (data.last) {
+      socket.emit(data.inbox, {message: data.message, date: null})
+    }
+  })
+
 })
-
-socket.on('send_message', (data) => {
-  io.to(data.inbox).emit('receive_message', {message: data.message, date: data.date, avatar: data.avatar, user_id: data.user_id});
-})
-
-})
- 
-
-
 
 //ADVERTISEMENT
 
@@ -94,6 +113,12 @@ app.post("/option", advertisementController.option);
 
 app.post("/show", advertisementController.publicate);
 
+app.post('/add_view', advertisementController.addView);
+
+app.post('/add_phone', advertisementController.addPhone);
+
+app.post('/add_select', advertisementController.addSelect);
+
 //USER
 
 app.get('/auth', userController.auth);
@@ -101,6 +126,8 @@ app.get('/auth', userController.auth);
 app.post("/add_user", userController.createUser);
 
 app.post("/login", userController.login);
+
+app.post('/add_select_user', userController.addSelect)
 
 //CHAT
 

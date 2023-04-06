@@ -31,6 +31,7 @@ export default function Header() {
                         <Link className="drop-down-item archive" to='/user/cabinet/archive'>Архів</Link>
                         <Link className="drop-down-item messages" to='/user/cabinet/messages'>Повідомлення</Link>
                         <Link className="drop-down-item chat" to='/user/chat'>Спілкування</Link>
+                        <Link className="drop-down-item settings" to='/user/cabinet/settings'>Налаштування</Link>
                         <div className="drop-down-item exit" onClick={clickHandler} >Вихід</div>
                     </div>
                  </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 import Header from "../Components/Header/Header";
@@ -8,19 +8,47 @@ import PhotoViewer from "../Components/Inputs/PhotoViewer";
 import MapElement from "../Components/Map/MapElement";
 import UserCard from "../Components/Cards/UserCard";
 
+import {FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, ViberIcon, ViberShareButton} from "react-share";
+import {FacebookIcon} from "react-share";
+import handleSelect from "../Utils/HandleSelect";
+
 export default function Advertisement() {
 
     const [data, setData] = useState("");
     const [advertisementTitle, setTitle] = useState('');
     const [parameters, setParameters] = useState('');
-
+    const [views, setViews] = useState('');
+    const [select, setSelect] = useState('');
+    const [selectBtn, setSelectBtn] = useState(false);
+ 
     const location = useLocation();
     
-    React.useEffect(() => {
+    useEffect(() => {
+        
         fetch(location.pathname)
             .then((res) => res.json())
             .then((data) => {
+                if (JSON.parse(localStorage.getItem('select').includes(data.id))) {
+                    setSelectBtn(true)
+                }
                 setData(data);
+                setViews(data.view);
+                setSelect(data.select);
+                let viewsArr = JSON.parse(localStorage.getItem('views')) ?? [];
+                if (!viewsArr.includes(data.id)){
+                    viewsArr.push(data.id);
+                    setViews(data.view + 1);
+                    fetch('/add_view', {
+                        method: 'POST',
+                        headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                        },
+                        mode: 'cors',
+                        body: JSON.stringify({id: data.id})
+                        });
+                }
+                localStorage.setItem('views', JSON.stringify(viewsArr));
                 switch(data.realtyType){
                     case 'Будинок':
                         setTitle(`${data.advertisementType} будинку`)
@@ -182,18 +210,27 @@ export default function Advertisement() {
 
     if (!data) return;
 
+    const selectClick = () => {
+        handleSelect(data.id);
+        setSelectBtn((prev) => !prev)
+    }
+
     return (
         <div className="app-screen">
             <Header />
             <div className="container advertisement-viewer">
                 <div className="realty-params">
                     <PhotoViewer id={data.slug} images={data.images}/>
-                    <div className="realty-advertisement-title">{advertisementTitle}</div>
+                    <div className="realty-advertisement-title">
+                        <span>
+                            {advertisementTitle}
+                        </span>
+                        <div className={"list-heart " + (selectBtn ? 'heart' : '')} onClick={selectClick}>
+                            <div className={"list-heart-text"}>{selectBtn ? 'Видалити' : 'В обрані'}</div>
+                        </div>
+                    </div>
                     <div className="advertisement-price">
                         Ціна за об'єкт: {data.price.toLocaleString('ua')} $ • {data.priceinuah.toLocaleString('ua')} грн. • {data.realtyType === 'Ділянка' || data.realtyType === 'Гараж' ? Math.ceil(data.price / data.parameters.square).toLocaleString('ua') : Math.ceil(data.price / data.parameters.general_square).toLocaleString('ua')} $ за {data.unit}
-                    </div>
-                    <div className="advertisement-date">
-                        Оголошення опубліковано: {data.date}
                     </div>
                     <Title type='location' text="Розташування об'єкту" />
                     <div className="advertisement-info">Область: {data.region}</div>
@@ -201,17 +238,55 @@ export default function Advertisement() {
                     <div className="advertisement-info">Район: {data.district}</div>
                     <div className="advertisement-info">Вулиця: {data.street}</div>
                     {data.position !== '' &&
-                        <MapElement center={data.position.split(',')} position={data.position.split(',')} zoom='16' />
+                        <MapElement center={data.position.split(',')} position={data.position.split(',')} zoom='16' marker={false}/>
                     }
                     <Title type='realty' text="Параметри об'єкту" />
                     {parameters}
                     <div className="advertisement-title-text descr">Опис</div>
                     <div className="advertisement-info">{data.description}</div>
-                    <Title type='contact' text="Контактні дані" />
+                    <div className="advertisement-info-cont">
+                        <div className="advertisement-date">
+                            Оголошення опубліковано: {data.date}
+                        </div>
+                        <div className="views-info">
+                            <div className="views info-adv">
+                                {views}
+                            </div>
+                            <div className="select info-adv">
+                                {select}
+                            </div>
+                        </div>
+                    </div>
+                    <Title type='share' text="Поділитися" />
+                    <div className="share-buttons">
+                        <div className="share-btn">
+                            <FacebookShareButton url={window.location.href} title=" " >
+                                <FacebookIcon></FacebookIcon>
+                            </FacebookShareButton>
+                        </div>
+                        <div className="share-btn">
+                            <TelegramShareButton url={window.location.href} title=" ">
+                                <TelegramIcon></TelegramIcon>
+                            </TelegramShareButton>
+                        </div>
+                        <div className="share-btn">
+                            <ViberShareButton url={window.location.href} text=" ">
+                                <ViberIcon></ViberIcon>
+                            </ViberShareButton>
+                        </div>
+                        <div className="share-btn">
+                            <TwitterShareButton url={window.location.href} title=" ">
+                                <TwitterIcon></TwitterIcon>
+                            </TwitterShareButton>
+                        </div>
+                        <div className="share-btn">
+                            <button className="share-button" onClick={() => {navigator.clipboard.writeText(window.location.href)}}></button>
+                        </div>
+                    </div>
                 </div>
                 <div className="advertisement-contacts">
                     <div className="user-container-advertisement-side-panel">
-                        <UserCard user={data.user}/>
+                        <UserCard user={data.user} id={data.id}/>
                     </div>
                 </div>
             </div>

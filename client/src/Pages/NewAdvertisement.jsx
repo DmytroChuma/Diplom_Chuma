@@ -479,7 +479,7 @@ export default function NewAdvertisement () {
                                 </div>
                             </div>  
                             <span className="info-for-users">Вкажіть розташування вашого об'єкту на карті.</span>
-                            <MapElement center={[48.9, 30.0]} position={[50.44351305245807, 30.520019531250004]} zoom={6} handlePosition={setPosition}/>
+                            <MapElement center={[48.9, 30.0]} position={[50.44351305245807, 30.520019531250004]} zoom={6} handlePosition={setPosition} marker={true}/>
                         </div>
 
                         <div className="content-container">

@@ -6,6 +6,7 @@ import Archive from './Archive';
 import Messages from './Messages';
 import MyAdvertisements from './MyAdvertisements';
 import Settings from './Settings';
+import InfoUser from './InfoUser';
 
 export default function Cabinet () {
 
@@ -24,9 +25,12 @@ export default function Cabinet () {
         case 'messages':
             page = <Messages />
             break;
-        default:
+        case 'settings':
             page = <Settings />
             break;
+        default:
+            page = <InfoUser />
+            break;    
     }
 
     return (
@@ -46,8 +50,11 @@ export default function Cabinet () {
                     <Link className={'cabinet-item messages ' + (slug === 'messages' ? 'active-i-c' : '')} to='/user/cabinet/messages'>
                         Повідомлення
                     </Link>
-                    <Link className='cabinet-item chat' to=''>
+                    <Link className='cabinet-item chat' to='/user/chat'>
                         Спілкування
+                    </Link>
+                    <Link className={'cabinet-item settings ' + (slug === 'settings' ? 'active-i-c' : '')} to='/user/cabinet/settings'>
+                        Налаштування
                     </Link>
                 </div>
                 <div className='cabinet-info-container'>

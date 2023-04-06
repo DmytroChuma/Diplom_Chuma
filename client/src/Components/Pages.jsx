@@ -44,15 +44,15 @@ export default function Pages(props) {
     }
 
     const backHandler = () => {
-       if (active-1 < 1) return;
-       setActive((active-1));
-       props.pageHandle(active-1);
+       if (parseInt(active)-1 < 1) return;
+       setActive((parseInt(active)-1));
+       props.pageHandle(parseInt(active)-1);
     }
 
     const nextHandler = () => {
-        if (active+1 > props.pages) return;
-        setActive((active+1));
-        props.pageHandle(active+1);
+        if (parseInt(active)+1 > props.pages) return;
+        setActive((parseInt(active)+1));
+        props.pageHandle(parseInt(active)+1);
     }
 
     useEffect( () => {
