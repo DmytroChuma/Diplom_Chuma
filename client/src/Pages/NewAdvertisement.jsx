@@ -13,6 +13,7 @@ import useInput from "../Hook/useInput";
 import DragAndDropFile from "../Components/DragAndDropFiles/DragAndDropFile";
 import Dialog from "../Components/Dialogs/Dialog";
 import Header from "../Components/Header/Header";
+import regions from "../Utils/Regions";
 
 export default function NewAdvertisement () {
 
@@ -126,16 +127,6 @@ export default function NewAdvertisement () {
             window.removeEventListener('beforeunload', unloadCallback)
           }
       }, []);
-
-      
-
-    const regions = ["Вінницька область", "Волинська область", "Дніпропетровська область", 
-    "Донецька область", "Житомирська область", "Закарпатська область", "Запорізька область", 
-    "Івано-Франківська область", "Київська область", "Кіровоградська область", "Луганська область", 
-    "Львівська область", "Миколаївська область", "Одеська область", "Полтавська область", 
-    "Рівненська область", "Сумська область", "Тернопільська область", "Харківська область", 
-    "Херсонська область", "Хмельницька область", "Черкаська область", "Чернівецька область", 
-    "Чернігівська область", "АР Крим"];
 
     const getData = (data) => {
         setRegion(data);
@@ -418,14 +409,16 @@ export default function NewAdvertisement () {
                                 <div className="input-row-container">
                                     <label className="input-label">Номер телефону</label>
                                     <Input 
-                                        type='text' 
-                                        hook_input={number} 
-                                        hint={<div><b>Формат номера телефону:</b><br></br>Код оператора + номер телефону<br></br>Наприклад: 000 0000000</div>} 
+                                        type='text'
+                                        name='phone'
+                                         
+                                        hint={<div><b>Формат номера телефону:</b><br></br>Код оператора + номер телефону<br></br>Наприклад: 000 0000000</div>}
+                                        value=''
                                     />
                                 </div>
                                 <div className="input-row-container">
                                     <label className="input-label">Ваше ім'я та прізвище</label>
-                                    <Input type='text' label="Ваше ім'я та прізвище" hook_input={name} />
+                                    <Input type='text' label="Ваше ім'я та прізвище" name='name'   value='' />
                                 </div>
                             </div>
                         </div>

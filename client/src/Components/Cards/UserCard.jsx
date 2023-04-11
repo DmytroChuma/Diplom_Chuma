@@ -28,8 +28,6 @@ export default function UserCard(props) {
             <span className='user-card-text'>Контактні дані продавця</span>
             <div className='user-card-info'>
                 <img className='user-avatar-card' src={'http://localhost:3001/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt=''/>
-                {//<img className='user-avatar-card' src={'http://localhost:3001/users/' + (props.user.avatar != '') ? 'avatar.png' : 'avatar.png'} alt=''/>
-                }
                 <div className='user-info-container'>
                     <span className='userName'>{`${props.user.firstName} ${props.user.lastName}`}</span>
                 </div>

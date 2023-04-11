@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 
 export default function Input (props) {
 
@@ -12,7 +12,7 @@ export default function Input (props) {
          
         interval.current = setInterval(() => {
             setValue((prevValue) => {
-                return ((prevValue >= props.max && step === 1) || (prevValue <= props.min && step === -1) ? prevValue : parseInt(prevValue) + step);
+                return ((parseInt(prevValue) >= props.max && step === 1) || (parseInt(prevValue) <= props.min && step === -1) ? prevValue : parseInt(prevValue) + step);
             });
         }, 100);
         
@@ -47,19 +47,28 @@ export default function Input (props) {
                 }
             }
             setValue(number);
-           /* if (props.handleChange !== undefined) {
+            if (props.handleChange !== undefined) {
                 props.handleChange(number);
-            }*/
+            }
         }
         else if (props.price) {
             let number = e.target.value.replace(/[^\d]/g,'');
             setValue(number);
             number = number === '' ? 0 : number;
             setPrice(parseInt(number).toLocaleString('ua'));
+            if (props.handleChange !== undefined) {
+                props.handleChange(number);
+            }
         }
         else {
             setValue(e.target.value)
+
+            if (props.handleChange !== undefined) {
+                props.handleChange(e.target.value);
+            }
         }
+
+         
     }
 
     const handleValidate = (e) => {
@@ -74,30 +83,36 @@ export default function Input (props) {
     } 
 
     const handleClick = (step) => {
-        
-        if (step > 0)
-            setValue((prev) => {
-                let number = prev >= props.max  ? prev : parseInt(prev) + step;
-               /* if (props.handleChange !== undefined) {
-                    props.handleChange(number);  
-                }*/
-               return number;
-            });
-        else 
-            setValue((prev) => {
-                let number = prev <= props.min  ? prev : parseInt(prev) + step;
-                /*if (props.handleChange !== undefined) {
-                    props.handleChange(number);  
-                }*/
-            return number;
-            });
+        let number = 0;
+        if (step > 0) {
+            number = parseInt(value) >= props.max  ? value : parseInt(value) + step;
+            setValue(number)
+        }
+        else {
+            number = parseInt(value) <= props.min  ? value : parseInt(value) + step;
+            setValue(number)
+        }
+        if (props.handleChange !== undefined) {
+            props.handleChange(number);  
+        }
     }
 
-    React.useEffect(() => {
+   /* useEffect(() => {
+        
         if (props.handleChange !== undefined) {
-            props.handleChange(value);  
+            props.handleChange(value, props.name);  
         }
-      }, [props, value]);
+        
+      }, [props, value]);*/
+
+        useEffect(() => {
+        let value = props.value
+        if (!value) {
+           value = '';
+        }
+        setValue(value);
+        setPrice(value)
+      }, [props.value]); 
 
     return(
         <div className="input-row">
@@ -111,7 +126,7 @@ export default function Input (props) {
                     min={props.min}
                     max={props.max}
                     placeholder={props.placeholder} 
-                    value={props.price ? price : value} 
+                    value={props.price ? price : value}
                     pattern={props.pattern} 
                 />
                 {props.hint !== undefined &&

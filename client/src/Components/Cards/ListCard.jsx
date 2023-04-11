@@ -31,7 +31,9 @@ export default function ListCard (props) {
         <div className="ListCard">
             <div className="list-images-container">
                 <div className="list-preview-container">
-                    <img className="list-preview" src={"http://localhost:3001/"+props.slug+"/"+props.images[0]} alt=""/>
+                    <Link to={'/advertisement/'+ props.slug}>
+                        <img className="list-preview" src={"http://localhost:3001/"+props.slug+"/"+props.images[0]} alt=""/>
+                    </Link>
                 </div>
                 {props.images.length > 2 && 
                     <div className="small-images-container">

@@ -20,12 +20,12 @@ export default function TableCard (props) {
 
         return (
             <div className="tableCard">
-                <div className="table-card-image-container">
+                <Link className="table-card-image-container" to={'/advertisement/'+ props.slug}>
                     <img className="table-card-photo" src={"http://localhost:3001/"+ props.slug +"/"+props.images[0]} alt=""/>
                     {props.images.length > 1 &&
                         <div className="table-photo-count-info">+ {props.images.length - 1} Фото</div>
-                    }
-                </div>
+                    } 
+                </Link>
                 <div className="table-card-info-container">
                     <Link className="table-street link" to={'/advertisement/'+ props.slug}>{props.street + ", " + props.city}</Link>
                     <div className="table-tags-container">{tags}</div>

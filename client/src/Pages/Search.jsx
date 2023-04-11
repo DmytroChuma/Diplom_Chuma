@@ -15,6 +15,7 @@ import handleSelect from "../Utils/HandleSelect";
 
 import store from "../Store/Store";
 import userSelect from "../Store/ActionsCreators/UserSelect";
+import regions from "../Utils/Regions";
 
 export default function Search (){
 
@@ -80,14 +81,6 @@ export default function Search (){
         const [advertisement, setAdvertisement] = useState('Всі оголошення');
 
         const filterRef = React.useRef()
-
-        const regions = ["Вінницька область", "Волинська область", "Дніпропетровська область", 
-        "Донецька область", "Житомирська область", "Закарпатська область", "Запорізька область", 
-        "Івано-Франківська область", "Київська область", "Кіровоградська область", "Луганська область", 
-        "Львівська область", "Миколаївська область", "Одеська область", "Полтавська область", 
-        "Рівненська область", "Сумська область", "Тернопільська область", "Харківська область", 
-        "Херсонська область", "Хмельницька область", "Черкаська область", "Чернівецька область", 
-        "Чернігівська область", "АР Крим"];
 
         document.title = 'Пошук нерухомості';
 
@@ -252,7 +245,7 @@ export default function Search (){
                     name: 'type',
                     text: 'Тип житла',
                     type: 0,
-                    options: ['Новобудова', 'Вторинне']
+                    options: ['Всі варіанти', 'Новобудова', 'Вторинне']
                   },
                   {
                     name: 'houseType',
@@ -320,7 +313,7 @@ export default function Search (){
                     value: ['2', '3', '4']
                   },
                   ...generalFilterProperties])
-                  filterDataHandler('type', 'Новобудова');
+                  filterDataHandler('type', 'Всі варіанти');
                   filterDataHandler('proposition', 'Всі варіанти');
                   filterDataHandler('map', 'Всі варіанти');
                   filterDataHandler('auction', 'Всі варіанти');
@@ -332,7 +325,7 @@ export default function Search (){
                   name: 'type',
                   text: 'Тип житла',
                   type: 0,
-                  options: ['Новобудова', 'Вторинне']
+                  options: ['Всі варіанти', 'Новобудова', 'Вторинне']
                 },
                 {
                   name: 'wall',
@@ -388,7 +381,7 @@ export default function Search (){
                   value: ['2', '3', '4']
                 },
                 ...generalFilterProperties])
-                filterDataHandler('type', 'Новобудова');
+                filterDataHandler('type', 'Всі варіанти');
                 filterDataHandler('proposition', 'Всі варіанти');
                 filterDataHandler('map', 'Всі варіанти');
                 filterDataHandler('auction', 'Всі варіанти');
@@ -400,7 +393,7 @@ export default function Search (){
                     name: 'type',
                     text: 'Тип гаража',
                     type: 0,
-                    options: ['Окремий гараж', 'Місце в кооперативі']
+                    options: ['Всі варіанти', 'Окремий гараж', 'Місце в кооперативі']
                   },
                   {
                     name: 'garageType',
@@ -447,7 +440,7 @@ export default function Search (){
                     value: ['2', '3', '4']
                   },
                   ...generalFilterProperties])
-                  filterDataHandler('type', 'Окремий гараж');
+                  filterDataHandler('type', 'Всі варіанти');
                   filterDataHandler('proposition', 'Всі варіанти');
                   filterDataHandler('map', 'Всі варіанти');
                   filterDataHandler('auction', 'Всі варіанти');

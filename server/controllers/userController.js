@@ -19,7 +19,9 @@ exports.login = async (req, res) => {
       req.session.userId = user.id;
       req.session.name = user.name;
       req.session.avatar = user.avatar;
-      req.session.select = user.select_post;
+      req.session.select = user.select;
+      req.session.permission = user.permission;
+      req.session.agency = user.agency;
       if (req.body.remember != '') {
         let token = bcrypt.hashSync(`${user.id}${Date.now()}`, 10);
         res.cookie('remember', token, 
@@ -31,7 +33,7 @@ exports.login = async (req, res) => {
         res.clearCookie('remember');
       }
     } 
-    res.json({status: user.status});
+    res.json({status: user.status, user: user});
 }
 
 exports.auth = async (req, res) => {
@@ -41,13 +43,17 @@ exports.auth = async (req, res) => {
       req.session.name = user.name;
       req.session.avatar = user.avatar;
       req.session.select = user.select;
+      req.session.permission = user.permission;
+      req.session.agency = user.agency;
     }
     if (req.session.userId) {
         res.json({
           id: req.session.userId,
           name: req.session.name,
           avatar: req.session.avatar,
-          select: req.session.select
+          select: req.session.select,
+          permission: req.session.permission,
+          agency: req.session.agency
         });
         return;
     }
@@ -57,4 +63,20 @@ exports.auth = async (req, res) => {
 exports.addSelect = async (req, res) => {
   User.setSelect(req.body.user, req.body.select);
   res.json({success: 1});
+}
+
+exports.permission = (req, res) => {
+  User.setPermission(req.session.userId, req.body.permission);
+  res.json({success: 1})
+}
+
+exports.getInfo = async (req, res) => {
+  let user = await User.getInfo(req.session.userId);
+  res.json(user);
+}
+
+exports.logout = async (req, res) => {
+  User.setToken(req.session.userId, '');
+  req.session.destroy();
+  res.json({success: 1})
 }

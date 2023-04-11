@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from "react-router-dom";
 
 import Header from '../../Components/Header/Header';
@@ -7,17 +7,26 @@ import Messages from './Messages';
 import MyAdvertisements from './MyAdvertisements';
 import Settings from './Settings';
 import InfoUser from './InfoUser';
+import AddAgency from '../Agency/AddAgency';
+import store from '../../Store/Store';
 
-export default function Cabinet () {
+export default function Cabinet ({dialog}) {
 
     const location = useLocation();
     let slug = location.pathname.split('/');
     slug = slug[slug.length - 1];
+    const [user, setUser] = useState({});
+    store.subscribe(() => setUser(store.getState().user))
+    useEffect(()=>{
+        if (store.getState()) {
+            setUser(store.getState().user)
+        }
+    }, [])
 
     let page; 
     switch(slug) {
         case 'advertisements':
-            page = <MyAdvertisements/>
+            page = <MyAdvertisements dialog={dialog}/>
             break;
         case 'archive':
             page = <Archive/>
@@ -27,6 +36,9 @@ export default function Cabinet () {
             break;
         case 'settings':
             page = <Settings />
+            break;
+        case 'add-agency':
+            page = <AddAgency dialog={dialog}/>
             break;
         default:
             page = <InfoUser />
@@ -41,6 +53,9 @@ export default function Cabinet () {
                     <Link className={'cabinet-item personally ' + (slug === 'cabinet' ? 'active-i-c' : '')}  to='/user/cabinet'>
                         Особистий кабінет
                     </Link>
+                    {user.permission > 0 &&
+                        <Link className={'cabinet-item agency '} to={`/agency/${user.agency}/agency`}>Агентство</Link>
+                    }
                     <Link className={'cabinet-item my-advertisements ' + (slug === 'advertisements' ? 'active-i-c' : '')} to='/user/cabinet/advertisements'>
                         Мої оголошення
                     </Link>

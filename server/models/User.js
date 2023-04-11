@@ -36,7 +36,7 @@ class User{
     
     static async login(login, password){
         let sql = `
-            SELECT id, first_name, last_name, password, avatar, select_post FROM user WHERE phone = '${login}' OR email = '${login}'
+            SELECT id, first_name, last_name, password, avatar, select_post, permission, agency FROM user WHERE phone = '${login}' OR email = '${login}'
         `;
 
         let res = await con.execute(sql)
@@ -47,7 +47,9 @@ class User{
                         id: res[0].id,
                         name: res[0].first_name + " " + res[0].last_name,
                         avatar: res[0].avatar,
-                        select: res[0].select_post
+                        select: res[0].select_post,
+                        permission: res[0].permission,
+                        agency: res[0].agency
                         };
             }
         }
@@ -56,7 +58,7 @@ class User{
 
     static async loginAuth (token) {
         let sql = `
-            SELECT id, first_name, last_name, avatar, select_post FROM user WHERE remember_token = '${token}'
+            SELECT id, first_name, last_name, avatar, select_post, permission, agency FROM user WHERE remember_token = '${token}'
         `;
         let res = await con.execute(sql)
         if (res.length > 0) {
@@ -64,7 +66,9 @@ class User{
                 id: res[0].id,
                 name: res[0].first_name + " " + res[0].last_name,
                 avatar: res[0].avatar,
-                select: res[0].select_post
+                select: res[0].select_post,
+                permission: res[0].permission,
+                agency: res[0].agency
                 };
         }
         return {status: 0};
@@ -82,6 +86,47 @@ class User{
             UPDATE user SET select_post = '${select}' WHERE id = '${id}'
         `;
         con.execute(sql);
+    }
+
+    static setPermission (id, permission) {
+        let sql = `
+            UPDATE user SET permission = '${permission}' WHERE id = '${id}'
+        `
+        con.execute(sql);
+    }
+
+    static async getInfo (id) {
+        let sql = `
+            SELECT first_name, last_name, phone, email, avatar, permission, region, city, description FROM user WHERE id = '${id}' 
+        `;
+        let res = await con.execute(sql)
+        return {
+            name: res[0].first_name,
+            surname: res[0].last_name,
+            phone: res[0].phone,
+            email: res[0].email,
+            avatar: res[0].avatar,
+            permission: res[0].permission,
+            region: res[0].region,
+            city: res[0].city,
+            description: res[0].description
+        }
+    }
+
+    static setAgency (user, agency) {
+        let sql = `
+            UPDATE user SET agency = '${agency}' WHERE id = '${user}'
+        `;
+        con.execute(sql)
+    }
+
+    static async getRealtors (agencyId) {
+        let sql = `
+            SELECT id, first_name, last_name, phone, avatar, description
+            FROM user
+            WHERE agency = '${agencyId}'
+        `;
+        return await con.execute(sql)
     }
 }
 

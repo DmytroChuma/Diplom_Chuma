@@ -18,8 +18,9 @@ const realtyController = require('./controllers/realtyController');
 const fileController = require('./controllers/fileController');
 const emailController = require('./controllers/emailController');
 const chatController = require('./controllers/chatController');
+const agencyController = require('./controllers/agencyController');
 const Chat = require('./models/Chat');
-const stringHandler = require('./handlers/StringHandler');
+//const stringHandler = require('./handlers/StringHandler');
 
 const PORT = process.env.PORT || 3001;
 
@@ -123,11 +124,25 @@ app.post('/add_select', advertisementController.addSelect);
 
 app.get('/auth', userController.auth);
 
+app.get('/logout', userController.logout);
+
+app.get('/user_info', userController.getInfo);
+
+app.post('/permission', userController.permission);
+
 app.post("/add_user", userController.createUser);
 
 app.post("/login", userController.login);
 
-app.post('/add_select_user', userController.addSelect)
+app.post('/add_select_user', userController.addSelect);
+
+//AGENCY
+
+app.get('/get_agency_info', agencyController.getInfo);
+
+app.get('/get_realtors', agencyController.realtors)
+
+app.post('/create_agency', upload.single("file"), agencyController.create);
 
 //CHAT
 

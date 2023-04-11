@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axiosInstance from '../../Utils/Axios';
+import axiosInstance from '../../Utils/Axios'
 import ProgressBar from '../Inputs/ProgressBar';
 import Element from './Element';
 

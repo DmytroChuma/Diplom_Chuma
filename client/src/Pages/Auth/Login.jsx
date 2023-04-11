@@ -4,32 +4,33 @@ import { Link, useNavigate } from "react-router-dom";
 import Input from "../../Components/Inputs/Input";
 import Checkbox from "../../Components/Inputs/Checkbox";
 import Background from "./Background";
-import useInput from "../../Hook/useInput";
 import Loading from "../../Components/Dialogs/Loading";
-import Dialog from "../../Components/Dialogs/Dialog";
+ 
+
+import store from "../../Store/Store";
+import UserLogin from "../../Store/ActionsCreators/UserLogin";
+import userSelect from "../../Store/ActionsCreators/UserSelect";
 
 import Header from "../../Components/Header/Header";
 
-export default function Login () {
+export default function Login (props) {
 
     const [remember, setRemember] = useState('');
-    const login = useInput("");
-    const password = useInput("");
+    const [login, setLogin] = useState("");
+    const [password,setPassword] = useState("");
     const [dialog, setDialog] = useState('');
 
     const navigate = useNavigate(); 
-
-    let timeOut;
 
     document.title = 'Вхід';
 
     const formValidation = () => {
         if (login.value === '') {
-            handleWarning('Помилка', 'Введіть логін!');
+            props.dialog('Помилка', 'Введіть логін!', 0);
             return false;
         }
         if (password.value === '') {
-            handleWarning('Помилка', 'Введіть пароль!');
+            props.dialog('Помилка', 'Введіть пароль!', 0);
             return false;
         }
         return true;
@@ -49,35 +50,25 @@ export default function Login () {
                 'Content-Type': 'application/json',
             },
             mode: 'cors',
-            body: JSON.stringify({login: login.value,
-                                password: password.value,
+            body: JSON.stringify({login: login,
+                                password: password,
                                 remember: remember
                                 })
           }).then(response => {
             response.json().then(json => {
                 setDialog(''); 
                 if (json.status === 0) {
-                    handleWarning('Помилка авторизації', 'Неправильний логін або пароль!')
+                    props.dialog('Помилка авторизації', 'Неправильний логін або пароль!')
                     return;
                 }
+                let user = {id: json.user.id, name: json.user.name, avatar: json.user.avatar, permission: json.user.permission, agency: json.user.agency}
+                store.dispatch(UserLogin(user));
+                store.dispatch(userSelect(json.select))
                 navigate('/');
             });
         });
          
     }
-
-    function clearWarning(){
-        setDialog('');
-        clearTimeout( timeOut );
-    }
-
-    const handleWarning = (title, text) => {
-        setDialog(<Dialog clickHandler={clearWarning} title={title} text={text} />);
-        clearTimeout( timeOut );
-        timeOut = setTimeout(() => {
-            setDialog('');
-        }, 10000);  
-      }
 
     return (
         <div className="app-screen">
@@ -89,8 +80,8 @@ export default function Login () {
                 </div>
                 <form className="auth" onSubmit={handleSubmit}>
                     <div className="auth-input-container">
-                        <Input type='text' hook_input={login}  placeholder="Телефон або Email" />
-                        <Input type='password' hook_input={password}  placeholder="Пароль" />
+                        <Input type='text' handleChange={setLogin}  placeholder="Телефон або Email" value='' />
+                        <Input type='password' handleChange={setPassword    }  placeholder="Пароль" value=''/>
                     </div>
                     <Checkbox handleChange={setRemember} checked={0}  name='remember' class="checkmark" text="Запам'ятати"/>
                     <div className="auth-btn-cont">

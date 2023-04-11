@@ -308,7 +308,7 @@ filter = async (params) => {
       filter += ` AND info.auction ='0'`;
     }
   }
-  // eslint, prettier
+ 
   if (params.advertisement && params.advertisement != 'Всі оголошення') {
     if (params.advertisement === 'Продаж') {
       filter += ` AND info.advertisementType = 'Продаж'`;
@@ -316,6 +316,10 @@ filter = async (params) => {
     else {
       filter += ` AND info.advertisementType != 'Продаж'`;
     }
+  }
+
+  if(params.agency) {
+    filter += ` AND user.agency = '${params.agency}'`;
   }
 
   if (params.select) {
@@ -350,6 +354,7 @@ filter = async (params) => {
       case 'Дача':
       case 'Частина будинку':
         if (params.type) {
+          if (params.type !== 'Всі варіанти')
           filt += createFilterString(params.type, 'house.dwelling_type');
         }
         if (params.houseType) {
@@ -401,6 +406,7 @@ filter = async (params) => {
         break;
       case 'Квартира':
         if (params.type) {
+          if (params.type !== 'Всі варіанти')
           filt += createFilterString(params.type, 'flat.type');
         }
         if (params.wall) {
@@ -454,6 +460,7 @@ filter = async (params) => {
         break;
       case 'Гараж':
         if (params.type) {
+          if (params.type !== 'Всі варіанти')
           filt += createFilterString(params.type, 'garage.type');
         }
         if (params.garageType) {
@@ -499,16 +506,16 @@ filter = async (params) => {
   let rows = await con.execute(`
   SELECT info.id, info.realtyType, info.city, info.street, info.description, info.price, info.currency, info.auction, info.date, info.slug, info.views, info.phones, info.select, 
       ${realty} as params
-    FROM info
-    WHERE info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? 'AND info.user = ' + params.user : ''} ${filter} 
+    FROM info, user
+    WHERE info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? 'AND info.user = ' + params.user : ''} ${filter} 
     HAVING params IS NOT NULL
   ` + sort + ` LIMIT ${(page-1)*5}, 5`);
 
   let count = await con.execute(`
   SELECT COUNT(*) as count,
   ${realty} as params
-FROM info
-WHERE info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? 'AND info.user = ' + params.user : ''} ${filter} 
+FROM info, user
+WHERE info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? 'AND info.user = ' + params.user : ''} ${filter} 
 HAVING params IS NOT NULL
   `);
 return {rows: rows, count: count};

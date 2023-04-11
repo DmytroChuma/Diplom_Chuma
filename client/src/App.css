@@ -1724,7 +1724,7 @@ img.element-img {
   gap: 10px;
   /*animation: 0.5s show ease;*/
   animation-name: show;
-  animation-duration: 10s;
+  animation-duration: 5s;
 }
 
 .succes-panel{
@@ -1936,6 +1936,16 @@ img.no-res-img {
   pointer-events: all;
 }
 
+.drop-down:hover .drop-down-user-info{
+  border-radius: 10px 10px 0px 0px !important;
+   
+}
+
+a.logo {
+  display: flex;
+  align-items: center;
+}
+
 .drop-down-container {
   position: absolute;
   top: 39px;
@@ -2018,7 +2028,7 @@ img.no-res-img {
   cursor: default;
 }
 
-.personally:before, .archive:before, .my-advertisements:before, .messages:before, .chat:before, .settings:before, .exit:before, .edit:before, .delete:before, .publicate:before, .long-arrow-left:before{
+.personally:before, .archive:before, .my-advertisements:before, .realtors:before, .messages:before, .chat:before, .agency:before, .settings:before, .exit:before, .edit:before, .delete:before, .publicate:before, .long-arrow-left:before{
   font-family: 'FontAwesome';
   text-align: center;
   width: 30px;
@@ -2033,35 +2043,43 @@ img.no-res-img {
 }
 
 .my-advertisements:before{
-  content: '\f022'
+  content: '\f022';
+}
+
+.realtors:before{
+  content: '\f0c0'
 }
 
 .messages:before{
-  content: '\f0e0'
+  content: '\f0e0';
+}
+
+.agency:before{
+  content: '\f1ad';
 }
 
 .settings:before{
-  content: '\f085'
+  content: '\f085';
 }
 
 .chat:before{
-  content: '\f0e6'
+  content: '\f0e6';
 }
 
 .exit:before{
-  content: '\f08b'
+  content: '\f08b';
 }
 
 .edit:before{
-  content: '\f040'
+  content: '\f040';
 }
 
 .long-arrow-left:before{
-  content: '\f177'
+  content: '\f177';
 }
 
 .delete:before{
-  content: '\f1f8'
+  content: '\f1f8';
 }
 
 .publicate:before{
@@ -2085,6 +2103,7 @@ img.no-res-img {
   padding: 10px;
   border: 1px solid #dbdbdb;
   border-radius: 10px;
+  position: relative;
 }
 
 .cabinet-info-container {
@@ -2645,4 +2664,374 @@ a.btn.link {
   min-height: auto;
   align-items: center;
   justify-content: center;
+}
+
+.cabinet-cards-container {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.info-cabinet-card {
+  padding-bottom: 0px;
+  border-radius: 10px;
+  border: 1px solid #dbdbdb;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 20px;
+  max-width: 500px;
+   
+}
+
+.cabinet-card-body {
+  padding: 10px;
+  min-height: 100px;
+}
+
+a.card-info-link-btn {
+  text-align: center;
+  padding: 5px 0px;
+  text-decoration: none;
+  color: white;
+  background: var(--backgroundColor);
+  height: 100%;
+}
+
+.cabinet-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cabinet-cards-container > div{
+  flex: 40%;
+}
+
+.agency-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 20px;
+  width: 500px;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid #cdcdcd;
+}
+
+.agency-form-input {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.agency-form-input-text {
+  height: 45px;
+    display: flex;
+    flex: 1 1;
+    align-items: center;
+}
+
+.agency-container {
+  display: flex;
+  justify-content: center;
+}
+
+textarea.agency-textarea {
+  max-height: 150px;
+ 
+}
+
+span.title-agency-form {
+  text-align: center;
+  font-size: 25px;
+  color: var(--backgroundColor);
+}
+
+.input-row.image {
+  display: flex;
+  justify-content: center;
+}
+
+.agency-form-img-container, .user-form-img-container {
+  overflow: hidden;
+  border-radius: 10px;
+  height: 60px;
+}
+
+.user-form-img-container{
+  height: 100px;
+  width: 100px;
+}
+
+img.agency-form-img, .user-form-img {
+    object-fit: cover;
+    transform: translate3d(0, 0, 1px);
+    height: 100% !important;
+    width: 100%;
+    cursor: pointer;
+}
+
+.input-row.column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dinamyc-input {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+button.add-btn, .del-btn {
+  width: 45px;
+  border: none;
+  background: #47b32c;
+  color: white;
+  font-size: 30px;
+  border-radius: 10px;
+  transition: 0.5s;
+}
+
+.del-btn{
+  background: #ff4444;
+}
+.agency-form-input.textarea {
+  display: flex;
+  flex-direction: column;
+}
+
+.add-btn:hover{
+  cursor: pointer;
+  background: #72bb60;
+}
+
+.del-btn:hover{
+  cursor: pointer;
+  background: #fa7a7a;
+}
+
+.user-avatar-input-cont {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.image-user {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.input-row-user {
+  display: flex;
+  
+}
+
+.user-form-input-text {
+  width: 100px;
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+}
+
+.user-name-cont {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 10px;
+}
+
+.cabinet-container.user {
+  align-items: center;
+}
+
+.user-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.list.full-user {
+  flex: 1;
+}
+
+img.avatar-header {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.user-header-avatar {
+  height: 30px;
+  width: 30px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.drop-down-user-info {
+  gap: 10px;
+  display: flex;
+}
+
+.contact-agency-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+  max-width: 600px;
+}
+
+.contact-info {
+  font-size: 22px;
+  font-weight: bold;
+  padding-bottom: 5px;
+  color: var(--backgroundColor);
+  border-bottom: 2px solid var(--backgroundColor);
+}
+
+.contact-agency {
+  font-size: 20px;
+}
+
+.agency-description {
+  max-width: 600px;
+  font-size: 20px;
+  line-height: 1.5;
+}
+
+.contact-a-c {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.agency-info-container{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+img.image-agency-logo {
+  height: 100%;
+}
+
+.agency-logo-info {
+  height: 150px;
+  min-width: 150px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.agency-info {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  font-size: 20px;
+}
+
+.agency-info-basic {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.agency-name-info {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.agency-advertisement-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+span.span-count {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.hover{
+  transition: 0.5s;
+}
+
+.hover:hover {
+  box-shadow: 1px 1px 10px black;
+  cursor: pointer;
+}
+
+img.realtor-avatar {
+  height: 100%;
+  width: 100%;
+}
+
+.realtor-card-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.realtor-info {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  padding: 10px
+}
+
+.realtor-phone-number {
+  font-size: 20px;
+  color: var(--backgroundColor);
+  cursor: pointer;
+}
+ 
+.realtor-phone-container {
+  display: flex;
+  gap: 10px;
+  z-index: 1;
+}
+
+.realtor-phone-number.type {
+  color: gray;
+  cursor: default;
+}
+
+.realtor-card-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+span.realtor-card-name {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.realtor-card-description {
+  padding: 10px;
+  font-size: 18px;
+}
+
+.realtor-card {
+  border-radius: 10px;
+  border: 1px solid #dbdbdb;
+  position: relative;
+  transition: 0.5s;
+}
+
+.realtors-agency-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.realtor-card:hover{
+  box-shadow: 1px 1px 10px black;
+  cursor: pointer;
 }

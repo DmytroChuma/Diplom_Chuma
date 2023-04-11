@@ -37,10 +37,13 @@ export default function Archive() {
             if (check.checked !== !all)
                 check.click();
         }
+
         setAll(!all);
     }
 
     const handleChecks = (value) => {
+        let checks = document.getElementsByName("card");
+
         let arr = check;
         let index = arr.indexOf(value);
         if (index !== -1) {
@@ -51,7 +54,7 @@ export default function Archive() {
         }
         else {
             arr.push(value);
-            if (arr.length === 3) {
+            if (arr.length === checks.length) {
                 let all = document.getElementsByName("selectAll");
                 all[0].checked = true;
                 setAll(true);
@@ -60,13 +63,19 @@ export default function Archive() {
         setCheck([...arr]);
     }
 
-    function loadItems (success, messageText) {
+    function loadItems (success, messageText, length) {
 
         let params = queryString.parse(location.search);
         let page = 1;
         if (params.page) {
-            setActivePage(params.page)
-            page = params.page
+            if (length === 1) {
+                setActivePage(params.page - 1)
+                page = params.page - 1
+            }
+            else {
+                setActivePage(params.page)
+                page = params.page
+            }
         }
 
         let all = document.getElementsByName("selectAll");

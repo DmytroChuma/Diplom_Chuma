@@ -14,7 +14,7 @@ export default function UserAdvertisementCard (props) {
             body: JSON.stringify({slug: props.slug})
           }).then(response => {
             response.json().then(json => {
-                props.handleLoad(json.success, 'Оголошення додано до архіву');
+                props.handleLoad(json.success, 'Оголошення додано до архіву', document.getElementsByClassName("user-advertisement-card").length);
             });
           });
     }
@@ -30,7 +30,7 @@ export default function UserAdvertisementCard (props) {
             body: JSON.stringify({slug: props.slug})
         }).then(response => {
             response.json().then(json => {
-                props.handleLoad(json.success, 'Оголошення опубліковано');
+                props.handleLoad(json.success, 'Оголошення опубліковано', document.getElementsByClassName("user-advertisement-card").length);
             });
           });
     }
@@ -46,20 +46,23 @@ export default function UserAdvertisementCard (props) {
             body: JSON.stringify({slug: props.slug})
         }).then(response => {
             response.json().then(json => {
-                props.handleLoad(json.success, 'Оголошення видалено');
+                props.handleLoad(json.success, 'Оголошення видалено', document.getElementsByClassName("user-advertisement-card").length);
             });
         });
    }
 
 
     return (
-        <div className="user-advertisement-card">
+        <div className={'user-advertisement-card ' + (props.link ? 'hover' : '')}>
            
             <div className="card-info">
                 <div className="userA-img">
                     <img className="userA-card-photo" src={"http://localhost:3001/"+ props.slug +"/"+ props.images[0]} alt='' />
                 </div>
                 <div className="user-advertisement-card-info">
+                    {props.link &&
+                        <Link className="list-street link" to={'/advertisement/'+ props.slug}></Link>
+                    }
                     <div className="list-street">{props.street + ", " + props.city}</div>
                     <div className="list-price-container">
                         <div className="list-price">{props.price.toLocaleString('ua')} $</div>
