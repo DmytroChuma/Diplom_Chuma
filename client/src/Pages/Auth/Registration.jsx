@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 import Input from "../../Components/Inputs/Input";
 import Background from "./Background";
@@ -6,48 +7,52 @@ import Header from "../../Components/Header/Header";
 
 export default function Registration (props){
 
+        const navigate = useNavigate()
+
         const [firstName, setFirstName] = useState('');
         const [lastName, setLastName] = useState('');
         const [number, setNumber] = useState('');
         const [email, setEmail] = useState('');
         const [password, setPassword] = useState('');
         const [confirmPassword, setConfirm] = useState('');
-        const [dialog, setDialog] = useState('');
 
         document.title = 'Реєстрація';
 
         function formValidation() {
-            if (firstName.value.trim() === '') {
+            if (firstName.trim() === '') {
                 props.dialog('Помилка', "Введіть ім'я");
                 return false;
             }
-            if (lastName.value.trim() === '') {
+            if (lastName.trim() === '') {
                 props.dialog('Помилка', "Введіть прізвище");
                 return false;
             }
-            if (number.value.trim() === '') {
+            if (number.trim() === '') {
                 props.dialog('Помилка', "Введіть номер телефону");
                 return false;
             }
-            
-            if (email.value.trim() === '') {
-                props.dialog('Помилка', "Введіть email");
+            if (number.length < 10) {
+                props.dialog('Помилка', 'Невірний формат номеру телефона')
+                return false;
+            }
+            if (email.trim() === '') {
+                props.dialog('Помилка', "Введіть Email");
                 return false;
             }
             const pattern = /^\S+@\S+\.\S+$/;
-            if (!pattern.test(email.value)) {
-                props.dialog('Помилка', "Неправильний формат email");
+            if (!pattern.test(email)) {
+                props.dialog('Помилка', "Неправильний формат Email");
                 return false;
             }
-            if (password.value.trim() === '') {
+            if (password.trim() === '') {
                 props.dialog('Помилка', "Введіть пароль");
                 return false;
             }
-            if (confirmPassword.value.trim() === '') {
+            if (confirmPassword.trim() === '') {
                 props.dialog('Помилка', "Підтвердіть пароль");
                 return false;
             }
-            if (password.value !== confirmPassword.value) {
+            if (password !== confirmPassword) {
                 props.dialog('Помилка', "Паролі не співпадають");
                 return false;
             }
@@ -74,21 +79,33 @@ export default function Registration (props){
                                     email: email,
                                     password: password})
               }).then(response => {
-                response.json().then(json => {
-
-                    console.log(JSON.stringify(json))
+                response.json().then(data => {
+                    if (data.success === 1) {
+                        props.dialog('Успіх', 'Зареєстровано', 1)
+                        navigate('/auth/login')
+                    }
+                    else {
+                        
+                        const pattern = /'(.*?)'/g;
+                        const mathces = [...data.error.sqlMessage.matchAll(pattern)];
+                        if (mathces[1][1] === 'phone'){
+                            props.dialog('Помилка', 'Такий номер телефона вже зареєстрований')
+                        }
+                        else if (mathces[1][1] === 'email') {
+                            props.dialog('Помилка', 'Такий Email вже зареєстрований')
+                        }
+                        else {
+                            props.dialog('Помилка', 'Помилка реєстрації')
+                        }   
+                    }
                 });
             });
-
-          
-            return true;
         }
 
         return (
             <div className="app-screen">
                 <Header />
                 <div className="container-auth"> 
-                {dialog}
                     <div className='auth-icon'>
                         <Background />
                     </div>
@@ -96,9 +113,9 @@ export default function Registration (props){
                         <div className="auth-input-container">
                             <Input type='text' handleChange={setFirstName} placeholder="Ім'я" value='' />
                             <Input type='text' handleChange={setLastName} placeholder="Прізвище" value=''  />
-                            <Input type='text' handleChange={setNumber} placeholder="Телефон" hint={<div><b>Формат номера телефону:</b><br></br>Код оператора + номер телефону<br></br>Наприклад: 000 0000000</div>} value=''  />
+                            <Input type='text' handleChange={setNumber} placeholder="Телефон" phone={true} hint={<div><b>Формат номера телефону:</b><br></br>Код оператора + номер телефону<br></br>Наприклад: 000 0000000</div>} value=''  />
                             <Input type='text' handleChange={setEmail} placeholder="Email" hint={<div><b>Формат електронної пошти:</b><br></br>example@gmail.com</div>} value='' />
-                            <Input type='password' handleChange={setPassword} placeholder="Пароль" value=''  />
+                            <Input type='password' handleChange={setPassword} placeholder="Пароль" value='' />
                             <Input type='password' handleChange={setConfirm} placeholder="Повторіть пароль" value=''  />
                         </div>
                         <button className="btn reg" type='submit'>Зареєструвати</button>

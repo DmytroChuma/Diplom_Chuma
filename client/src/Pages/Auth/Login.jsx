@@ -25,11 +25,11 @@ export default function Login (props) {
     document.title = 'Вхід';
 
     const formValidation = () => {
-        if (login.value === '') {
+        if (login === '') {
             props.dialog('Помилка', 'Введіть логін!', 0);
             return false;
         }
-        if (password.value === '') {
+        if (password === '') {
             props.dialog('Помилка', 'Введіть пароль!', 0);
             return false;
         }
@@ -43,18 +43,24 @@ export default function Login (props) {
         }
         
         setDialog(<Loading text='' />);
+        try{
         fetch('/login', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
             },
+            credentials : "include",
             mode: 'cors',
             body: JSON.stringify({login: login,
                                 password: password,
                                 remember: remember
                                 })
           }).then(response => {
+            if (response.status !== 200) {
+                setDialog('')
+                props.dialog('Помилка авторизації', 'Спробуйте пізніше')
+            }
             response.json().then(json => {
                 setDialog(''); 
                 if (json.status === 0) {
@@ -64,9 +70,13 @@ export default function Login (props) {
                 let user = {id: json.user.id, name: json.user.name, avatar: json.user.avatar, permission: json.user.permission, agency: json.user.agency}
                 store.dispatch(UserLogin(user));
                 store.dispatch(userSelect(json.select))
+                props.socket.emit("join_room", json.user.id);
+                if (json.user.agency !== 0)
+                    props.socket.emit("join_room", json.user.agency);
                 navigate('/');
             });
         });
+    }catch(err) {setDialog('')}
          
     }
 

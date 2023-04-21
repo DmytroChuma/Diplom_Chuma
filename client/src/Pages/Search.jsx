@@ -10,11 +10,8 @@ import Header from "../Components/Header/Header";
 import NoResult from "../Components/NoResult";
 import Pages from "../Components/Pages";
 import Input from "../Components/Inputs/Input";
-import useInput from "../Hook/useInput";
 import handleSelect from "../Utils/HandleSelect";
 
-import store from "../Store/Store";
-import userSelect from "../Store/ActionsCreators/UserSelect";
 import regions from "../Utils/Regions";
 
 export default function Search (){
@@ -74,7 +71,21 @@ export default function Search (){
 
         const [region, setRegion] = useState("");
 
-        const street = useInput('');
+        const [priceMin, setPriceMin] = useState('')
+
+        const [priceMax, setPriceMax] = useState('')
+
+        const [currency, setCurrency] = useState('$')
+
+        const [squareMin, setSquareMin] = useState('')
+
+        const [squareMax, setSquareMax] = useState('')
+
+        const [unit, setUnit] = useState('')
+
+        const [rooms, setRooms] = useState('')
+
+        const [parameters, setParameters] = useState('')
 
         const [sortType, SetSort] = useState("Спочатку нові");
 
@@ -89,12 +100,17 @@ export default function Search (){
         }
         
         const getSelectHeart = (id) => {
+          if (!localStorage.getItem('select')) return false
           if (JSON.parse(localStorage.getItem('select')).includes(id)) {
             return true;
           }
           return false;
         }
         
+        const tagsHandler = (tag) => {      
+          navigate(`/search?${region === '' ? '' : `region=${region}&`}${city === '' ? '' : `city=${city}&`}advertisement=Всі оголошення${parameters === '' ? '' : '&'}${parameters}&sort=Спочатку нові&realty=${tag.realty ? tag.realty : 'Вся нерухомість' }&${tag.type}=${tag.urlText}`)
+        }
+
         const createItems = (data, type) => {
           if(data.length === 0) {
             return(<NoResult/>);
@@ -103,7 +119,7 @@ export default function Search (){
           if (type === "0") {
             let list = [];
             for (let i = 0 ; i < data.length; i++) {
-              list.push(<ListCard key={i} id={data[i].id} selectHandler={selectHandler} price={data[i].price} images={data[i] ? data[i].images : ""} select={getSelectHeart(data[i].id)} date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug} />);
+              list.push(<ListCard key={i} id={data[i].id} showTags={true} tagsHandler={tagsHandler} selectHandler={selectHandler} price={data[i].price} images={data[i] ? data[i].images : ""} select={getSelectHeart(data[i].id)} date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug} />);
             }
             return(<div className="list-cards-container">
               {list}
@@ -112,7 +128,7 @@ export default function Search (){
           else {
             let table = [];
             for (let i = 0 ; i < data.length; i++) {
-              table.push(<TableCard key={i} id={data[i].id} selectHandler={selectHandler} price={data[i].price} images={data[i] ? data[i].images : ""} select={getSelectHeart(data[i].id)}  date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug}/>);
+              table.push(<TableCard key={i} id={data[i].id} showTags={true} tagsHandler={tagsHandler} selectHandler={selectHandler} price={data[i].price} images={data[i] ? data[i].images : ""} select={getSelectHeart(data[i].id)}  date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug}/>);
             }
             return(<div className="table-cards-container">
               {table}
@@ -123,6 +139,14 @@ export default function Search (){
   
           useEffect(() => {
             let params = queryString.parse(location.search);
+            if (JSON.stringify(params) === '{}') {
+              setRegion('')
+              SetCities('')
+              SetCity('')
+              setAdvertisement('Всі оголошення')
+              setRealty('Вся нерухомість')
+              setFilterOptions(generalFilterProperties)
+            }
             if (params.page) {
               setActivePage(params.page)
             }
@@ -137,10 +161,72 @@ export default function Search (){
               if (realty !== params.realty) {
                 realtySelectHandler(params.realty, params); 
               }
+              if (region !== params.region && params.region) {
+                getData(params.region, false)
+              }
+              else if (!params.region){
+                setRegion('')
+                SetCities('')
+                SetCity('')
+              }
+              if (city !== params.city && params.city) {
+                getArea(params.city)
+              }
+              if (params.pricemin) {
+                setPriceMin(params.pricemin)
+              }
+              else {
+                setPriceMin('')
+              }
+              if (params.pricemax) {
+                setPriceMax(params.pricemax)
+              }
+              else {
+                setPriceMax('')
+              }
+              if (params.currency){
+                setCurrency(params.currency)
+              }
+              else {
+                setCurrency('$')
+              }
+              if (params.squaremin) {
+                setSquareMin(params.squaremin)
+              }
+              else {
+                setSquareMin('')
+              }
+              if (params.squaremax) {
+                setSquareMax(params.squaremax)
+              }
+              else {
+                setSquareMax('')
+              }
+              if (params.unit){
+                setUnit(params.unit)
+              }
+              else {
+                setUnit('')
+              }
+              if (params.rooms){
+                setRooms(params.rooms)
+              }
+              else {
+                setRooms('')
+              }
               delete params.sort;
               delete params.advertisement;
               delete params.realty;
               delete params.page;
+              delete params.region;
+              delete params.city;
+              delete params.pricemin;
+              delete params.pricemax;
+              delete params.currency;
+              delete params.rooms;
+              delete params.squaremin;
+              delete params.squaremax;
+              delete params.unit;
               for (let parameter of Object.keys(params)) {
                 filterDataHandler(parameter, params[parameter]);
               }
@@ -148,9 +234,13 @@ export default function Search (){
 
             setItems(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>);
             setShowPages(false);
-              fetch(location.pathname+location.search).then((res) => res.json()).then((data) => {
+            let query = location.pathname+location.search
+            if (!query.includes('count=12')){
+              query.includes('?') ? query += '&count=12' : query += '?count=12'
+            }
+              fetch(query).then((res) => res.json()).then((data) => {
               setData(data.realty);
-              setPage(Math.ceil(data.count / 5));
+              setPage(Math.ceil(data.count / 12));
               if(data.length === 0) {
                 setItems(<NoResult/>);
               }
@@ -176,16 +266,19 @@ export default function Search (){
 
         
 
-          const getData = (data) => {
+          const getData = (data, clear = true) => {
             setRegion(data);
             fetch('/region/:'+data).then((res) => res.json()).then((data) => {
               SetCities(data.cities);
-              SetCity("");
+              if (clear)
+                SetCity("");
             });
+            navigate(`/search?region=${data}&advertisement=${advertisement}${parameters === '' ? '' : '&'}${parameters}&realty=${realty}&${filterValue}${filterValue !== ''? "&" : ''}sort=${sortType}&page=${1}`)
           }
 
           const getArea = (data) => {
             SetCity(data);
+            navigate(`/search?region=${region}&city=${data}&advertisement=${advertisement}${parameters === '' ? '' : '&'}${parameters}&realty=${realty}&${filterValue}${filterValue !== ''? "&" : ''}sort=${sortType}&page=${1}`)
           }
 
           const createFilterLink = () => {
@@ -199,7 +292,24 @@ export default function Search (){
 
             let value = properies.join('&');
             setActivePage(1);
-            navigate(`/search?advertisement=${advertisement}&realty=${realty}&${value}${value !== ''? "&" : ''}sort=${sortType}&page=${1}`);
+            let params = []
+            if (priceMin !== '' || priceMax !== '')
+              params.push(`currency=${currency}`);
+            if (priceMin !== '') 
+              params.push(`pricemin=${priceMin}`);
+            if (priceMax !== '') 
+              params.push(`pricemax=${priceMax}`);
+            if (squareMin !== '') 
+              params.push(`squaremin=${squareMin}`);
+            if (squareMax !== '')
+              params.push(`squaremax=${squareMax}`);
+            if (unit !== '')
+              params.push(`unit=${unit}`);
+            if (rooms !== '')
+              params.push(`rooms=${rooms}`);
+            let paramsVal = params.join('&');
+            setParameters(params.join('&'))
+            navigate(`/search?${region === '' ? '' : `region=${region}&`}${city === '' ? '' : `city=${city}&`}advertisement=${advertisement}${paramsVal === '' ? '' : '&'}${paramsVal}&realty=${realty}&${value}${value !== ''? "&" : ''}sort=${sortType}&page=${1}`);
             setFilterValue(value);
             return value;
           }
@@ -207,7 +317,7 @@ export default function Search (){
           const sort = (sort) => {
             SetSort(sort);
             setActivePage(1);
-            navigate(`/search?advertisement=${advertisement}&realty=${realty}&${filterValue === '' ? '' : filterValue+'&'}sort=${sort}&page=${1}`);
+            navigate(`/search?${region === '' ? '' : `region=${region}&`}${city === '' ? '' : `city=${city}&`}advertisement=${advertisement}${parameters === '' ? '' : '&'}${parameters}&realty=${realty}&${filterValue === '' ? '' : filterValue+'&'}sort=${sort}&page=${1}`);
           }
 
           async function fetchHandler (path) {
@@ -223,16 +333,19 @@ export default function Search (){
           const realtySelectHandler = async (type, params = '') =>{
             if (params === '' && type !== realty) setFilter({});
             if (params === '' && type !== realty) setFilterOptions([]);
-           // let filterValue = createFilterLink(true);
             let data;
-            /*let filterVal = filterValue;
-            if (realty !== type) {
-              filterVal = '';
-            }*/
             setRealty(type);
             setActivePage(1);
+            setParameters('')
+            setPriceMax('')
+            setPriceMin('')
+            setSquareMax('')
+            setSquareMin('')
+            setUnit('')
+            setCurrency('$')
+            setRooms('')
             if (params === '') {
-              navigate(`/search?advertisement=${advertisement}&realty=${type}&sort=${sortType}&page=${1}`);
+              navigate(`/search?${region === '' ? '' : `region=${region}&`}${city === '' ? '' : `city=${city}&`}advertisement=${advertisement}&realty=${type}&sort=${sortType}&page=${1}`);
             }
             
             switch(type){
@@ -502,32 +615,54 @@ export default function Search (){
 
           const pagesHandler = (activePage) => {
             setActivePage(activePage);
-            navigate(`/search?advertisement=${advertisement}&realty=${realty}&${filterValue === '' ? '' : filterValue+'&'}sort=${sortType}&page=${activePage}`);
+            navigate(`/search?${region === '' ? '' : `region=${region}&`}${city === '' ? '' : `city=${city}&`}advertisement=${advertisement}${parameters === '' ? '' : '&'}${parameters}&realty=${realty}&${filterValue === '' ? '' : filterValue+'&'}sort=${sortType}&page=${activePage}`);
           }
 
           const advertisementHandler = (advertisement) =>{
             setAdvertisement(advertisement);
             setActivePage(1);
-            navigate(`/search?advertisement=${advertisement}&realty=${realty}&${filterValue === '' ? '' : filterValue+'&'}sort=${sortType}&page=${1}`);
+            navigate(`/search?${region === '' ? '' : `region=${region}&`}${city === '' ? '' : `city=${city}&`}advertisement=${advertisement}${parameters === '' ? '' : '&'}${parameters}&realty=${realty}&${filterValue === '' ? '' : filterValue+'&'}sort=${sortType}&page=${1}`);
           }
 
         return (
           <div className="app-screen">
             <Header />
             <div className="container">
-              
-              <div className="select-location-container">
-                <Select class={"no-border"} handleData={getData} placeholder="Оберіть область" name='region' readonly={false} list={regions} value={region}/>
-                <Select class={"no-border"} handleData={getArea} placeholder="Оберіть місто" name='city' readonly={false} list={cities} value={city} />
-                <Input class={"no-border full"} placeholder="Введіть вулицю" name='street' value={street.value}  />
+              <div className="select-container">
+                <Select class="full" handleData={getData} placeholder="Оберіть область" name='region' list={regions} value={region}/>
+                <Select class="full" handleData={getArea} placeholder="Оберіть місто" name='city' list={cities} value={city} />
+                <Select class="full" handleData={advertisementHandler} placeholder="Тип оголошення" value={advertisement} name='realty' list={["Всі оголошення", "Продаж", "Оренда"]} />
+                <Select class="full" handleData={realtySelectHandler} placeholder="Тип нерухомості" value={realty} name='realty' list={["Вся нерухомість", "Будинок", "Квартира", "Ділянка", "Гараж", "Дача", "Частина будинку"]}  />
               </div>
             
               <div className="select-options-container">
                 <div className="select-container">
-                  <Select class={""} handleData={advertisementHandler} placeholder="Тип оголошення" value={advertisement} name='realty' readonly={true} list={["Всі оголошення", "Продаж", "Оренда"]} />
-                  <Select class={""} handleData={realtySelectHandler} placeholder="Тип нерухомості" value={realty} name='realty' readonly={true} list={["Вся нерухомість", "Будинок", "Квартира", "Ділянка", "Гараж", "Дача", "Частина будинку"]}  />
+                  <div className="filter-inputs">
+                    <span className="filt-text">Ціна</span>
+                    <Input class='filt-input' price={true} value={priceMin} handleChange={setPriceMin} placeholder='Від'/>
+                    <Input class='filt-input' price={true} value={priceMax} handleChange={setPriceMax} placeholder='До'/>
+                    <Select class='currency-list' value={currency} handleData={setCurrency} list={['$', 'грн']}/>
+                    <span className="filt-text">Площа</span>
+                    <Input class='filt-input' value={squareMin} number={true} handleChange={setSquareMin} placeholder='Від'/>
+                    <Input class='filt-input' value={squareMax} number={true} handleChange={setSquareMax} placeholder='До'/>
+                    {realty === 'Ділянка' && <Select class='area-list' value={unit} handleData={setUnit} placeholder='Одиниця' list={['Сотка', 'Гектар', 'м²']}/>}
+                    {(realty === 'Квартира' || realty === 'Будинок' || realty === 'Дача' || realty === 'Частина будинку' ) && 
+                      <div className="filter-inputs">
+                        <span className="filt-text">Кількість кімнат</span>
+                        <Input class='filt-input' value={rooms} int={true} number={true} handleChange={setRooms} placeholder='Кімнат'/>
+                      </div>
+                    }
+                    {realty === 'Гараж' && 
+                      <div className="filter-inputs">
+                        <span className="filt-text">Машиномісць</span>
+                        <Input class='filt-input garage' value={rooms} int={true} number={true} handleChange={setRooms} placeholder='Машиномісць'/>
+                      </div>
+                    }
+                  </div>
                 </div>
-                <div className="filter-container-button">
+              </div>
+
+              <div className="filter-container-button">
                   <Filter ref={filterRef} options={filterOptions} dataHandler={filterDataHandler} parameters={filterParams}/>
                     <button className="btn" onClick={() => {
                       createFilterLink();
@@ -535,13 +670,12 @@ export default function Search (){
                         filterRef.current.click();
                       }
                       }}>Застосувати</button>
-                  </div>
-              </div>
+                </div>
              
               <div className="separator"></div>
 
               <div className="settings-container">
-                <Select class={""} handleData={sort} placeholder="Тип сортування" value={sortType} name='realty' readonly={true} list={["Спочатку нові", "Найдорожчі", "Найдешевші"]} />
+                <Select class={""} handleData={sort} placeholder="Тип сортування" value={sortType} name='realty' list={["Спочатку нові", "Найдорожчі", "Найдешевші"]} />
                 <div className="btn-check-container">
                   <Link className="btn link" to="/select">Обрані</Link>
                   <button onClick={(e) => {toggleClass(e); setItems(createItems(data, "0"))}} className={"list-check btn-check " + (localStorage.getItem('card') === "0" ? "activate" : "")}></button>

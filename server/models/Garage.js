@@ -76,6 +76,39 @@ class Garage{
 
         con.execute(sql);
     }
+
+    static async update (typeA, garageType, car, wallName, roofName, floorName, square, width, length, gateWidth,
+        height, pit, basement, residential, sectional, stateName, electricityName, info) {
+
+        let result = await con.execute(`
+        SELECT garage_type.id as type, garage_wall.id as wall, garage_roof.id as roof, garage_floor.id as floor, realty_state.id as state, communication.id as electricity
+        FROM garage_type, garage_wall, garage_roof, garage_floor, realty_state, communication
+        WHERE garage_type.name = '${garageType}' AND garage_wall.name = '${wallName}' AND garage_roof.name = '${roofName}' AND garage_floor.name = '${floorName}' AND realty_state.name = '${stateName}' AND communication.name = '${electricityName}'`);
+        const { type, wall, roof, floor, state, electricity } = result[0];
+
+        let sql = `
+            UPDATE garage SET type = '${typeA}',
+            garageType = '${type}',
+            car = '${car}',
+            wall = '${wall}',
+            roof = '${roof}',
+            floor = '${floor}',
+            square = '${square}',
+            width = '${width}', 
+            length = '${length}',
+            gateWidth = '${gateWidth}',
+            height = '${height}',
+            pit = '${pit}',
+            basement = '${basement}',
+            residential = '${residential}',
+            sectional = '${sectional}',
+            state = '${state}',
+            electricity = '${electricity}'
+            WHERE info = '${info}'
+        `
+        con.execute(sql)
+    }
+
 }
 
 module.exports = Garage;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axiosInstance from '../../Utils/Axios'
 import ProgressBar from '../Inputs/ProgressBar';
 import Element from './Element';
@@ -9,9 +9,21 @@ export default function DragAndDropFile(props){
     const [active, setActive] = useState(false);
     const [progress, setProgress] = useState('0');
     const [elements, setElements] = useState([]);
+    const [loaded, setLoaded] = useState(false)
     const [showProgress, setShowProgress] = useState(false);
 
     let timeOut;
+
+    useEffect(() => {
+        if (props.loadedFiles && !loaded && props.loadedFiles.length > 0) {
+            let elementsLoaded = []
+            props.loadedFiles.forEach((element) => {
+                elementsLoaded.push(<Element key={element} path={`${props.slug}/${element}`} deleteHandler={deleteElementHandler}/>);
+            })
+            setElements(elementsLoaded)
+            setLoaded(true)
+        }
+    }, [props, loaded])
 
     function checkFiles(files){
         for(let file of files){
@@ -41,7 +53,7 @@ export default function DragAndDropFile(props){
         setActive(false);
         if (e.dataTransfer.files && e.dataTransfer.files[0]) {
             if (!checkFiles(e.dataTransfer.files)){
-                props.warning("Завантажити можна лише файти з розширенням: " + props.filter.join(', '));
+                props.warning('Помилка', "Завантажити можна лише файти з розширенням: " + props.filter.join(', '));
                 return;
             }
             handleFiles(e.dataTransfer.files);
@@ -110,6 +122,13 @@ export default function DragAndDropFile(props){
                     (element) => element !== data)
             );  
         }
+        if (props.handleLoaded !== undefined) {
+                props.handleLoaded((prev) =>
+                    prev.filter(
+                        (element) => `${props.slug}/${element}` !== data)
+                );  
+        }
+        console.log(elements)
     }
 
     return(

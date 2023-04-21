@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import store from "../../Store/Store";
 import UserLogin from "../../Store/ActionsCreators/UserLogin";
@@ -11,6 +11,8 @@ export default function Header() {
 
     const [user, setUser] = useState(typeof store.getState() !== 'undefined' ? store.getState().user : {});
 
+    const navigate = useNavigate();
+
     store.subscribe(() => {
         setUser(store.getState().user)
     })
@@ -19,7 +21,8 @@ export default function Header() {
         fetch('/logout');
         localStorage.setItem('select', '[]')
         store.dispatch(UserLogin({}));
-        store.dispatch(userSelect([]))
+        store.dispatch(userSelect([]));
+        navigate('/')
       }
 
     return (

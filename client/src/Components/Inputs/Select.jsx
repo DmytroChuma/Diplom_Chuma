@@ -1,11 +1,10 @@
 //import React, { Component } from "react";
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
  
 export default function Select (props) {
     const name = props.name;
     const placeholder = props.placeholder;
-    const readonly = props.readonly;
     const list = props.list;
 
      
@@ -34,17 +33,16 @@ export default function Select (props) {
             return;
         }
         SetIsOpen((prev) => !prev);
-        if(!readonly && isOpen){
-            SetIsOpen(true);
-        }
     }
 
     const itemClickHandle = (e) => {
+        
         SetSelect(e.target.innerHTML);
         if (typeof props.handleData === 'function') {
             props.handleData(e.target.innerHTML);
         }
-        
+
+        SetIsOpen(false)
     }
      
     useEffect(() => {
@@ -60,12 +58,10 @@ export default function Select (props) {
     for (let i = 0 ; i < list.length; i++) {
         items.push(<div key={i} onClick={(e) => itemClickHandle(e)} className="select-item">{list[i]}</div>);
     }
-
-
      
     return (
         <div className={"list " + props.class}>
-            <input autoComplete="off" required={props.required} ref={ref} onChange={e => SetSelect(e.target.value)} onClick={handleClick} className="list-input" type='text' value={select}  name={name} placeholder={placeholder} readOnly={readonly}/>
+            <input autoComplete="off" onClick={handleClick} required={props.required} ref={ref} className="list-input" type='text' value={select}  name={name} placeholder={placeholder} readOnly={true}/>
             <svg className={"arrow " + (isOpen ? "show" : "")}>
                <path d="M0 2 L10 10 L20 2 L18 0 L10 6 L2 0 Z" />
             </svg>

@@ -8,7 +8,6 @@ import queryString from 'query-string'
 import NoResult from '../../Components/NoResult';
 import store from '../../Store/Store';
 import Pages from '../../Components/Pages';
-//import Dialog from '../../Components/Dialogs/Dialog';
 
 export default function MyAdvertisements (props) {
 
@@ -25,6 +24,7 @@ export default function MyAdvertisements (props) {
     const check = [];
     const [checked, setCheck] = useState([]);
     const [all, setAll] = useState(false);
+
     store.subscribe(() => setUser(store.getState().user))
     document.title = 'Мої оголошення';
 

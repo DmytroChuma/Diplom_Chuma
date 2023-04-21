@@ -1,29 +1,35 @@
 const con = require('../config/db_connector');
 
 class Chat{
-    static async generateInboxRoom(data){
+    static async generateInboxRoom(id, user){
+        let inbox = await con.execute(`
+            SELECT inbox.inbox_id, inbox_participants.user_id
+            FROM inbox_participants,  inbox
+            WHERE inbox_participants.user_id != '${id}' AND inbox.id = inbox_participants.inbox_id
+            GROUP BY inbox_participants.inbox_id 
+            HAVING COUNT(*) = 1;`)
+        if (inbox.length > 0) {
+            for (let i = 0; i < inbox.length; i++) {
+                if (inbox[i].user_id === user) {
+                    return inbox[i].inbox_id
+                }
+            }
+        }
+
         let sql = `
             INSERT INTO inbox (inbox_id) VALUES (UUID());
         `;
         let result = con.execute(sql);
-        const id  = await result.then(result => result.insertId);
-
-        let values = [];
-        /* 
-            for (data.users) {
-                let arr = [];
-                arr.push(id)
-                arr.push(user.id)
-                values.push(arr)
-            }
-        */
+        const inboxId  = await result.then(result => result.insertId);
 
         sql = `
-        INSERT INTO inbox_participants (inbox_id, user_id) VALUES ?
+        INSERT INTO inbox_participants (inbox_id, user_id) VALUES ('${inboxId}', '${id}'), ('${inboxId}', '${user}')
         `;
 
-        con.execute(sql, [values]);
-
+        con.execute(sql);
+        let inb = await con.execute(`SELECT inbox_id FROM inbox WHERE id = '${inboxId}'`)
+ 
+        return inb[0].inbox_id
     }
 
     static async getChats(user_id) {
@@ -38,8 +44,7 @@ class Chat{
             GROUP BY inbox_participants.inbox_id 
             HAVING COUNT(*) = 1;
         `;
-        let result = await con.execute(sql);
-        return result;
+        return await con.execute(sql);
     }
 
     static async getMessages(inbox_id) {
@@ -50,21 +55,21 @@ class Chat{
             WHERE user.id = messages.user_id AND inbox.id = messages.inbox_id AND inbox.inbox_id = '${inbox_id}'
             ORDER BY messages.date ASC;
         `;
-        let result = await con.execute(sql);
-        return result;
+        return await con.execute(sql);
     }
 
-    static async createMessage(user, message, inbox, answear){
+    static async createMessage(user, message, inbox, answear, file = ''){
         let sql = `
             INSERT INTO messages 
-            (inbox_id, user_id, message, date, answear) 
+            (inbox_id, user_id, message, date, answear, file) 
             VALUES 
             (
                 (SELECT id FROM inbox WHERE inbox_id = '${inbox}'), 
                 '${user}', 
                 '${message.replace("'", '\'')}', 
                 NOW(),
-                ${answear}
+                ${answear},
+                '${file}'
             )
         `;
         let result = con.execute(sql);
@@ -72,7 +77,12 @@ class Chat{
         return id;
     }
 
-    static deleteMessage(id) {
+    static deleteMessage(id, file) {
+        if (file && file !== '') {
+            const fs = require('fs');
+            fs.unlinkSync('./public/files/' + file);
+        }
+
         let sql = `
             DELETE FROM messages WHERE id = '${id}'
         `;

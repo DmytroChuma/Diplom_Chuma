@@ -95,6 +95,45 @@ class House{
         con.execute(sql);
     }
 
+    static async update (houseType, dwellingType, rooms, floor, mansard, basement, wallName, heating, plan, furniture, generalSquare, livingSquare, area, unit, garage, fireplace, balcony, garden,
+        stateName, roofName, electricityName, gasName, waterName, info) {
+            let result = await con.execute(`
+        SELECT wall_type.id as wall, realty_state.id as state, communication.id as electricity,
+        (SELECT id FROM communication WHERE name = '${gasName}') as gas,
+        (SELECT id FROM communication WHERE name = '${waterName}') as water, roof.id as roof
+        FROM wall_type, realty_state, communication, roof
+        WHERE wall_type.name = '${wallName}' AND realty_state.name = '${stateName}' AND communication.name = '${electricityName}' AND roof.name = '${roofName}' `);
+        const { wall, state, electricity, gas, water, roof } = result[0];
+
+        let sql = `
+            UPDATE house SET house_type = '${houseType}',
+            dwelling_type = '${dwellingType}',
+            rooms_count = '${rooms}',
+            floor_count = '${floor}',
+            mansard = '${mansard}',
+            basement = '${basement}',
+            wall = '${wall}',
+            heating = '${heating}',
+            plan = '${plan}',
+            furniture = '${furniture}',
+            general_square = '${generalSquare}',
+            living_square = '${livingSquare}',
+            area = '${area}',
+            unit = '${unit}',
+            garage = '${garage}',
+            fireplace = '${fireplace}',
+            balcony = '${balcony}',
+            garden = '${garden}',
+            state = '${state}',
+            roof = '${roof}',
+            electricity = '${electricity}',
+            gas = '${gas}',
+            water = '${water}'
+            WHERE info = '${info}'
+        `
+
+        con.execute(sql);
+    }
 }
 
 module.exports = House;

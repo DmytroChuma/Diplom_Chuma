@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useLocation, json } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import queryString from 'query-string'
 
 import Header from "../Components/Header/Header";
@@ -46,7 +46,7 @@ export default function Select () {
         if (type === "0") {
           let list = [];
           for (let i = 0 ; i < data.length; i++) {
-            list.push(<ListCard key={i} id={data[i].id} selectHandler={selectHandler} price={data[i].price} images={data[i] ? data[i].images : ""} select={getSelectHeart(data[i].id)} date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug} />);
+            list.push(<ListCard key={i} id={data[i].id} showTags={false} selectHandler={selectHandler} price={data[i].price} images={data[i] ? data[i].images : ""} select={getSelectHeart(data[i].id)} date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug} />);
           }
           return(<div className="list-cards-container">
             {list}
@@ -55,7 +55,7 @@ export default function Select () {
         else {
           let table = [];
           for (let i = 0 ; i < data.length; i++) {
-            table.push(<TableCard key={i} id={data[i].id} selectHandler={selectHandler} price={data[i].price} images={data[i] ? data[i].images : ""} select={getSelectHeart(data[i].id)}  date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug}/>);
+            table.push(<TableCard key={i} id={data[i].id} showTags={false} selectHandler={selectHandler} price={data[i].price} images={data[i] ? data[i].images : ""} select={getSelectHeart(data[i].id)}  date={data[i].date} tags={data[i].tags} street={data[i].street} city={data[i].city} priceinua={data[i].priceinua} square={data[i].square} description={data[i].description} slug={data[i].slug}/>);
           }
           return(<div className="table-cards-container">
             {table}
@@ -88,16 +88,16 @@ export default function Select () {
             if (params.page) {
                 let size = JSON.parse(localStorage.getItem('select'))
                 page = params.page
-                if (Math.ceil(size.length/5) < page) {
-                    page = Math.ceil(size.length/5);
+                if (Math.ceil(size.length/12) < page) {
+                    page = Math.ceil(size.length/12);
                 }
               setActivePage(page)
             }
         setItems(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>);
             setShowPages(false);
-              fetch(`/search?page=${page}&select=${localStorage.getItem('select')}`).then((res) => res.json()).then((data) => {
+              fetch(`/search?count=12&page=${page}&select=${localStorage.getItem('select')}`).then((res) => res.json()).then((data) => {
               setData(data.realty);
-              setPage(Math.ceil(data.count / 5 ));
+              setPage(Math.ceil(data.count / 12 ));
               if(data.length === 0) {
                 setItems(<NoResult text='Ви ще не додали жодного оголошення в обране'/>);
               }

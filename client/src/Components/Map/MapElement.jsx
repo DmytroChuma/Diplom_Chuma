@@ -15,39 +15,24 @@ function MyComponent ({ saveMarkers }) {
 }
 
 class MapElement extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      zoom: this.props.zoom,
-      markers: this.props.position,
-      center: this.props.center
-    };
-  }
 
   saveMarkers = (newMarkerCoords) => {
     if (this.props.marker){
-      this.setState({markers: newMarkerCoords});
       this.props.handlePosition(newMarkerCoords);
+      this.props.mapHandler(true);
     }
   };
-  
-  addMarker = (e) => {
-    const {markers} = this.state
-    markers.push(e.latlng)
-    this.setState({markers})
-  }
-
 
   render() {
 
     return (
       <div className="map">
-        <MapContainer center={this.state.center} zoom={this.state.zoom} scrollWheelZoom={false}>
+        <MapContainer center={this.props.center} zoom={this.props.zoom} scrollWheelZoom={false}>
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <Marker icon={MarkerIcon} position={this.state.markers}>
+          <Marker icon={MarkerIcon} position={this.props.position}>
           </Marker>
           <MyComponent saveMarkers={this.saveMarkers} />
         </MapContainer>

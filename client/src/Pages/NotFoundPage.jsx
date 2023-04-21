@@ -6,6 +6,7 @@ import notFound from "../404.svg";
 
 export default class NotFoundPage extends Component {
     render () {
+        document.title = '404';
         return (
             <div className="app-screen">
                 <Header />

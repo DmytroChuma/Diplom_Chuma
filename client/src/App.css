@@ -2,12 +2,21 @@
 html{
  /* background: var(--backgroundColor);*/
  overflow: overlay;
+ overflow-x: hidden;
+}
+
+.no-scroll{
+  overflow: hidden;
 }
 
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
    
+}
+
+.input-field.filt-input {
+  width: 110px;
 }
 
 html::-webkit-scrollbar-track{
@@ -17,6 +26,7 @@ html::-webkit-scrollbar-track{
 .items-container::-webkit-scrollbar-track, .photos-container::-webkit-scrollbar-track{
   border-radius: 10px 10px 10px 10px;
 }
+
 
 .photos-container::-webkit-scrollbar-track{
   background: transparent;
@@ -673,6 +683,7 @@ img.small-image {
 
 .list-date, .table-date {
   color: #6c6c6c;
+  margin-top: auto;
 }
 
 .ListCard:hover {
@@ -949,6 +960,7 @@ img.leaflet-marker-icon.leaflet-div-icon.leaflet-zoom-animated.leaflet-interacti
 .filter-container {
   display: flex;
   flex-direction: column;
+  margin-left: auto;
 }
 
 .filter-button-container {
@@ -962,7 +974,6 @@ img.leaflet-marker-icon.leaflet-div-icon.leaflet-zoom-animated.leaflet-interacti
   border-radius: 10px;
   padding: 10px;
   transition: 0.5s;
- 
 }
 
 .arrow.white{
@@ -1377,6 +1388,12 @@ label.input-label {
   margin-right: 20px;
 }
 
+.agency-t:before{
+  font-family: 'fontAwesome';
+  content: '\f1ad';
+  margin-right: 20px;
+}
+
 .realty:before{
   font-family: 'fontAwesome';
   content: '\f015';
@@ -1438,7 +1455,7 @@ label.input-label {
 
 .new {
   display: flex;
-  gap: 30px;
+  gap: 10px;
   flex-direction: column;
 }
  
@@ -1674,7 +1691,7 @@ img.element-img {
   position: fixed;
   top: 0px;
   left: 0px;
-  z-index: 3;
+  z-index: 4;
   width: 100%;
   height: 100%;
   align-items: flex-start;
@@ -1700,6 +1717,12 @@ img.element-img {
 
 .warning-text {
   font-size: 18px;
+}
+
+.confirm-btn-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 .app-screen{
@@ -1866,6 +1889,7 @@ textarea {
 .filter-container-button {
   display: flex;
   gap: 10px;
+  position: relative;
 }
 .no-result {
   display: flex;
@@ -1875,10 +1899,22 @@ textarea {
   gap: 10px;
 }
 
+.list.currency-list {
+  width: 60px;
+}
+
+.list.area-list {
+  width: 105px;
+}
+
 img.no-res-img {
   height: 350px;
 }
  
+.input-field.filt-input.garage {
+  width: 135px;
+}
+
 .no-res-text{
   font-size: 36px;
   color: #777777;
@@ -1913,6 +1949,7 @@ img.no-res-img {
   background: var(--backgroundColor);
   color: white;
   cursor: default;
+  pointer-events: none;
 }
 
 .page-button.other {
@@ -2006,6 +2043,7 @@ a.logo {
   gap: 10px;
   text-decoration: none;
   color: black;
+  align-items: center;
 }
 
 .cabinet-item:hover{
@@ -2549,7 +2587,7 @@ button.edit-chat-mess-btn {
   outline: none;
 }
 
-.input-div::-webkit-scrollbar-track{
+.file-modal-panel::-webkit-scrollbar-track, .input-div::-webkit-scrollbar-track{
   background: transparent;
   box-shadow: none;
 
@@ -2825,6 +2863,26 @@ button.add-btn, .del-btn {
   height: 100px;
   border-radius: 10px;
   overflow: hidden;
+  position: relative;
+}
+
+.avatar-delete {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  background: red;
+  width: 20px;
+  height: 20px;
+  z-index: 2;
+}
+
+.avatar-delete::before{
+  font-family: 'FontAwesome';
+  font-size: 18px;
+  content: '\f00d';
+  color:white;
+  display: flex;
+    justify-content: center;
 }
 
 .input-row-user {
@@ -2878,7 +2936,7 @@ img.avatar-header {
   display: flex;
 }
 
-.contact-agency-container {
+.contact-agency-container, .contact-realtor-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -2894,7 +2952,7 @@ img.avatar-header {
   border-bottom: 2px solid var(--backgroundColor);
 }
 
-.contact-agency {
+.contact-agency, .contact-realtor {
   font-size: 20px;
 }
 
@@ -2927,6 +2985,11 @@ img.image-agency-logo {
   overflow: hidden;
 }
 
+.agency-logo-info-realtor{
+  height: 100px;
+  min-width: 100px;
+}
+
 .agency-info {
   display: flex;
   flex-direction: row;
@@ -2942,10 +3005,22 @@ img.image-agency-logo {
 
 .agency-name-info {
   font-size: 24px;
+  color: black;
+  text-decoration: none;
   font-weight: bold;
 }
 
-.agency-advertisement-container {
+.agency-info-realtor {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+span.agency-count {
+  font-size: 20px;
+} 
+
+.agency-advertisement-container, .realtor-advertisement-container {
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -3034,4 +3109,424 @@ span.realtor-card-name {
 .realtor-card:hover{
   box-shadow: 1px 1px 10px black;
   cursor: pointer;
+}
+
+.realtor-advertisement-container {
+  gap: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.list-input{
+  cursor: default;
+}
+
+.list-input-btn:before {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+.realtor-info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.image-realtor {
+  width: 100px;
+  height: 100px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.realtor-user-info {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.realtor-name {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.realtor-info-i {
+  font-size: 18px;
+}
+
+.user-form-input.textarea {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.user-form-input-text-t {
+  font-size: 20px;
+}
+
+textarea.user-textarea {
+  max-height: 110px;
+}
+
+.pass-change {
+  text-align: center;
+}
+
+button.pass-btn {
+  border: none;
+  background: none;
+  color: var(--backgroundColor);
+  font-size: 20px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: 0.5s;
+}
+
+.pass-btn:hover{
+  border-color: var(--backgroundColor);
+}
+
+img.user-image-cabinet {
+  width: 100%;
+  height: 100%;
+}
+
+.user-image-cabinet-container {
+  width: 100px;
+  height: 100px;
+  min-width: 100px;
+  object-fit: contain;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.user-info-card {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user-cabinet-name {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.user-i-n {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 10px;
+}
+
+span.cabinet-user-info {
+  font-size: 20px;
+}
+
+.user-cabinet-info-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100px;
+}
+
+.digit {
+  font-size: 30px;
+  font-weight: bold;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card-info-user {
+  height: 100%;
+}
+
+img.cards-logo-img {
+  height: 100%;
+}
+
+.cards-logo-img-container {
+  height: 50px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cards-logo-agency {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
+.cards-logo-name {
+  font-weight: normal;
+}
+
+.modal-window{
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  background: #0000007a;
+}
+
+.modal-panel {
+  padding: 10px;
+  border-radius: 10px;
+  background: white;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 500px;
+  min-width: 500px;
+}
+
+button.exit-btn {
+  margin-left: auto;
+  top: 10px;
+  right: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+button.exit-btn:before{
+  color: red;
+  font-family: 'FontAwesome';
+  content: '\f00d';
+  font-size: 20px;
+}
+
+span.modal-text {
+  font-size: 20px;
+  text-align: center;
+}
+
+.modal-container {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.messages-time-container {
+  position: absolute;
+  top: 69px;
+  right: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 4;
+  max-width: 350px;
+}
+
+.message-body {
+  position: relative;
+  padding: 10px;
+  background: var(--backgroundColor);
+  color: white;
+  font-size: 20px;
+  border-radius: 10px;
+  animation-name: showMess;
+  animation-duration: 5s;
+}
+
+@keyframes showMess {
+  0% {right: -370px; }
+  10% {right: 0px;}
+  90% {right: 0px;}
+  100% {right: -370px;}
+}
+
+.message-card {
+  display: flex;
+    border-radius: 10px;
+    border: 1px solid #dbdbdb;
+    flex-direction: column;
+}
+
+.message-span-card {
+  padding: 10px;
+  font-size: 20px;
+}
+
+.message-span-card-p{
+  font-size: 20px;
+}
+
+.message-btn-container {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.message-span-cont {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+button.delete-btn {
+  background: #ff4949;
+  border: none;
+  border-radius: 10px;
+  width: 23px;
+  cursor: pointer;
+}
+
+button.delete-btn:before{
+  color: white;
+  font-family: 'FontAwesome';
+  content: '\f00d';
+}
+
+span.userType {
+  font-size: 18px;
+  color: gray;
+}
+
+.edit-btn-cont {
+  text-align: center;
+}
+
+button.btn.edit-f {
+  min-width: 250px;
+}
+
+.filter-inputs {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+span.filt-text {
+  font-size: 20px;
+}
+
+.modal-file {
+  width: 100px;
+  border-radius: 10px;
+  background: #e5e5e5;
+}
+
+.file-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.file-name {
+  font-size: 18px;
+  display: flex;
+  gap: 10px;
+}
+
+.file-dummy:before, a.file-dummy-span:before{
+  font-family: 'fontAwesome';
+  content: '\f016';
+  font-size: 20px;
+  color: black;
+}
+
+.file-modal-panel{
+  max-height: 500px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+a.file-dummy-span {
+  color: white;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  overflow-wrap: anywhere;
+}
+
+a.file-dummy-span:before{
+  color: white;
+  font-size: 26px;
+}
+
+img.chat-img-message {
+  max-width: 190px;
+  border-radius: 10px;
+}
+
+.user-chat-time {
+  margin-top: auto;
+}
+
+.home-background{
+  background-image: url('../public/images/fone.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 400px;
+}
+
+.list.home-list {
+  background: white;
+  flex: 1;
+}
+
+.container.list-home-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  align-items: center;
+}
+
+.btn.home-btn:before{
+  font-family: 'fontAwesome';
+  content: '\f002';
+  color: white;
+  font-size: 30px;
+  transition: 0.5s;
+}
+
+.btn.home-btn:hover:before{
+  color: black;
+}
+
+span.home-text {
+  font-size: 24px;
+}
+
+.container.home {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.home-card {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.home-title {
+  display: flex;
+  justify-content: center;
+  font-size: 36px;
+  position: fixed;
+  width: 100%;
+  color: white;
+  top: 135px;
 }

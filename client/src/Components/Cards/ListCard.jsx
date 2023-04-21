@@ -10,7 +10,7 @@ export default function ListCard (props) {
     for (let i = 1; i < props.images.length && i < 4; i++) {
         images.push(<div key={i} className="small-image-box">
             <img className="small-image" alt="" src={"http://localhost:3001/"+props.slug+"/"+props.images[i]}/>
-            {(i === 3 && props.images.length > 3) &&
+            {(i === 3 && props.images.length > 4) &&
                 <div className="photo-count-info">+ {props.images.length - 4} Фото</div>
             }
         </div>);
@@ -19,7 +19,7 @@ export default function ListCard (props) {
     let tags = [];
     for(let i = 0; i < props.tags.length && i < 3; i++){
         if (props.tags[i] === "") continue;
-        tags.push(<button key={i} className="tag">{props.tags[i]}</button>);
+        tags.push(<button key={i} className="tag" onClick={() => props.tagsHandler(props.tags[i])}>{props.tags[i].text}</button>);
     } 
 
     const selectClick = () => {
@@ -48,7 +48,7 @@ export default function ListCard (props) {
                         <div className={"list-heart-text"}>{select ? 'Видалити' : 'В обрані'}</div>
                     </div>
                 </div>
-                <div className="list-tags-container">{tags}</div>
+                {props.showTags && <div className="list-tags-container">{tags}</div>}
                 <div className="list-price-container">
                     <div className="list-price">{props.price.toLocaleString('ua')} $</div>
                     •

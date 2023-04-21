@@ -19,7 +19,7 @@ export default function ContextMenu({ children, cX, cY }) {
   ContextMenu.propTypes = {
     children: PropTypes.oneOfType([
       PropTypes.arrayOf(PropTypes.element),
-      PropTypes.element.isRequired
+      PropTypes.element
     ]),
     cX: PropTypes.number.isRequired,
     cY: PropTypes.number.isRequired,

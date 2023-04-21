@@ -30,7 +30,7 @@ export default function CheckBox (props) {
 
     return (
         <label className={"checkbox " + props.labelClass}>{props.text}
-            <input onChange={handleChange} type='checkbox' {...props.hook_input} value={props.text} name={props.name} defaultChecked={check}/>
+            <input onChange={handleChange} type='checkbox' value={props.text} name={props.name} defaultChecked={check}/>
             <span className={props.class}></span>
         </label>
     )

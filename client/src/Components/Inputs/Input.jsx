@@ -3,9 +3,8 @@ import React, {useState, useRef, useEffect} from "react";
 export default function Input (props) {
 
     const [value, setValue] = useState(props.value);
-    const [price, setPrice] = useState(props.value);
+    const [formattedValue, setFormattedValue] = useState(props.value);
     const interval = useRef(null);
-
 
     const startCounter = (step) => {
         if (interval.current) return;  
@@ -26,16 +25,29 @@ export default function Input (props) {
       };
 
       const handleChange = (e) => {
-        
-        if (props.min !== undefined || props.number) {
-            let number = e.target.value.replace(/[^\d.]/g,'');
-            if (props.min === undefined) {
+        formatHandler(e.target.value)
+    }
+
+    const formatHandler = (value) => {
+        if (props.code) {
+            let code = value.replace(/[^\d]/g,'');
+            setValue(code);
+            if (props.handleChange !== undefined) {
+                props.handleChange(code);
+            }
+        }
+        else if (props.min !== undefined || props.number) {
+            let number = value.replace(/[^\d.]/g,'');
+            if (props.min === undefined && !props.int) {
                 number = number.replace(/[.%]/g, function(match, offset, all) { 
                     return match === "." ? (all.indexOf(".") === offset ? '.' : '') : ''; 
                 })
                 if (number.charAt(0) === '.') {
                     number = '0' + number;
                 }
+            }
+            else if (props.int) {
+                number = number.replace('.', '');
             }
             else {
                 number = number.replace('.', '');
@@ -52,35 +64,44 @@ export default function Input (props) {
             }
         }
         else if (props.price) {
-            let number = e.target.value.replace(/[^\d]/g,'');
+            let number = value.replace(/[^\d]/g,'');
             setValue(number);
-            number = number === '' ? 0 : number;
-            setPrice(parseInt(number).toLocaleString('ua'));
+            if (number !== '') {
+                setFormattedValue(parseInt(number).toLocaleString('ua'));
+            }
+            else {
+                setFormattedValue(number)
+            }
             if (props.handleChange !== undefined) {
                 props.handleChange(number);
             }
         }
-        else {
-            setValue(e.target.value)
-
+        else if (props.phone) {
+            let phone = value.replace(/[^\d]/g,'');
+            setValue(phone);
+            let format = phone.length < 1 ? `` :
+                         phone.length < 4 ? `(${phone.substring(0,3)}` :
+                         phone.length < 7 ? `(${phone.substring(0,3)}) ${phone.substring(3,6)}` :
+                         phone.length < 11 ? `(${phone.substring(0,3)}) ${phone.substring(3,6)} ${phone.substring(6)}` : `(${phone.substring(0,3)}) ${phone.substring(3,6)} ${phone.substring(6, 10)}`
+            setFormattedValue(format)
             if (props.handleChange !== undefined) {
-                props.handleChange(e.target.value);
+                props.handleChange(phone);
             }
         }
+        else {
+            setValue(value)
 
-         
+            if (props.handleChange !== undefined) {
+                props.handleChange(value);
+            }
+        }
     }
 
-    const handleValidate = (e) => {
-       /* if (props.min !== undefined) {
-            if (value > props.max) {
-                setValue(props.max);
-            }
-            else if (value < props.min) {
-                setValue(props.min);
-            }
-        }*/
-    } 
+    const handleBlur = () => {
+        if (props.blurHandler !== undefined) {
+            props.blurHandler();
+        }
+    }
 
     const handleClick = (step) => {
         let number = 0;
@@ -97,21 +118,13 @@ export default function Input (props) {
         }
     }
 
-   /* useEffect(() => {
-        
-        if (props.handleChange !== undefined) {
-            props.handleChange(value, props.name);  
-        }
-        
-      }, [props, value]);*/
-
         useEffect(() => {
         let value = props.value
         if (!value) {
            value = '';
         }
         setValue(value);
-        setPrice(value)
+        formatHandler(value)
       }, [props.value]); 
 
     return(
@@ -119,14 +132,13 @@ export default function Input (props) {
             <div className={"input-field " + props.class}>
                 <input
                     onChange={handleChange}
-                    onBlur={handleValidate}
+                    onBlur={handleBlur}
                     className={(props.hint !== undefined || props.min !== undefined) ? "input" : "input full"} 
-                    {...props.hook_input} 
                     type={props.type}
                     min={props.min}
                     max={props.max}
                     placeholder={props.placeholder} 
-                    value={props.price ? price : value}
+                    value={props.price ? formattedValue : props.phone ? formattedValue : value}
                     pattern={props.pattern} 
                 />
                 {props.hint !== undefined &&
@@ -146,49 +158,3 @@ export default function Input (props) {
         </div>
     );
 }
-
-
-/*export default class Input extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: "",
-            label: this.props.label,
-            placeholder: this.props.placeholder,
-            type: this.props.type,
-            pattern: this.props.pattern,
-            hint: this.props.hint,
-            show: false,
-            hook: this.props.hook
-        };
-    }
-
-    render() {*/
-
-      /*  const mouseEnterHint = (e) => {
-            this.setState({show: true});
-        }
-
-        const mouseLeaveHint = (e) => {
-            this.setState({show: false});
-        }*/
-
-        //onMouseEnter={mouseEnterHint} onMouseLeave={mouseLeaveHint}
-
-       /* return (
-            <div className="input-row">
-                <div className="input-field">
-                    <input className={this.state.hint !== undefined ? "input" : "input full"} {...this.state.hook} onChange={(e) => this.setState({value: e.target.value})} type={this.state.type} placeholder={this.state.placeholder} value={this.state.value} pattern={this.state.pattern} />
-                    {this.state.hint !== undefined &&
-                        <div className="hint" >
-                            <div className={this.state.show ? "hintBody show" : "hintBody"}>
-                                {this.state.hint} 
-                            </div>
-                        </div>
-                    } 
-                </div>
-            </div>
-        )
-    }
-        
-}*/

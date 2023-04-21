@@ -7,7 +7,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
     const [message, setMessage] = useState({
         message: mess[0],
         date: mess[1],
-        file: mess[2]
+        file: mess[2] === '""' ? '' : mess[2]
     })
 
     useEffect(() => {
@@ -33,6 +33,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
         e.target.classList.add("active");
     }
 
+    console.log(message)
+
     return (
         <div ref={ref} className={"user-chat-card " + (props.active ? 'active' : '')} onClick={clickHandler}>
             <div className="user-chat-image">
@@ -41,8 +43,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
             <div className="user-chat-info">
                 <span className="user-chat-name">{`${props.user.first_name} ${props.user.last_name}`}</span>
                 <div className="user-chat-message-info">
-                    <span className="user-chat-last">{message.message.length > 25 ? message.message.substring(0, 25) + '...' : message.message}</span>
-                    <span className="user-chat-time">{isToday(new Date(Date.parse(message.date))) ? new Date(Date.parse(message.date)).toLocaleTimeString().substring(0, 5) : new Date(Date.parse(message.date)).toLocaleDateString()}</span>
+                    <span className="user-chat-last">{message.file === '' ? message.message.length > 25 ? message.message.substring(0, 25) + '...' : message.message : 'Файлове повідомлення'}</span>
+                    <span className="user-chat-time">{message.date ? isToday(new Date(Date.parse(message.date))) ? new Date(Date.parse(message.date)).toLocaleTimeString().substring(0, 5) : new Date(Date.parse(message.date)).toLocaleDateString() : ''}</span>
                 </div>
             </div>
         </div>

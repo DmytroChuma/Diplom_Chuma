@@ -15,8 +15,8 @@ class Agency{
     async create () {
         const fs = require('fs');
         let region = await con.execute(`SELECT id FROM region WHERE region = '${this.region}'`);
- 
-        if (this.logo !== 'null') {
+        console.log(this.logo)
+        if (this.logo) {
             fs.rename('./public/'+this.logo, `./public/images/agency/${this.logo.split('/')[1]}`, function (err) {
                 if (err) throw err
             })
@@ -79,6 +79,56 @@ class Agency{
         if (!result[0])
             return false;
         return result[0]
+    }
+
+    static async update(id, logo, name, region, city, description, phones, emails, oldLogo) {
+        let regionId = await con.execute(`SELECT id FROM region WHERE region = '${region}'`);
+
+        const fs = require('fs');
+        let image = '';
+        if (logo) {
+            fs.rename('./public/'+logo, `./public/images/agency/${logo.split('/')[1]}`, function (err) {
+                if (err) {
+                    console.log(err)
+                }  
+            })
+            image = `logo = '${logo.split('/')[1]}',` 
+        }
+        else {
+            image = '';
+        }
+ 
+        if (oldLogo !== '') {
+            try {
+                fs.unlinkSync('./public/images/agency/'+oldLogo);
+            }catch(error){}
+        }
+
+        let phonesArr = [];
+        let phoneArr = JSON.parse(phones);
+        for (let phone of phoneArr) {
+            phonesArr.push(phone.phone)
+        }
+
+        let emailsArr = [];
+        let emailArr = JSON.parse(emails);
+        for (let email of emailArr) {
+            emailsArr.push(email.email)
+        }
+
+        let sql = `
+            UPDATE agency SET name = '${name}', region = '${regionId[0].id}', ${image} city = '${city}', phones = '${phonesArr.join(',')}', emails = '${emailsArr.join(',')}', description = '${description}'
+            WHERE id = '${id}'
+        `
+   
+        con.execute(sql)
+    }
+
+    static delete (id) {
+        let sql = `
+            DELETE FROM agency WHERE id = '${id}'
+        `
+        con.execute(sql)
     }
 }
 

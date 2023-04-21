@@ -10,7 +10,7 @@ export default function TableCard (props) {
         let tags = [];
         for(let i = 0; i <props.tags.length && i < 3; i++){
             if (props.tags[i] === "") continue;
-            tags.push(<button key={i} className="tag">{props.tags[i]}</button>);
+            tags.push(<button key={i} className="tag" onClick={() => props.tagsHandler(props.tags[i])}>{props.tags[i].text}</button>);
         } 
 
         const selectClick = () => {
@@ -28,7 +28,7 @@ export default function TableCard (props) {
                 </Link>
                 <div className="table-card-info-container">
                     <Link className="table-street link" to={'/advertisement/'+ props.slug}>{props.street + ", " + props.city}</Link>
-                    <div className="table-tags-container">{tags}</div>
+                    {props.showTags && <div className="table-tags-container">{tags}</div>}
                     <div className="table-price-container">
                         <div className="table-price">{props.price.toLocaleString('ua')} $</div>
                         •
@@ -38,9 +38,9 @@ export default function TableCard (props) {
                     <div className="table-info">{props.description.length > 50 ? props.description.substring(0, 50) + "..." : props.description}</div>
                     <div className="table-date-container">
                         <div className="table-date">{props.date}</div>
-                        <div className={"table-heart " + (select ? 'heart' : '')} onClick={selectClick}>
+                        {!props.hideHeart && <div className={"table-heart " + (select ? 'heart' : '')} onClick={selectClick}>
                             <div className="table-heart-text">{select ? 'Видалити' : 'В обрані'}</div>
-                        </div>
+                        </div>}
                     </div>
                 </div>
             </div>

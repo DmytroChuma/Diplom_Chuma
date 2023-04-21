@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import parse from 'html-react-parser'
+import { Link } from "react-router-dom";
 
 export default function Message(props) {
 
@@ -22,14 +23,14 @@ export default function Message(props) {
                     <img className="user-avatar-message" src={'http://localhost:3001/users/' + (props.avatar !== '' ? props.avatar : 'avatar.png')} alt=''/>
                 </div>
             }
-            <div className={"message " + props.class} onClick={(e) => props.handleClick(e, props.class, props.text, props.id)}>
+            <div className={"message " + props.class} onClick={(e) => props.handleClick(e, props.class, props.text, props.file === '' ? '' : props.file.path, props.id)}>
                 {props.answear !== 0 &&
                     <div className="answear">
                         {answear}
                     </div>
                 }
                 <div className="message-chat-cont">
-                    <span>{parse(props.text)}</span>
+                    <span>{props.text !== '' ? parse(props.text) : props.file.type.split('/')[0] === 'image' ? <img className="chat-img-message" src={`http://localhost:3001/files/${props.file.path}`} alt=''/> : <a href={`http://localhost:3001/files/${props.file.path}`} download className="file-dummy-span">{props.file.path}</a>}</span>
                     <span className="message-chat-date">{new Date(Date.parse(props.date)).toLocaleTimeString().substring(0, 5)}</span>
                 </div>
             </div>

@@ -9,7 +9,7 @@ import Advertisements from "./Advertisements";
 import Realtors  from "./Realtors";
 
 
-export default function Agency() {
+export default function Agency({dialog, socket}) {
 
     const [owner, setOwner] = useState(false)
     const [error, setError] = useState(false)
@@ -24,16 +24,22 @@ export default function Agency() {
     let page; 
 
     store.subscribe(() => {
-        if (store.getState().user.permission === 2 && store.getState().user.agency.toString() === id) {
-            setOwner(true)
+        if (store.getState().user.permission > 0 && store.getState().user.agency.toString() === id) {
+            if (store.getState().user.permission === 2) {
+                setOwner(true)
+            }
             setUser(store.getState().user)
         }
     })
 
+    document.title = 'Агентство';
+
     useEffect(() => {
         if (store.getState()) {
-            if (store.getState().user.permission === 2 && store.getState().user.agency.toString() === id) {
-                setOwner(true)
+            if (store.getState().user.permission > 0 && store.getState().user.agency.toString() === id) {
+                if (store.getState().user.permission === 2) {
+                    setOwner(true)
+                }
                 setUser(store.getState().user)
             }
         }
@@ -47,10 +53,10 @@ export default function Agency() {
 
         switch(slug) {
             case 'settings':
-                page = <AddAgency text='Налаштування агенства'/>
+                page = <AddAgency dialog={dialog} data={data} text='Налаштування агенства' id={id} dataHandler={setData}/>
                 break;
             case 'realtors':
-                page = <Realtors id={id} user={user}/>
+                page = <Realtors id={id} user={user} socket={socket} dialog={dialog}/>
                 break;
             case 'advertisements':
                 page = <Advertisements id={id}/>

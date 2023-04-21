@@ -15,27 +15,27 @@ const transporter  = nodemailer.createTransport({
     transporter.sendMail(mailOptions, function(error, info){
         if (error) {
             console.log("error is "+error);
-        resolve(false);
+            resolve(false);
         } 
-    else {
-        console.log('Email sent: ' + info.response);
-        resolve(true);
-        }
-    });
+        else {
+            console.log('Email sent: ' + info.response);
+            resolve(true);
+            }
+        });
     })
 }
 
 async function send (to, subject, text) {
     const mailOptions = {
-        from: 'course2000@yahoo.com',
+        from: 'House <course2000@yahoo.com>',
         to: to,
         subject: subject,
-        text: text
+        html: text
     };
     
-    let resp = await wrapedSendMail(mailOptions);
+    let res = await wrapedSendMail(mailOptions);
    
-    return resp;
+    return res;
 }
 
 module.exports.send = send;

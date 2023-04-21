@@ -4,6 +4,7 @@ const con = require('../config/db_connector');
 
 let Advertisement = require("../models/Advertisement");
 const stringHandler = require('../handlers/StringHandler');
+const { permission } = require('./userController');
 
 let cours;
 request(
@@ -81,26 +82,27 @@ function createRealtyArray(rows){
       let params = rows[i].params.split(',');
       let square;
       let tags = [];
+       
       switch(rows[i].realtyType){
         case 'Будинок':
         case 'Дача':
         case 'Частина будинку':
-          tags.push(params[2], params[1]);
+          tags.push({text: params[2], type: 'type', urlText: params[2], realty: rows[i].realtyType}, {text: params[1], type: 'houseType', urlText: params[1], realty: rows[i].realtyType});
           square = `${params[0]} м²`;
           break;
         case 'Квартира':
-          tags.push(params[1]);
+          tags.push({text: params[1], type: 'type', urlText: params[1], realty: rows[i].realtyType});
           square = `${params[0]} м² • ${params[2]} ${stringHandler.morph(params[2], ['кімната', 'кімнати', 'кімнат'])}`;
           break;
         case 'Гараж':
-          tags.push(params[1]);
+          tags.push({text: params[1], type: 'type', urlText: params[1], realty: rows[i].realtyType});
           square = `${params[0]} м² • машиномісць: ${params[2]}`;
           break;
         case 'Ділянка':
-          square = `${params[0]} `+(params[1] === 'Сотка' ? stringHandler.morph(params[0], ['сотка', 'сотки', 'соток']) : params[1] === 'Гектар' ? stringHandler.morph(params[0], ['гектар', 'гектара', 'гектарів']) : `м<sup>2</sup>` );
+          square = `${params[0]} `+(params[1] === 'Сотка' ? stringHandler.morph(params[0], ['сотка', 'сотки', 'соток']) : params[1] === 'Гектар' ? stringHandler.morph(params[0], ['гектар', 'гектара', 'гектарів']) : `м²` );
           break;
       }
-      tags.push(rows[i].auction == 1 ? "Торг" : "");
+      tags.push(rows[i].auction == 1 ? {text :"Торг", type:'auction', urlText: 'Торг можливий'} : "");
   
       let realty = {
         id: rows[i].id,
@@ -155,10 +157,12 @@ function createRealtyArray(rows){
     }
 
     let user = {
+      id : advertisement.userId,
       firstName: advertisement.first_name,
       lastName: advertisement.last_name,
       phone: advertisement.phone,
-      avatar: advertisement.avatar
+      avatar: advertisement.avatar,
+      type: advertisement.proposition === 'Від власника' ? 'Власник' : advertisement.permission > 0 ? 'Рієлтор' : 'Посередник'
     }
 
     let realty = {
@@ -276,6 +280,11 @@ function createAdvantagesFilterString (values, table, equals = '1') {
 
 filter = async (params) => {
 
+    let advetisementsCount = 5;
+    if (params.count){
+      advetisementsCount = params.count
+    }
+
     let sort = 'ORDER BY info.date DESC';
   if (params.sort) {
     if (params.sort == "Найдорожчі"){
@@ -308,7 +317,37 @@ filter = async (params) => {
       filter += ` AND info.auction ='0'`;
     }
   }
- 
+
+  if(params.region) {
+    filter += ` AND region.region = '${params.region}'`
+  }
+
+  if(params.city) {
+    filter += ` AND info.city = '${params.city}'`
+  }
+
+  let divide = 1
+  if(params.currency) {
+    if (params.currency === 'грн')
+      divide = JSON.parse(cours)[1].sale
+  }
+
+  if (params.pricemin && !params.pricemax) {
+    filter += ` AND info.price >= '${params.pricemin / divide}'`
+  }
+  else if (params.pricemax && !params.pricemin) {
+    filter += ` AND info.price <= '${params.pricemax / divide}'`
+  }
+  else if (params.pricemin && params.pricemax){
+    let min = params.pricemin
+    let max = params.pricemax
+    if(parseInt(params.pricemin) > parseInt(params.pricemax)){
+      min = params.pricemax
+      max = params.pricemin
+    }
+    filter += ` AND info.price BETWEEN '${min / divide}' AND '${max / divide}'`
+  }
+
   if (params.advertisement && params.advertisement != 'Всі оголошення') {
     if (params.advertisement === 'Продаж') {
       filter += ` AND info.advertisementType = 'Продаж'`;
@@ -357,6 +396,26 @@ filter = async (params) => {
           if (params.type !== 'Всі варіанти')
           filt += createFilterString(params.type, 'house.dwelling_type');
         }
+        if (params.rooms){
+          filt += createFilterString(params.rooms, 'house.rooms_count');
+        }
+      
+        if (params.squaremin && !params.squaremax) {
+          filt += ` AND house.general_square >= '${params.squaremin}'`
+        }
+        else if (params.squaremax && !params.squaremin) {
+          filt += ` AND house.general_square <= '${params.squaremax}'`
+        }
+        else if (params.squaremin && params.squaremax){
+          let min = params.squaremin
+          let max = params.squaremax
+          if(parseInt(params.squaremin) > parseInt(params.squaremax)){
+            min = params.squaremax
+            max = params.squaremin
+          }
+          filt += ` AND house.general_square BETWEEN '${min}' AND '${max}'`
+        }
+
         if (params.houseType) {
           filt += createFilterString(params.houseType, 'house.house_type');
         }
@@ -409,6 +468,26 @@ filter = async (params) => {
           if (params.type !== 'Всі варіанти')
           filt += createFilterString(params.type, 'flat.type');
         }
+        if (params.rooms){
+          filt += createFilterString(params.rooms, 'flat.rooms_count');
+        }
+
+        if (params.squaremin && !params.squaremax) {
+          filt += ` AND flat.general_square >= '${params.squaremin}'`
+        }
+        else if (params.squaremax && !params.squaremin) {
+          filt += ` AND flat.general_square <= '${params.squaremax}'`
+        }
+        else if (params.squaremin && params.squaremax){
+          let min = params.squaremin
+          let max = params.squaremax
+          if(parseInt(params.squaremin) > parseInt(params.squaremax)){
+            min = params.squaremax
+            max = params.squaremin
+          }
+          filt += ` AND flat.general_square BETWEEN '${min}' AND '${max}'`
+        }
+
         if (params.wall) {
           filt += createMultiTableFilterString(params.wall, 'wall_type', 'flat', 'wall');
           tables += ', wall_type';
@@ -445,6 +524,33 @@ filter = async (params) => {
           filt += createMultiTableFilterString(params.relief,  'relief', 'area', 'relief');
           tables += ', relief';
         }
+
+        let divide = 1
+        if (params.unit) {
+          if (params.unit === 'Сотка')
+            divide = 100
+          if (params.unit === 'Гектар')
+            divide = 10000
+        }
+
+        if (params.squaremin && !params.squaremax) {
+          let min = params.squaremin * divide
+          filt += ` AND ((area.square >= '${min}' AND unit = 'м²') OR (area.square * 100 >= '${min}' AND unit = 'Сотка') OR (area.square * 10000 >= '${min}' AND unit = 'Гектар'))`
+        }
+        else if (params.squaremax && !params.squaremin) {
+          let max = params.squaremax * divide
+          filt += ` AND ((area.square <= '${max}' AND unit = 'м²') OR (area.square * 100 <= '${max}' AND unit = 'Сотка') OR (area.square * 10000 <= '${max}' AND unit = 'Гектар'))`
+        }
+        else if (params.squaremin && params.squaremax){
+          let min = params.squaremin * divide
+          let max = params.squaremax * divide
+          if(parseInt(params.squaremin) > parseInt(params.squaremax)){
+            min = params.squaremax * divide
+            max = params.squaremin * divide
+          }
+          filt += ` AND ((area.square BETWEEN '${min}' AND '${max}' AND unit = 'м²') OR (area.square * 100 BETWEEN '${min}' AND '${max}' AND unit = 'Сотка') OR (area.square * 10000 BETWEEN '${min}' AND '${max}' AND unit = 'Гектар'))`
+        }
+
         if (params.soil) {
           filt += createMultiTableFilterString(params.soil,  'soil', 'area', 'soil');
           tables += ', soil';
@@ -463,6 +569,26 @@ filter = async (params) => {
           if (params.type !== 'Всі варіанти')
           filt += createFilterString(params.type, 'garage.type');
         }
+        if (params.rooms){
+          filt += createFilterString(params.rooms, 'garage.car');
+        }
+
+        if (params.squaremin && !params.squaremax) {
+          filt += ` AND garage.square >= '${params.squaremin}'`
+        }
+        else if (params.squaremax && !params.squaremin) {
+          filt += ` AND garage.square <= '${params.squaremax}'`
+        }
+        else if (params.squaremin && params.squaremax){
+          let min = params.squaremin
+          let max = params.squaremax
+          if(parseInt(params.squaremin) > parseInt(params.squaremax)){
+            min = params.squaremax
+            max = params.squaremin
+          }
+          filt += ` AND garage.square BETWEEN '${min}' AND '${max}'`
+        }
+
         if (params.garageType) {
           filt += createMultiTableFilterString(params.garageType,  'garage_type', 'garage', 'garageType');
           tables += ', garage_type';
@@ -502,31 +628,40 @@ filter = async (params) => {
   if (page === 'undefined'){
     page = 1;
   }
+ 
+let limit = (page-1)*advetisementsCount;
+if (isNaN(limit)){
+  limit = 0;
+}
+
+if (params.top) {
+  sort = 'ORDER BY info.views AND info.select AND info.phones AND info.date DESC';
+}
 
   let rows = await con.execute(`
   SELECT info.id, info.realtyType, info.city, info.street, info.description, info.price, info.currency, info.auction, info.date, info.slug, info.views, info.phones, info.select, 
       ${realty} as params
-    FROM info, user
-    WHERE info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? 'AND info.user = ' + params.user : ''} ${filter} 
+    FROM info, user, region
+    WHERE info.region = region.id AND info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? 'AND info.user = ' + params.user : ''} ${filter} 
     HAVING params IS NOT NULL
-  ` + sort + ` LIMIT ${(page-1)*5}, 5`);
+  ` + sort + ` LIMIT ${limit}, ${advetisementsCount}`);
 
   let count = await con.execute(`
   SELECT COUNT(*) as count,
   ${realty} as params
-FROM info, user
-WHERE info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? 'AND info.user = ' + params.user : ''} ${filter} 
+FROM info, user, region
+WHERE info.region = region.id AND info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? 'AND info.user = ' + params.user : ''} ${filter} 
 HAVING params IS NOT NULL
   `);
 return {rows: rows, count: count};
 }
 
-exports.loadAdvertisement = async (req, res) => {
-    let advertisement = await con.execute(`
-        SELECT info.id, info.realtyType, info.advertisementType, info.city, info.district, info.street, info.position, info.description, info.price, info.currency, info.auction,info.proposition, info.date, info.slug, info.views, info.select, region.region, user.first_name, user.last_name, user.phone, user.avatar
+const loadInfoAboutRealty = async (slug) => {
+  let advertisement = await con.execute(`
+        SELECT info.id, info.realtyType, info.advertisementType, info.city, info.district, info.street, info.position, info.description, info.price, info.currency, info.auction, info.proposition, info.date, info.slug, info.views, info.select, region.region, user.first_name, user.id as userId, user.last_name, user.phone, user.avatar, user.permission
         FROM info, region
         INNER JOIN user
-        WHERE info.slug = '${req.params.slug}' AND region.id = info.region AND region.id = info.region AND user.id = info.user;
+        WHERE info.slug = '${slug}' AND region.id = info.region AND region.id = info.region AND user.id = info.user;
     `);
     let sql;
     switch (advertisement[0].realtyType) {
@@ -564,56 +699,142 @@ exports.loadAdvertisement = async (req, res) => {
                     garage.square, garage.width, garage.length, garage.gateWidth, garage.height, garage.pit, garage.basement, garage.residential, 
                     garage.sectional, state.name as state, communication.name as electricity
                 FROM garage, garage_type as type, garage_wall as wall, garage_roof as roof, garage_floor as floor, realty_state as state, communication
-                WHERE garage.info = '${advertisement[0].id}' AND type.id = garage.garageType AND wall.id = garage.wall AND roof.id = garage.roof AND floor.id = garage.floor AND state.id = garage.id AND communication.id = garage.electricity
+                WHERE garage.info = '${advertisement[0].id}' AND type.id = garage.garageType AND wall.id = garage.wall AND roof.id = garage.roof AND floor.id = garage.floor AND state.id = garage.state AND communication.id = garage.electricity
             `;
             break;
     }
+    return {sql: sql, advertisement: advertisement};
+}
 
-    let realtyParams = await con.execute(sql);
+exports.loadAdvertisement = async (req, res) => {
 
-    let realty = loadAdvertisementInfo(advertisement[0], realtyParams[0]);
+    let result = await loadInfoAboutRealty(req.params.slug)
+
+    let realtyParams = await con.execute(result.sql);
+
+    let realty = loadAdvertisementInfo(result.advertisement[0], realtyParams[0]);
   
     res.json(realty);
 }
 
+function loadEditor (advertisement, realtyParams) {
+  let images = getFiles("./public/" + advertisement.slug);
+
+  let realty = {
+    id: advertisement.id,
+    realtyType: advertisement.realtyType,
+    advertisementType: advertisement.advertisementType,
+    region: advertisement.region,
+    city: advertisement.city,
+    district: advertisement.district,
+    street: advertisement.street,
+    description: advertisement.description,
+    price: advertisement.price,
+    currency: advertisement.currency,
+    position: advertisement.position,
+    auction: advertisement.auction,
+    proposition: advertisement.proposition,
+    images: images,
+    slug: advertisement.slug,
+    parameters: realtyParams,
+  };
+  return realty
+}
+
+exports.loadAdvertisementForEditor = async (req, res) => {
+
+  let result = await loadInfoAboutRealty(req.params.slug)
+
+  let realtyParams = await con.execute(result.sql);
+
+  let realty = loadEditor(result.advertisement[0], realtyParams[0])
+
+  res.json(realty)
+
+}
+
 exports.createAdvertisement = async (req, res) => {
-  const advertisement = new Advertisement(req.body.realtyType, req.body.advertisementType, req.body.region, req.body.city, req.body.district, req.body.street, req.body.position, req.body.description, req.body.price, req.body.currency, req.body.auction === 'Ні' ? 0 : 1, req.body.proposition, JSON.parse(req.body.files));
-  
-  let id = await advertisement.addNewAdvertisement();
-  switch(req.body.realtyType){
-    case 'Будинок':
-    case 'Дача':
-    case 'Частина будинку':
-      let House = require("../models/House");
-      const house = new House(req.body.house_type, req.body.dwelling_type, req.body.rooms_count, req.body.floor_count, req.body.mansard === '' ? 0 : 1, req.body.basement === '' ? 0 : 1, 
-                              req.body.wall, req.body.heating, req.body.plan === '' ? 0 : 1, req.body.furniture, req.body.general_square, req.body.living_square, req.body.area, req.body.unit, 
-                              req.body.garage === '' ? 0 : 1, req.body.fireplace === '' ? 0 : 1, req.body.balcony === '' ? 0 : 1, req.body.garden === '' ? 0 : 1, req.body.state, req.body.roof, 
-                              req.body.electricity, req.body.gas, req.body.water, id);
-      house.create();
-      break;
-    case 'Квартира':
-      let Flat = require("../models/Flat");
-      const flat = new Flat(req.body.dwelling_type, req.body.rooms_count, req.body.floor_count, req.body.wall, req.body.heating,
-                            req.body.plan === '' ? 0 : 1, req.body.multi === '' ? 0 : 1, req.body.furniture === '' ? 0 : 1, 
-                            req.body.mansard === '' ? 0 : 1, req.body.general_square, req.body.living_square, req.body.state, 
-                            req.body.electricity, req.body.gas, req.body.water, id);
-      flat.create();
-      break;
-    case 'Ділянка':
-      let Area = require("../models/Area");
-      const area = new Area(req.body.square, req.body.unit, req.body.relief, req.body.soil, 
-                            req.body.river === '' ? 0 : 1, req.body.lake === '' ? 0 : 1, id);
-      area.create();
-      break;
-    case 'Гараж':
-      let Garage = require("../models/Garage");
-      const garage = new Garage(req.body.type, req.body.garageType, req.body.car, req.body.wall, req.body.roof, 
-                                req.body.floor, req.body.square, req.body.width, req.body.length, req.body.gateWidth, 
-                                req.body.height, req.body.pit === '' ? 0 : 1, req.body.basement === '' ? 0 : 1, req.body.residential === '' ? 0 : 1, req.body.sectional === '' ? 0 : 1, 
-                                req.body.state, req.body.electricity, id);
-      garage.create();
-      break;
-  }
+  try{
+    const advertisement = new Advertisement(req.body.realtyType, req.body.advertisementType, req.body.region, req.body.city, req.body.district, req.body.street, 
+                                            req.body.position, req.body.description, req.body.price, req.body.currency, req.body.auction === 'Ні' ? 0 : 1, 
+                                            req.body.proposition, JSON.parse(req.body.files), req.body.user);
+    
+    let adv = await advertisement.addNewAdvertisement();
+    switch(req.body.realtyType){
+      case 'Будинок':
+      case 'Дача':
+      case 'Частина будинку':
+        let House = require("../models/House");
+        const house = new House(req.body.house_type, req.body.dwelling_type, req.body.rooms_count, req.body.floor_count, req.body.mansard === '' ? 0 : 1, req.body.basement === '' ? 0 : 1, 
+                                req.body.wall, req.body.heating, req.body.plan === '' ? 0 : 1, req.body.furniture, req.body.general_square, req.body.living_square, req.body.area, req.body.unit, 
+                                req.body.garage === '' ? 0 : 1, req.body.fireplace === '' ? 0 : 1, req.body.balcony === '' ? 0 : 1, req.body.garden === '' ? 0 : 1, req.body.state, req.body.roof, 
+                                req.body.electricity, req.body.gas, req.body.water, adv.id);
+        await house.create();
+        break;
+      case 'Квартира':
+        let Flat = require("../models/Flat");
+        const flat = new Flat(req.body.dwelling_type, req.body.rooms_count, req.body.floor_count, req.body.wall, req.body.heating,
+                              req.body.plan === '' ? 0 : 1, req.body.multi === '' ? 0 : 1, req.body.furniture === '' ? 0 : 1, 
+                              req.body.mansard === '' ? 0 : 1, req.body.general_square, req.body.living_square, req.body.state, 
+                              req.body.electricity, req.body.gas, req.body.water, adv.id);
+        await flat.create();
+        break;
+      case 'Ділянка':
+        let Area = require("../models/Area");
+        const area = new Area(req.body.square, req.body.unit, req.body.relief, req.body.soil, 
+                              req.body.river === '' ? 0 : 1, req.body.lake === '' ? 0 : 1, adv.id);
+        await area.create();
+        break;
+      case 'Гараж':
+        let Garage = require("../models/Garage");
+        const garage = new Garage(req.body.type, req.body.garageType, req.body.car, req.body.wall, req.body.roof, 
+                                  req.body.floor, req.body.square, req.body.width, req.body.length, req.body.gateWidth, 
+                                  req.body.height, req.body.pit === '' ? 0 : 1, req.body.basement === '' ? 0 : 1, req.body.residential === '' ? 0 : 1, req.body.sectional === '' ? 0 : 1, 
+                                  req.body.state, req.body.electricity, adv.id);
+        await garage.create();
+        break;
+    }
+    res.json({success: 1, slug: adv.slug})
+  }catch(err){console.log(err); res.json({success: 0})}
+}
+
+exports.updateAdvertisement = async (req, res) => {
+  try{
+    let id = await Advertisement.update(req.body.region, req.body.city, req.body.district, req.body.street, 
+                                        req.body.position, req.body.description, req.body.price, req.body.currency, req.body.auction === 'Ні' ? 0 : 1, 
+                                        JSON.parse(req.body.files), req.body.slug)
+    switch(req.body.realtyType){
+      case 'Будинок':
+      case 'Дача':
+      case 'Частина будинку':
+        let House = require("../models/House");
+        House.update(req.body.house_type, req.body.dwelling_type, req.body.rooms_count, req.body.floor_count, req.body.mansard === '' ? 0 : 1, req.body.basement === '' ? 0 : 1, 
+                    req.body.wall, req.body.heating, req.body.plan === '' ? 0 : 1, req.body.furniture, req.body.general_square, req.body.living_square, req.body.area, req.body.unit, 
+                    req.body.garage === '' ? 0 : 1, req.body.fireplace === '' ? 0 : 1, req.body.balcony === '' ? 0 : 1, req.body.garden === '' ? 0 : 1, req.body.state, req.body.roof, 
+                    req.body.electricity, req.body.gas, req.body.water, id[0].id);
+        break;
+      case 'Квартира':
+        let Flat = require("../models/Flat");
+        Flat.update(req.body.dwelling_type, req.body.rooms_count, req.body.floor_count, req.body.wall, req.body.heating,
+                    req.body.plan === '' ? 0 : 1, req.body.multi === '' ? 0 : 1, req.body.furniture === '' ? 0 : 1, 
+                    req.body.mansard === '' ? 0 : 1, req.body.general_square, req.body.living_square, req.body.state, 
+                    req.body.electricity, req.body.gas, req.body.water, id[0].id);
+        break;
+      case 'Ділянка':
+        let Area = require("../models/Area");
+        Area.update(req.body.square, req.body.unit, req.body.relief, req.body.soil, 
+                    req.body.river === '' ? 0 : 1, req.body.lake === '' ? 0 : 1, id[0].id);
+        break;
+      case 'Гараж':
+        let Garage = require("../models/Garage");
+        Garage.update(req.body.type, req.body.garageType, req.body.car, req.body.wall, req.body.roof, 
+                      req.body.floor, req.body.square, req.body.width, req.body.length, req.body.gateWidth, 
+                      req.body.height, req.body.pit === '' ? 0 : 1, req.body.basement === '' ? 0 : 1, req.body.residential === '' ? 0 : 1, req.body.sectional === '' ? 0 : 1, 
+                      req.body.state, req.body.electricity, id[0].id);
+        break;
+    }
+    res.json({success: 1})
+  }catch(err) {res.json({success: 0})}
 }
 
 exports.addToArchive = (req, res) => {

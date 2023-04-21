@@ -86,7 +86,7 @@ export default function UserAdvertisementCard (props) {
                 {props.check}
                 <div className="card-buttons">
                     {!props.archive &&
-                        <Link className="btn edit" to={'/edit-advertisement /'+props.slug} >Редагувати</Link>
+                        <Link className="btn edit" to={'/edit-advertisement/'+props.slug} >Редагувати</Link>
                     }
                     {props.archive && 
                         <button onClick={showHandler} className="btn publicate">Опублікувати</button>

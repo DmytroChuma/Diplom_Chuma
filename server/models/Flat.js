@@ -71,6 +71,36 @@ class Flat{
         con.execute(sql);
     }
 
+    static async update(dwelling_type, rooms, floor, wallName, heating, plan, multi, furniture, mansard, square, l_square, stateName, electricityName, gasName, waterName, info){
+
+        let result = await con.execute(`
+        SELECT wall_type.id as wall, realty_state.id as state, communication.id as electricity,
+        (SELECT id FROM communication WHERE name = '${gasName}') as gas,
+        (SELECT id FROM communication WHERE name = '${waterName}')as water 
+        FROM wall_type, realty_state, communication
+        WHERE wall_type.name = '${wallName}' AND realty_state.name = '${stateName}' AND communication.name = '${electricityName}' `);
+        const { wall, state, electricity, gas, water } = result[0];
+
+        let sql = `
+            UPDATE flat SET type = '${dwelling_type}',
+            rooms_count = '${rooms}',
+            floor_count = '${floor}',
+            wall = '${wall}',
+            heating = '${heating}',
+            plan = '${plan}',
+            multi = '${multi}',
+            furniture = '${furniture}',
+            mansard = '${mansard}',
+            general_square = '${square}',
+            living_square = '${l_square}',
+            state = '${state}',
+            electricity = '${electricity}',
+            gas = '${gas}',
+            water = '${water}'
+            WHERE info = '${info}'
+        `
+        con.execute(sql);
+    }
 }
 
 module.exports = Flat;

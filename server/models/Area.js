@@ -38,5 +38,21 @@ class Area{
             
         con.execute(sql);
     }
+
+    static async update(square, unit, reliefName, soilName, river, lake, info){
+        let result = await con.execute(`SELECT relief.id as relief, soil.id as soil FROM relief, soil WHERE relief.name = "${reliefName}" AND soil.name = "${soilName}"`);
+        const { relief, soil } = result[0];
+
+        let sql = `
+            UPDATE area SET square = '${square}',
+            unit = '${unit}',
+            relief = '${relief}',
+            soil = '${soil}',
+            river = '${river}',
+            lake = '${lake}'
+            WHERE info = '${info}'
+        `
+        con.execute(sql)
+    }
 }
 module.exports = Area;

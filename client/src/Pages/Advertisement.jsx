@@ -7,12 +7,12 @@ import Title from "../Components/Title";
 import PhotoViewer from "../Components/Inputs/PhotoViewer";
 import MapElement from "../Components/Map/MapElement";
 import UserCard from "../Components/Cards/UserCard";
+import store from "../Store/Store";
 
-import {FacebookShareButton, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, ViberIcon, ViberShareButton} from "react-share";
-import {FacebookIcon} from "react-share";
+import {FacebookShareButton, FacebookIcon, TelegramIcon, TelegramShareButton, TwitterIcon, TwitterShareButton, ViberIcon, ViberShareButton} from "react-share";
 import handleSelect from "../Utils/HandleSelect";
 
-export default function Advertisement() {
+export default function Advertisement({dialog}) {
 
     const [data, setData] = useState("");
     const [advertisementTitle, setTitle] = useState('');
@@ -20,7 +20,14 @@ export default function Advertisement() {
     const [views, setViews] = useState('');
     const [select, setSelect] = useState('');
     const [selectBtn, setSelectBtn] = useState(false);
- 
+    const [user, setUser] = useState('')
+    store.subscribe(() => setUser(store.getState().user))
+    useEffect(()=>{
+        if (store.getState()) {
+            setUser(store.getState().user)
+        }
+    }, [user])
+
     const location = useLocation();
     
     useEffect(() => {
@@ -215,6 +222,8 @@ export default function Advertisement() {
         setSelectBtn((prev) => !prev)
     }
 
+    document.title = 'Перегляд оголошення';
+
     return (
         <div className="app-screen">
             <Header />
@@ -230,7 +239,8 @@ export default function Advertisement() {
                         </div>
                     </div>
                     <div className="advertisement-price">
-                        Ціна за об'єкт: {data.price.toLocaleString('ua')} $ • {data.priceinuah.toLocaleString('ua')} грн. • {data.realtyType === 'Ділянка' || data.realtyType === 'Гараж' ? Math.ceil(data.price / data.parameters.square).toLocaleString('ua') : Math.ceil(data.price / data.parameters.general_square).toLocaleString('ua')} $ за {data.unit}
+                        {data.advertisementType === 'Оренда' && `Ціна за добу: ${data.price.toLocaleString('ua')} $`}
+                        {data.advertisementType === 'Продаж' && `Ціна за об'єкт: ${data.price.toLocaleString('ua')} $ • ${data.priceinuah.toLocaleString('ua')} грн. • ${data.realtyType === 'Ділянка' || data.realtyType === 'Гараж' ? Math.ceil(data.price / data.parameters.square).toLocaleString('ua') : Math.ceil(data.price / data.parameters.general_square).toLocaleString('ua')} $ за ${data.unit}`}
                     </div>
                     <Title type='location' text="Розташування об'єкту" />
                     <div className="advertisement-info">Область: {data.region}</div>
@@ -280,15 +290,17 @@ export default function Advertisement() {
                             </TwitterShareButton>
                         </div>
                         <div className="share-btn">
-                            <button className="share-button" onClick={() => {navigator.clipboard.writeText(window.location.href)}}></button>
+                            <button className="share-button" onClick={() => {navigator.clipboard.writeText(window.location.href); dialog('Успіх', 'Посилання скопійовано', 1)}}></button>
                         </div>
                     </div>
                 </div>
+                {user.id !== data.user.id && 
                 <div className="advertisement-contacts">
                     <div className="user-container-advertisement-side-panel">
-                        <UserCard user={data.user} id={data.id}/>
+                        <UserCard user={data.user} id={data.id} show={user.id ? true : false}/>
                     </div>
                 </div>
+                }
             </div>
         </div>
     )

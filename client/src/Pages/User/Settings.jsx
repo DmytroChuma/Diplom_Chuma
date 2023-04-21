@@ -4,8 +4,11 @@ import Input from "../../Components/Inputs/Input";
 import Select from "../../Components/Inputs/Select";
 import regions from "../../Utils/Regions";
 import store from '../../Store/Store';
+import UserLogin from "../../Store/ActionsCreators/UserLogin";
+import axiosInstance from "../../Utils/Axios";
+import Code from "../../Components/Dialogs/Code";
 
-export default function Settings() {
+export default function Settings({dialog}) {
 
     const [avatar, setAvatar] = useState(null);
     const [url, setURL] = useState('http://localhost:3001/users/avatar.png');
@@ -17,26 +20,38 @@ export default function Settings() {
     const [city, SetCity] = useState("Не вказано");
     const [phone, setPhone] = useState('');
     const [email, setEmail] = useState('');
+    const [description, setDescription] = useState('');
+    const [showBtn, setShowBtn] = useState(false)
+    const [showDescription, setShowDescription] = useState(false);
+    const [defaultAvatar, setDefault] = useState(false);
+    
+    const [modal, setModal] = useState('');
 
     const handleImage = (e) => {
         if (e.target.files[0]) {
+            setShowBtn(true);
             setAvatar(e.target.files[0]);
             setURL(URL.createObjectURL(e.target.files[0]))
+            setDefault(false);
         }
     }
 
     useEffect(() => {
         fetch('/user_info').then((res) => res.json()).then((data) => {
-            console.log(data)
             setName(data.name)
             setSurname(data.surname)
             setPhone(data.phone);
             setEmail(data.email);
+            if (data.permission > 0) {
+                setShowDescription(true);
+                setDescription(data.description);
+            }
             if (data.avatar !== '') {
+                setShowBtn(true);
                 setURL(`http://localhost:3001/users/${data.avatar}`);
             }
             if (data.region !== '')
-                setRegion(data.region)
+                getData(data.region, false)
             if (data.city !== '')
                 SetCity(data.city)
         });
@@ -45,11 +60,12 @@ export default function Settings() {
         }
     }, [])
 
-    const getData = (data) => {
+    const getData = (data, city) => {
         setRegion(data);
         fetch('/region/:'+data).then((res) => res.json()).then((data) => {
           SetCities(data.cities);
-          SetCity("Не вказано");
+          if (city)
+            SetCity("Не вказано");
         });
     }
 
@@ -57,24 +73,89 @@ export default function Settings() {
         SetCity(data);
     }
 
-    const handleSubmit = () => {
-        console.log(name)
-        console.log(test)
+    const validate = () => {
+        if (name.trim() === '') {
+            dialog('Помилка', "Введіть ім'я")
+            return false;
+        }
+        if (surname.trim() === '') {
+            dialog('Помилка', "Введіть прізвище")
+            return false;
+        }
+        if (phone.trim() === '') {
+            dialog('Помилка', "Введіть телефон")
+            return false;
+        }
+        if (phone.trim().length < 10) {
+            dialog('Помилка', "Неправильний формат номеру телефона")
+            return false;
+        }
+        if (email.trim() === '') {
+            dialog('Помилка', "Введіть Email")
+            return false;
+        }
+        const pattern = /^\S+@\S+\.\S+$/;
+            if (!pattern.test(email)) {
+                dialog('Помилка', "Неправильний формат Email");
+                return false;
+            }
+        return true;
     }
 
-    const handleChange = (value, name) => {
-       //setUser({...user, name: value})
-        console.log(name)
-        console.log(value)
+    const handleSubmit = async () => {
 
-    //    setUser({...obj})
+        if(validate()) {
+            let file = '';
+            let formData = new FormData();
+            formData.append('file', avatar)
+            await axiosInstance.post("/upload_file", formData, {
+                headers: {
+                "Content-Type": "multipart/form-data",
+                }
+            }).then((res) => {
+                if (res.data.status !== 'error'){
+                    let path = res.data.path.split('\\');
+                    path.shift();
+                    file = path.join('/');
+                }
+            })
+
+            await axiosInstance.post("/update_user", {
+                id: store.getState().user.id,
+                name: name,
+                surname: surname,
+                region: region === 'Не вказано' ? '' : region ,
+                city: city === 'Не вказано' ? '' : city ,
+                phone: phone,
+                email: email,
+                avatar: file,
+                description: description,
+                oldAvatar: defaultAvatar ? store.getState().user.avatar : '' ,
+                defaultAvatar: defaultAvatar
+            }).then((res) => {
+                if (res.data.success === 1){
+                    let user = store.getState().user;
+                    user.name = `${name} ${surname}`;
+                    user.avatar = file === '' ? user.avatar : file.split('/')[1];
+                    if (defaultAvatar) {
+                        user.avatar = ''
+                    }
+                    store.dispatch(UserLogin(user));
+                    dialog('Успіх','Дані збережено',1)
+                }
+            })
+        }
     }
 
+    document.title = 'Налаштування';
+    
     return (
         <div className="cabinet-container user">
+            {modal}
             <div className="user-form">
                 <div className="user-avatar-input-cont">
                     <div className="image-user">
+                        {showBtn && <div className="avatar-delete" onClick={() => {setShowBtn(false); setAvatar(null); setURL('http://localhost:3001/users/avatar.png'); setDefault(true)}}></div>}
                         <input type='file' accept='image/*' id='user-avatar' style={{display: 'none'}} onChange={handleImage}/>
                         <label htmlFor='user-avatar' className="user-form-img-container">
                             <img className="user-form-img" src={url} alt=''/>
@@ -93,19 +174,28 @@ export default function Settings() {
                 </div>
                 <div className="input-row-user">
                     <span className="user-form-input-text">Область</span>
-                    <Select handleData={getData} class='full-user' placeholder="Оберіть область" name='region' readonly={false} list={regions} value={region} />
+                    <Select handleData={getData} class='full-user' placeholder="Оберіть область" name='region' list={regions} value={region} />
                 </div>
                 <div className="input-row-user">
                     <span className="user-form-input-text">Місто</span>
-                    <Select handleData={getCity} class='full-user' placeholder="Оберіть місто" name='city' readonly={false} list={cities} value={city}/>
+                    <Select handleData={getCity} class='full-user' placeholder="Оберіть місто" name='city' list={cities} value={city}/>
                 </div>
                 <div className="input-row-user">
                     <span className="user-form-input-text">Телефон</span>
-                    <Input handleChange={setPhone} type='text' name='phone' placeholder="Телефон" class='' value={phone}/>
+                    <Input handleChange={setPhone} phone={true} type='text' name='phone' placeholder="Телефон" class='' value={phone}/>
                 </div>
                 <div className="input-row-user">
                     <span className="user-form-input-text">Email</span>
                     <Input handleChange={setEmail} type='text' name='email' placeholder="Email" class='' value={email}/>
+                </div>
+                {showDescription && 
+                    <div className="user-form-input textarea">
+                        <span className="user-form-input-text-t">Короткий опис про себе</span>
+                        <textarea onChange={(e) => setDescription(e.target.value)} className="user-textarea" value={description}></textarea>
+                    </div>
+                }
+                <div className="pass-change">
+                    <button className="pass-btn" onClick={() => {setModal(<Code dialog={dialog} email={email} modalHandle={setModal}/>)}}>Змінити пароль</button>
                 </div>
                 <button className="btn" onClick={handleSubmit}>Зберегти</button>
             </div>

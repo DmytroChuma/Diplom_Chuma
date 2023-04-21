@@ -4,6 +4,7 @@ import queryString from 'query-string'
 
 import UserAdvertisementCard from "../../Components/Cards/UserAdvertisementCard";
 import Pages from "../../Components/Pages";
+import NoResult from "../../Components/NoResult";
 
 export default function Advertisements (props) {
 
@@ -39,6 +40,8 @@ export default function Advertisements (props) {
         navigate(`/agency/${props.id}/advertisements?agency=${props.id}&page=${activePage}`);
     }
     
+    document.title = 'Оголошення агентства';
+
     return (
         <div className="agency-advertisement-container">
             {Array.isArray(data) && 
@@ -47,6 +50,7 @@ export default function Advertisements (props) {
                     <div className="separator"></div>
                 </div>}
             {!Array.isArray(data) && data}
+            {data.length === 0 && <NoResult text='Агентство немає оголошень'/>}
             {Array.isArray(data) && data.map((element, index) => {
                 return (
                     <div key={index}>

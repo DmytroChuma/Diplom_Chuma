@@ -10,7 +10,7 @@ import InfoUser from './InfoUser';
 import AddAgency from '../Agency/AddAgency';
 import store from '../../Store/Store';
 
-export default function Cabinet ({dialog}) {
+export default function Cabinet ({dialog, socket}) {
 
     const location = useLocation();
     let slug = location.pathname.split('/');
@@ -21,7 +21,7 @@ export default function Cabinet ({dialog}) {
         if (store.getState()) {
             setUser(store.getState().user)
         }
-    }, [])
+    }, [user])
 
     let page; 
     switch(slug) {
@@ -29,21 +29,23 @@ export default function Cabinet ({dialog}) {
             page = <MyAdvertisements dialog={dialog}/>
             break;
         case 'archive':
-            page = <Archive/>
+            page = <Archive dialog={dialog}/>
             break;
         case 'messages':
-            page = <Messages />
+            page = <Messages dialog={dialog} socket={socket}/>
             break;
         case 'settings':
-            page = <Settings />
+            page = <Settings dialog={dialog}/>
             break;
         case 'add-agency':
             page = <AddAgency dialog={dialog}/>
             break;
         default:
-            page = <InfoUser />
+            page = <InfoUser user={user} socket={socket} dialog={dialog}/>
             break;    
     }
+
+    document.title = 'Особистий кабінет';
 
     return (
         <div className="app-screen">

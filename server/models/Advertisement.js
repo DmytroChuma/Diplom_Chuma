@@ -2,7 +2,7 @@ const con = require('../config/db_connector');
 
 class Advertisement {
     constructor(realty_type, advert_type, region, city, district, street,
-                position, description, price, currency, auction, proposition, files) {
+                position, description, price, currency, auction, proposition, files, user) {
         this.realty_type = realty_type;
         this.advert_type = advert_type;
         this.region = region.replace("'", "\\'");
@@ -16,6 +16,7 @@ class Advertisement {
         this.auction = auction;
         this.proposition = proposition;
         this.files = files;
+        this.user = user;
     }
     
     async addNewAdvertisement() {
@@ -57,6 +58,7 @@ class Advertisement {
             currency,
             auction,
             proposition,
+            user,
             date,
             slug
         )
@@ -73,15 +75,41 @@ class Advertisement {
             '${this.currency}',
             '${this.auction}',
             '${this.proposition}',
+            '${this.user}',
             NOW(),
             '${slug}'
         )
         `;
 
         let result = con.execute(sql);
-        const id  = await result.then(result => result.insertId);
- 
-        return id;
+        return {id: await result.then(result => result.insertId), slug: slug}
+    }
+
+    static async update(region, city, district, street,
+        position, description, price, currency, auction, files, slug){
+        const fs = require('fs')
+        let regionId = await con.execute(`SELECT id FROM region WHERE region = '${region.replace("'", "\\'")}'`)
+
+        files.forEach(element => {
+            fs.rename('./public/'+element, `./public/${slug}/${element.split('/')[1]}`, function (err) {
+                if (err) console.error(err)
+            })
+        });
+
+        let sql = `
+            UPDATE info SET region = '${regionId[0].id}',
+            city = '${city.replace("'", "\\'")}',
+            district = '${district.replace("'", "\\'")}',
+            street = '${street.replace("'", "\\'")}',
+            position = '${position}',
+            description = '${description.replace("'", "\\'")}',
+            price = '${price}',
+            currency = '${currency}',
+            auction = '${auction}'
+            WHERE slug = '${slug}'
+        `
+        con.execute(sql)
+        return await con.execute(`SELECT id FROM info WHERE slug = '${slug}'`);
     }
 
     static addToArchive(slug) {

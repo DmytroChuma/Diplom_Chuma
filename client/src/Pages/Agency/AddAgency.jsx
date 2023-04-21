@@ -7,7 +7,7 @@ import axiosInstance from "../../Utils/Axios";
 import store from "../../Store/Store";
 import UserLogin from "../../Store/ActionsCreators/UserLogin";
 
-export default function AddAgency({dialog, text}) {
+export default function AddAgency({dialog, text, id, data, dataHandler}) {
 
     const [phones, setPhones] = useState([{phone: ''}]);
     const [email, setEmail] = useState([{email: ''}]);
@@ -22,9 +22,33 @@ export default function AddAgency({dialog, text}) {
     const navigate = useNavigate();
 
     useEffect(() => {
+        if (!text) {
+            if (!store.getState()) {
+                navigate(`/`);
+                return;
+            }
+            if (store.getState().user.permission === 2 || store.getState().user.permission === 1) {
+                navigate(`/user/cabinet`);
+                return;
+            }
+        }
+
         if (text) {
-            //check if not owner
-            //fetch('')
+            if (!store.getState()) {
+                navigate(`/agency/${id}/agency`);
+                return;
+            }
+            if (store.getState().user.permission !== 2 && store.getState().user.agency !== id) {
+                navigate(`/agency/${id}/agency`);
+                return;
+            }
+            getData(data.region)
+            SetCity(data.city)
+            setName(data.name)
+            setDescription(data.description)
+            setPhones(data.phones.split(',').map((element) => {return {phone: element}}))
+            setEmail(data.emails.split(',').map((element) => {return {email: element}}))
+            setURL(data.logo === '' ? 'http://localhost:3001/images/default.png' : `http://localhost:3001/images/agency/${data.logo}`)
         }
     }, [])
 
@@ -52,11 +76,12 @@ export default function AddAgency({dialog, text}) {
         }
     }
 
-    const getData = (data) => {
+    const getData = (data, city) => {
         setRegion(data);
         fetch('/region/:'+data).then((res) => res.json()).then((data) => {
           SetCities(data.cities);
-          SetCity("");
+          if (city)
+            SetCity("");
         });
     }
 
@@ -64,65 +89,145 @@ export default function AddAgency({dialog, text}) {
         SetCity(data);
     }
 
+    const validate = () => {
+        if(name.trim() === '') {
+            dialog('Помилка', 'Введіть назву агентства')
+            return false
+        }
+        if (region === '') {
+            dialog('Помилка', 'Оберіть регіон')
+            return false
+        }
+        if (city === '') {
+            dialog('Помилка', 'Оберіть місто')
+            return false
+        }
+        if (description.trim() === '') {
+            dialog('Помилка', 'Введіть опис агентства')
+            return false
+        }
+        for (let phone of phones) {
+            if (phone.phone.length !== 10) {
+                dialog('Помилка', 'Неправильний формат телефону')
+                return false
+            }
+        }
+        for (let mail of email) {
+            if (mail.email.trim() === '') {
+                dialog('Помилка', 'Заповніть всі поля для електронних пошт агентства')
+                return false
+            }
+            const pattern = /^\S+@\S+\.\S+$/;
+            if (!pattern.test(mail.email)) {
+                dialog('Помилка', "Неправильний формат Email");
+                return false;
+            }
+        }
+        return true
+    }
+
     const submitHandle = async () => {
-        let path = '';
-        let formData = new FormData();
-        formData.append('file', logo);
-        await axiosInstance.post("/upload_file", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            }
-        }).then((res) => {
-            if (res.data.status !== 'error'){
-                path = res.data.path.split('\\');
-                path.shift();
-                path = path.join('/');
-                formData = new FormData();
-                formData.append('file', path);
-            }
-        });
-        formData.append('name', name);
-        formData.append('region', region)
-        formData.append('city', city)
-        formData.append('description', description)
-        formData.append('phones', JSON.stringify(phones))
-        formData.append('emails', JSON.stringify(email))
-        formData.append('user', store.getState().user.id)
-        await axiosInstance.post("/create_agency", formData, {
+        if(validate()) {
+            let path = '';
+            let formData = new FormData();
+            formData.append('file', logo);
+            await axiosInstance.post("/upload_file", formData, {
                 headers: {
-                  "Content-Type": "multipart/form-data",
+                "Content-Type": "multipart/form-data",
                 }
-        }).then((res) => {
-            if (res.data.success === 1) {
-                dialog("Успіх", "Агентство створено успішно", 1)
-                fetch('/permission', {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                      Accept: 'application/json',
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({permission: 2})});
-                let user = store.getState().user
-                user.permission = 2;
-                store.dispatch(UserLogin(user));
-                navigate(`/agency/${res.data.id}/agency`);
+            }).then((res) => {
+                if (res.data.status !== 'error'){
+                    path = res.data.path.split('\\');
+                    path.shift();
+                    path = path.join('/');
+                }
+            });
+            formData = new FormData();
+            formData.append('file', path);
+            formData.append('name', name);
+            formData.append('region', region)
+            formData.append('city', city)
+            formData.append('description', description)
+            formData.append('phones', JSON.stringify(phones))
+            formData.append('emails', JSON.stringify(email))
+            formData.append('user', store.getState().user.id)
+
+            if (text) {
+
+                await axiosInstance.post("/update_agency", {
+                    id: id,
+                    name: name,
+                    file: path,
+                    region: region,
+                    city: city,
+                    description: description,
+                    phones: JSON.stringify(phones),
+                    emails: JSON.stringify(email),
+                    oldLogo: logo ? data.logo : ''
+                }).then((res) => {
+                    console.log(res.data)
+                    if (res.data.success === 1) {
+                        let phonesArr = [];
+                        for (let phone of phones) {
+                            phonesArr.push(phone.phone)
+                        }
+
+                        let emailsArr = [];
+                        for (let element of email) {
+                            emailsArr.push(element.email)
+                        }
+                        dialog("Успіх", "Інформацію оновлено", 1)
+                        dataHandler({
+                            name: name,
+                            logo: path !== '' ? path.split('/')[1] : '',
+                            description: description,
+                            region: region,
+                            city: city,
+                            phones:phonesArr.join(','),
+                            emails: emailsArr.join(',')
+                        })
+                    }
+                })
             }
             else {
-                dialog("Помилка", "Не вдалося створити агентство", 1)
-                fetch('/delete_file', {
-                    method: 'POST',
-                    mode: 'cors',
-                    headers: {
-                      Accept: 'application/json',
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({file: path})});
+                await axiosInstance.post("/create_agency", formData, {
+                        headers: {
+                        "Content-Type": "multipart/form-data",
+                        }
+                }).then((res) => {
+                    if (res.data.success === 1) {
+                        dialog("Успіх", "Агентство створено успішно", 1)
+                        fetch('/permission', {
+                            method: 'POST',
+                            mode: 'cors',
+                            headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({permission: 2})});
+                        let user = store.getState().user
+                        user.permission = 2;
+                        store.dispatch(UserLogin(user));
+                        navigate(`/agency/${res.data.id}/agency`);
+                    }
+                    else {
+                        dialog("Помилка", "Не вдалося створити агентство", 1)
+                        fetch('/delete_file', {
+                            method: 'POST',
+                            mode: 'cors',
+                            headers: {
+                            Accept: 'application/json',
+                            'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({file: path})});
+                    }
+                })
             }
-        })
-
-        
+        }
     }
+
+    document.title = 'Додати агентство';
+    if(text) document.title = "Налаштування";
 
     return(
         <div className="agency-container">
@@ -132,8 +237,10 @@ export default function AddAgency({dialog, text}) {
                 <div className="agency-form-input">
                     <span className="agency-form-input-text">Логотип</span>
                     <div className="input-row image">
+                        
                         <input type='file' accept='image/*' id='agency-logo' style={{display: 'none'}} onChange={handleImage}/>
                         <label htmlFor='agency-logo' className="agency-form-img-container">
+                         
                             <img className="agency-form-img" src={url} alt=''/>
                         </label>
                     </div>
@@ -145,13 +252,13 @@ export default function AddAgency({dialog, text}) {
                 <div className="agency-form-input">
                     <span className="agency-form-input-text">Область</span>
                     <div className="input-row">
-                        <Select handleData={getData} class='' placeholder="Оберіть область" name='region' readonly={false} list={regions} value={region}/>
+                        <Select handleData={getData} class='' placeholder="Оберіть область" name='region' list={regions} value={region}/>
                     </div>
                 </div>
                 <div className="agency-form-input">
                     <span className="agency-form-input-text">Місто</span>
                     <div className="input-row">
-                        <Select handleData={getCity} class='' placeholder="Оберіть місто" name='city' readonly={false} list={cities} value={city}/>
+                        <Select handleData={getCity} class='' placeholder="Оберіть місто" name='city' list={cities} value={city}/>
                     </div>
                 </div>
                 <div className="agency-form-input">
@@ -200,9 +307,9 @@ export default function AddAgency({dialog, text}) {
                 </div>
                 <div className="agency-form-input textarea">
                     <span className="agency-form-input-text">Короткий опис агентства</span>
-                    <textarea onChange={(e) => setDescription(e.target.value)} className="agency-textarea"></textarea>
+                    <textarea onChange={(e) => setDescription(e.target.value)} value={(description)} className="agency-textarea"></textarea>
                 </div>
-                <button className="btn" onClick={submitHandle}>Створити</button>
+                <button className="btn" onClick={submitHandle}>{text ? 'Змінити' : 'Створити'}</button>
             </div>
         </div>
         

@@ -2,13 +2,14 @@ import React from "react";
 import PropTypes from 'prop-types';
 import { Link } from "react-router-dom";
 
-export default function CabinetCard({children, link, linkText}) {
+export default function CabinetCard({children, link, linkText, clickHandler}) {
+
     return (
         <div className="info-cabinet-card">
             <div className="cabinet-card-body">
                 {children}
             </div>
-            <Link className='card-info-link-btn' to={link}>{linkText}</Link>
+            <Link onClick={() => clickHandler()} className='card-info-link-btn' to={link}>{linkText}</Link>
         </div>
     )
 }
