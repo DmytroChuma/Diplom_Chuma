@@ -34,7 +34,6 @@ function App() {
   const [message, setMessage] = useState('')
 
   let timeOut;
- // let timeMessage;
 
   if (!localStorage.getItem('card'))
     localStorage.setItem('card', 0);
@@ -42,7 +41,6 @@ function App() {
       localStorage.setItem('select', "[]")
 
       useEffect(()=>{
-        //socket.on('connect', ()=>console.log(socket.id))
         socket.on('connect_error', ()=>{
           setTimeout(()=>socket.connect(),3000) 
         })
@@ -52,8 +50,6 @@ function App() {
           <div className="messages-time-container" >
               <Message text={data.text} />
           </div>)
-          //clearTimeout( timeMessage );
-          //timeMessage = 
           setTimeout(() => {
             setMessage('');
           }, 5000);  
