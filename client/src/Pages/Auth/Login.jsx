@@ -105,21 +105,3 @@ export default function Login (props) {
         </div>
     )
 }
-
-
-
-/*
-
- <div className="authContainer">
-            <form className="auth">
-                <Input type='text' placeholder="Телефон або Email" />
-                <Input type='password' placeholder="Пароль" />
-                {//<Checkbox name='remember' class="checkmark" text="Запам'ятати"/>
-                }
-                <button className="btn log" type='submit'>Увійти</button>
-                <Link className="linkAuth" to='/auth/registration'>Зареєструватись</Link>
-            </form>
-            
-        </div>
-
-*/

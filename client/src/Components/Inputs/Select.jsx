@@ -1,15 +1,9 @@
-//import React, { Component } from "react";
 import React, { useEffect, useState, useRef } from "react";
 
- 
 export default function Select (props) {
     const name = props.name;
     const placeholder = props.placeholder;
     const list = props.list;
-
-     
-    
- 
 
     const [isOpen, SetIsOpen] = useState(false);
 
@@ -74,34 +68,3 @@ export default function Select (props) {
     )
 
 }
-
-
-/*export default class Select extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            list: this.props.list,
-            isOpen: false,
-            selected: 0
-        };
-    }
-    render() {
-
-        const handleClick = (e) => {
-            e.target.parentElement.getElementsByClassName("arrow")[0].classList.add('show');
-            e.target.parentElement.getElementsByClassName("select-list-container")[0].classList.add('show');
-        }
-
-        return (
-            <div className="list" onClick={(e) => handleClick(e)}>
-                <input className="list-input" type='text' name={this.props.name} placeholder={this.props.placeholder} />
-                <svg className="arrow">
-                   <path d="M0 2 L10 10 L20 2 L18 0 L10 6 L2 0 Z" />
-                </svg>
-                {this.state.list}
-            </div>
-        )
-    }
-}
-
- */
