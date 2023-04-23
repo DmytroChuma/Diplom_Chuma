@@ -47,7 +47,7 @@ export default function Info ({data}) {
                 </div>
             </div>
             <Title type='description' text='Інформація про рієлтора' />
-            <div className="">
+            <div className="realtor-description">
                 {data.description === '' ? 'Рієлтор не залишив опис про себе.' : data.description }
             </div>
         </div>

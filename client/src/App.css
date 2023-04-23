@@ -3434,6 +3434,7 @@ span.filt-text {
   font-size: 18px;
   display: flex;
   gap: 10px;
+  overflow-wrap: anywhere;
 }
 
 .file-dummy:before, a.file-dummy-span:before{
@@ -3478,7 +3479,7 @@ img.chat-img-message {
   background-repeat: no-repeat;
   background-size: cover;
   width: 100%;
-  height: 400px;
+  min-height: 370px;
 }
 
 .list.home-list {
@@ -3525,8 +3526,12 @@ span.home-text {
   display: flex;
   justify-content: center;
   font-size: 36px;
-  position: fixed;
+  position: absolute;
   width: 100%;
   color: white;
   top: 135px;
+}
+
+.realtor-description {
+  font-size: 20px;
 }

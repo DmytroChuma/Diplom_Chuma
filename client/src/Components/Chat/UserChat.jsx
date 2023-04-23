@@ -33,8 +33,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
         e.target.classList.add("active");
     }
 
-    console.log(message)
-
     return (
         <div ref={ref} className={"user-chat-card " + (props.active ? 'active' : '')} onClick={clickHandler}>
             <div className="user-chat-image">

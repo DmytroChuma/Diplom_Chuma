@@ -29,7 +29,7 @@ export default function Header() {
         <div className="navArea">
             <div className="btnContainer">
                 <Link className="logo" to='/'><img src={logo} alt=''/></Link>
-                <Link className="headerNavBtn" to='/search'>Купити</Link>
+                <Link className="headerNavBtn" to='/search?advertisement=Продаж&realty=Вся%20нерухомість&sort=Спочатку%20нові&page=1'>Купити</Link>
                 <Link className="headerNavBtn" to='/search?advertisement=Оренда&realty=Вся%20нерухомість&sort=Спочатку%20нові&page=1'>Орендувати</Link>
             </div>
             <div className="btnContainer">

@@ -38,13 +38,17 @@ export default function Chat({socket}) {
   }
 
   const messageClick = (e, className, text, file, id) => {
+    e.preventDefault()
     let x = e.clientX;
     let y = e.clientY;
-    if (y > document.getElementById("messages-container").offsetHeight - 150 && file === '') {
+    if (y > document.getElementById("messages-container").offsetHeight - 150 && text !== '') {
       y -= 190;
     }
     else if (y > document.getElementById("messages-container").offsetHeight - 150 && file !== ''){
       y -= 50;
+    }
+    if (y > document.getElementById("messages-container").offsetHeight - 150 && text !== '' && !className.includes('my')) {
+      y = e.clientY - 90;
     }
     let menu;
     if (className.includes('my') && text !== '') {
@@ -125,7 +129,9 @@ export default function Chat({socket}) {
     setLastUser(data.user_id);
     let messageDate = new Date(Date.parse(data.date)).toLocaleDateString()
 
-    let mess = <Message key={data.id} id={data.id} handleClick={messageClick} text={data.message} file={data.file} date={data.date} avatar={avatar} class={(data.user_id === store.getState().user.id ? 'my' : '') + margin} answear={data.answear} amessage={data.a_message} />
+    console.log(data)
+
+    let mess = <Message key={data.id} id={data.id} socket={socket} handleClick={messageClick} text={data.message} file={data.file !== '' ? data.file : ''} date={data.date} avatar={avatar} class={(data.user_id === store.getState().user.id ? 'my' : '') + margin} answear={data.answear} amessage={data.a_message} />
     if (messageDate !== lastDate) 
       setMessages([...message, <DateMessage key={messageDate} date={messageDate}/>, mess]);
     else
@@ -139,7 +145,7 @@ export default function Chat({socket}) {
     let newMessages = [];
     for (let mess of message) {
       if(mess.props.id === data.id){
-        newMessages.push(<Message key={data.id} id={data.id} handleClick={mess.props.handleClick} text={data.message} date={mess.props.date} avatar={mess.props.avatar} class={mess.props.class} answear={mess.props.answear} amessage={mess.props.amessage}/>)
+        newMessages.push(<Message key={data.id} id={data.id} socket={socket} handleClick={mess.props.handleClick} text={data.message} date={mess.props.date} file='' avatar={mess.props.avatar} class={mess.props.class} answear={mess.props.answear} amessage={mess.props.amessage}/>)
         continue;
       }
       newMessages.push(mess);

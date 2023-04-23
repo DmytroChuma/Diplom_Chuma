@@ -82,6 +82,13 @@ function createRealtyArray(rows){
       let params = rows[i].params.split(',');
       let square;
       let tags = [];
+
+      let price = rows[i].price;
+      let priceinuah = JSON.parse(cours)[1].sale * price;
+      if (rows[i].currency === 'грн') {
+        priceinuah = rows[i].price;
+        price = priceinuah / JSON.parse(cours)[1].sale;
+      }
        
       switch(rows[i].realtyType){
         case 'Будинок':
@@ -108,8 +115,8 @@ function createRealtyArray(rows){
         id: rows[i].id,
         street: rows[i].street,
         city: rows[i].city,
-        price: rows[i].price,
-        priceinua: JSON.parse(cours)[1].sale * rows[i].price,
+        price: price,
+        priceinua: priceinuah,
         square: square,
         description: rows[i].description,
         date: formattedDate,
@@ -135,7 +142,7 @@ function createRealtyArray(rows){
     let priceinuah = JSON.parse(cours)[1].sale * price;
     if (advertisement.currency === 'грн') {
       priceinuah = advertisement.price;
-      price = JSON.parse(cours)[1].sale / priceinuah;
+      price = priceinuah / JSON.parse(cours)[1].sale;
     }
 
     let unit = 'м²';

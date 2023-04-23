@@ -7,6 +7,7 @@ export default function Message(props) {
     const [answear, setAnswear] = useState(props.amessage);
 
     useEffect(()=>{
+        console.log(props)
         if (props.answear){
             props.socket.on('edit_message', (data) => {
                 if(data.id === props.answear) {
@@ -16,6 +17,15 @@ export default function Message(props) {
         }
     }, [])
 
+  /*  useEffect(() => {
+        const handleContextMenu = (e) => {
+          e.preventDefault()
+        }
+        document.addEventListener("contextmenu", handleContextMenu)
+        return () => {document.removeEventListener("contextmenu", handleContextMenu)}
+      }, [])*/
+    
+
     return(
         <div className="message-chat">
              {(props.avatar || props.avatar === '') &&
@@ -23,7 +33,7 @@ export default function Message(props) {
                     <img className="user-avatar-message" src={'http://localhost:3001/users/' + (props.avatar !== '' ? props.avatar : 'avatar.png')} alt=''/>
                 </div>
             }
-            <div className={"message " + props.class} onClick={(e) => props.handleClick(e, props.class, props.text, props.file === '' ? '' : props.file.path, props.id)}>
+            <div className={"message " + props.class} onContextMenu={(e) => props.handleClick(e, props.class, props.text, (props.file || props.file === '') ? '' : props.file.path, props.id)}>
                 {props.answear !== 0 &&
                     <div className="answear">
                         {answear}
