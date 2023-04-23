@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import parse from 'html-react-parser'
-import { Link } from "react-router-dom";
 
 export default function Message(props) {
 
     const [answear, setAnswear] = useState(props.amessage);
 
     useEffect(()=>{
-        console.log(props)
         if (props.answear){
             props.socket.on('edit_message', (data) => {
                 if(data.id === props.answear) {
@@ -15,16 +13,7 @@ export default function Message(props) {
                 }
             })
         }
-    }, [])
-
-  /*  useEffect(() => {
-        const handleContextMenu = (e) => {
-          e.preventDefault()
-        }
-        document.addEventListener("contextmenu", handleContextMenu)
-        return () => {document.removeEventListener("contextmenu", handleContextMenu)}
-      }, [])*/
-    
+    }, [props])
 
     return(
         <div className="message-chat">

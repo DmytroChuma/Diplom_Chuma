@@ -32,10 +32,9 @@ function App() {
   
   const [dialog, setDialog] = useState('')
   const [message, setMessage] = useState('')
-  const [user,setUser] = useState({})
 
   let timeOut;
-  let timeMessage;
+ // let timeMessage;
 
   if (!localStorage.getItem('card'))
     localStorage.setItem('card', 0);
@@ -53,8 +52,9 @@ function App() {
           <div className="messages-time-container" >
               <Message text={data.text} />
           </div>)
-          clearTimeout( timeMessage );
-          timeMessage = setTimeout(() => {
+          //clearTimeout( timeMessage );
+          //timeMessage = 
+          setTimeout(() => {
             setMessage('');
           }, 5000);  
         })
@@ -111,8 +111,8 @@ const handleDialog = (title, text, type=0) => {
             <Route exact path="/select" element={<Select />}></Route>
             <Route exact path="/search/:params" element={<Search />}></Route>
             <Route exact path="/advertisement/:slug" element={<Advertisement dialog={handleDialog}/>}></Route>
-            <Route exact path="/add-new-advertisement" element={<NewAdvertisement user={user} dialog={handleDialog} />}></Route>
-            <Route exact path="/edit-advertisement/:slug" element={<NewAdvertisement user={user} dialog={handleDialog} />}></Route>
+            <Route exact path="/add-new-advertisement" element={<NewAdvertisement dialog={handleDialog} />}></Route>
+            <Route exact path="/edit-advertisement/:slug" element={<NewAdvertisement dialog={handleDialog} />}></Route>
             <Route exact path="/user/cabinet" element={<Cabinet dialog={handleDialog} socket={socket}/>}></Route>
             <Route exact path="/user/cabinet/:slug" element={<Cabinet dialog={handleDialog} socket={socket}/>}></Route>
             <Route exact path="/agency/:id/:slug" element={<Agency dialog={handleDialog} socket={socket}/>}></Route>

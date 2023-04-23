@@ -182,7 +182,7 @@ class User{
         (SELECT COUNT(*) FROM info WHERE user = user.id AND archive = 0) as publicated, 
         (SELECT COUNT(*) FROM info WHERE user = user.id AND archive = 1) as archivated 
         FROM info, user LEFT JOIN agency ON agency.id = user.agency 
-        WHERE user.id = '${id}' AND info.user = user.id;
+        WHERE user.id = '${id}'
         `
         return await con.execute(sql)
     }

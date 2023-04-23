@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import queryString from 'query-string'
 
@@ -16,7 +16,7 @@ import regions from "../Utils/Regions";
 
 export default function Search (){
 
-        const generalFilterProperties = [
+        const [generalFilterProperties] = useState([
           {
             name: "proposition",
             text: "Пропозиція",
@@ -35,7 +35,7 @@ export default function Search (){
             type: 0,
             options: ["Всі варіанти", "Торг можливий", "Торг не можливий"]
           }
-        ];
+        ]);
 
         const navigate = useNavigate();
 
@@ -107,11 +107,11 @@ export default function Search (){
           return false;
         }
         
-        const tagsHandler = (tag) => {      
+        const tagsHandler = useCallback((tag) => {      
           navigate(`/search?${region === '' ? '' : `region=${region}&`}${city === '' ? '' : `city=${city}&`}advertisement=Всі оголошення${parameters === '' ? '' : '&'}${parameters}&sort=Спочатку нові&realty=${tag.realty ? tag.realty : 'Вся нерухомість' }&${tag.type}=${tag.urlText}`)
-        }
+        }, [city, navigate, parameters, region])
 
-        const createItems = (data, type) => {
+        const createItems = useCallback((data, type) => {
           if(data.length === 0) {
             return(<NoResult/>);
           }
@@ -134,122 +134,9 @@ export default function Search (){
               {table}
             </div>);
           }
-        }
+        }, [tagsHandler])
 
   
-          useEffect(() => {
-            let params = queryString.parse(location.search);
-            if (JSON.stringify(params) === '{}') {
-              setRegion('')
-              SetCities('')
-              SetCity('')
-              setAdvertisement('Всі оголошення')
-              setRealty('Вся нерухомість')
-              setFilterOptions(generalFilterProperties)
-            }
-            if (params.page) {
-              setActivePage(params.page)
-            }
-            setFilterParams(params);
-            if (params.realty) {
-              if (sortType !== params.sort) {
-                SetSort(params.sort); 
-              }
-              if (advertisement !== params.advertisement) {
-                setAdvertisement(params.advertisement);
-              }
-              if (realty !== params.realty) {
-                realtySelectHandler(params.realty, params); 
-              }
-              if (region !== params.region && params.region) {
-                getData(params.region, false)
-              }
-              else if (!params.region){
-                setRegion('')
-                SetCities('')
-                SetCity('')
-              }
-              if (city !== params.city && params.city) {
-                getArea(params.city)
-              }
-              if (params.pricemin) {
-                setPriceMin(params.pricemin)
-              }
-              else {
-                setPriceMin('')
-              }
-              if (params.pricemax) {
-                setPriceMax(params.pricemax)
-              }
-              else {
-                setPriceMax('')
-              }
-              if (params.currency){
-                setCurrency(params.currency)
-              }
-              else {
-                setCurrency('$')
-              }
-              if (params.squaremin) {
-                setSquareMin(params.squaremin)
-              }
-              else {
-                setSquareMin('')
-              }
-              if (params.squaremax) {
-                setSquareMax(params.squaremax)
-              }
-              else {
-                setSquareMax('')
-              }
-              if (params.unit){
-                setUnit(params.unit)
-              }
-              else {
-                setUnit('')
-              }
-              if (params.rooms){
-                setRooms(params.rooms)
-              }
-              else {
-                setRooms('')
-              }
-              delete params.sort;
-              delete params.advertisement;
-              delete params.realty;
-              delete params.page;
-              delete params.region;
-              delete params.city;
-              delete params.pricemin;
-              delete params.pricemax;
-              delete params.currency;
-              delete params.rooms;
-              delete params.squaremin;
-              delete params.squaremax;
-              delete params.unit;
-              for (let parameter of Object.keys(params)) {
-                filterDataHandler(parameter, params[parameter]);
-              }
-            }
-
-            setItems(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>);
-            setShowPages(false);
-            let query = location.pathname+location.search
-            if (!query.includes('count=12')){
-              query.includes('?') ? query += '&count=12' : query += '?count=12'
-            }
-              fetch(query).then((res) => res.json()).then((data) => {
-              setData(data.realty);
-              setPage(Math.ceil(data.count / 12));
-              if(data.length === 0) {
-                setItems(<NoResult/>);
-              }
-              else {
-                setItems(createItems(data.realty, localStorage.getItem('card')));
-                setShowPages(true);
-              }
-            });
-          }, [location]); 
 
           const toggleClass = (e) => {
             if(e.target.classList.contains("activate")) return;
@@ -266,7 +153,7 @@ export default function Search (){
 
         
 
-          const getData = (data, clear = true) => {
+          const getData = useCallback((data, clear = true) => {
             setRegion(data);
             fetch('/region/:'+data).then((res) => res.json()).then((data) => {
               SetCities(data.cities);
@@ -274,12 +161,12 @@ export default function Search (){
                 SetCity("");
             });
             navigate(`/search?region=${data}&advertisement=${advertisement}${parameters === '' ? '' : '&'}${parameters}&realty=${realty}&${filterValue}${filterValue !== ''? "&" : ''}sort=${sortType}&page=${1}`)
-          }
+          }, [advertisement, filterValue, navigate, parameters, realty, sortType])
 
-          const getArea = (data) => {
+          const getArea = useCallback((data) => {
             SetCity(data);
             navigate(`/search?region=${region}&city=${data}&advertisement=${advertisement}${parameters === '' ? '' : '&'}${parameters}&realty=${realty}&${filterValue}${filterValue !== ''? "&" : ''}sort=${sortType}&page=${1}`)
-          }
+          }, [advertisement, filterValue, navigate, parameters, realty, sortType, region])
 
           const createFilterLink = () => {
             let properies = [];
@@ -330,7 +217,29 @@ export default function Search (){
             return data;
           }
 
-          const realtySelectHandler = async (type, params = '') =>{
+          const filterDataHandler = useCallback((name, value) => {
+            let objName = name.includes('[]') ? name.substring(0, name.length - 2) : name;
+            let property = filter[`${objName}`] ? [...filter[`${objName}`]] : [];
+            let index = property.indexOf(value);
+            if (name.includes('[]')) {
+              if (index !== -1) {
+                property.splice(index, 1);
+              }
+              else {
+                property.push(value);
+              }
+            }
+            else {
+              property = value;
+            }
+
+            setFilter((prev) => ({
+              ...prev,
+              [`${objName}`] : property
+            }))
+          }, [filter])
+
+          const realtySelectHandler = useCallback(async (type, params = '') =>{
             if (params === '' && type !== realty) setFilter({});
             if (params === '' && type !== realty) setFilterOptions([]);
             let data;
@@ -589,29 +498,7 @@ export default function Search (){
                 setFilterOptions([...generalFilterProperties]);
                 break;
             }
-          }
-
-          const filterDataHandler = (name, value) => {
-            let objName = name.includes('[]') ? name.substring(0, name.length - 2) : name;
-            let property = filter[`${objName}`] ? [...filter[`${objName}`]] : [];
-            let index = property.indexOf(value);
-            if (name.includes('[]')) {
-              if (index !== -1) {
-                property.splice(index, 1);
-              }
-              else {
-                property.push(value);
-              }
-            }
-            else {
-              property = value;
-            }
-
-            setFilter((prev) => ({
-              ...prev,
-              [`${objName}`] : property
-            }))
-          }
+          }, [advertisement, city, filterDataHandler, generalFilterProperties, navigate, realty, region, sortType])
 
           const pagesHandler = (activePage) => {
             setActivePage(activePage);
@@ -623,6 +510,121 @@ export default function Search (){
             setActivePage(1);
             navigate(`/search?${region === '' ? '' : `region=${region}&`}${city === '' ? '' : `city=${city}&`}advertisement=${advertisement}${parameters === '' ? '' : '&'}${parameters}&realty=${realty}&${filterValue === '' ? '' : filterValue+'&'}sort=${sortType}&page=${1}`);
           }
+
+          
+          useEffect(() => {
+            let params = queryString.parse(location.search);
+            if (JSON.stringify(params) === '{}') {
+              setRegion('')
+              SetCities('')
+              SetCity('')
+              setAdvertisement('Всі оголошення')
+              setRealty('Вся нерухомість')
+              setFilterOptions(generalFilterProperties)
+            }
+            if (params.page) {
+              setActivePage(params.page)
+            }
+            setFilterParams(params);
+            if (params.realty) {
+              if (sortType !== params.sort) {
+                SetSort(params.sort); 
+              }
+              if (advertisement !== params.advertisement) {
+                setAdvertisement(params.advertisement);
+              }
+              if (realty !== params.realty) {
+                realtySelectHandler(params.realty, params); 
+              }
+              if (region !== params.region && params.region) {
+                getData(params.region, false)
+              }
+              else if (!params.region){
+                setRegion('')
+                SetCities('')
+                SetCity('')
+              }
+              if (city !== params.city && params.city) {
+                getArea(params.city)
+              }
+              if (params.pricemin) {
+                setPriceMin(params.pricemin)
+              }
+              else {
+                setPriceMin('')
+              }
+              if (params.pricemax) {
+                setPriceMax(params.pricemax)
+              }
+              else {
+                setPriceMax('')
+              }
+              if (params.currency){
+                setCurrency(params.currency)
+              }
+              else {
+                setCurrency('$')
+              }
+              if (params.squaremin) {
+                setSquareMin(params.squaremin)
+              }
+              else {
+                setSquareMin('')
+              }
+              if (params.squaremax) {
+                setSquareMax(params.squaremax)
+              }
+              else {
+                setSquareMax('')
+              }
+              if (params.unit){
+                setUnit(params.unit)
+              }
+              else {
+                setUnit('')
+              }
+              if (params.rooms){
+                setRooms(params.rooms)
+              }
+              else {
+                setRooms('')
+              }
+              delete params.sort;
+              delete params.advertisement;
+              delete params.realty;
+              delete params.page;
+              delete params.region;
+              delete params.city;
+              delete params.pricemin;
+              delete params.pricemax;
+              delete params.currency;
+              delete params.rooms;
+              delete params.squaremin;
+              delete params.squaremax;
+              delete params.unit;
+              for (let parameter of Object.keys(params)) {
+                filterDataHandler(parameter, params[parameter]);
+              }
+            }
+
+            setItems(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>);
+            setShowPages(false);
+            let query = location.pathname+location.search
+            if (!query.includes('count=12')){
+              query.includes('?') ? query += '&count=12' : query += '?count=12'
+            }
+              fetch(query).then((res) => res.json()).then((data) => {
+              setData(data.realty);
+              setPage(Math.ceil(data.count / 12));
+              if(data.length === 0) {
+                setItems(<NoResult/>);
+              }
+              else {
+                setItems(createItems(data.realty, localStorage.getItem('card')));
+                setShowPages(true);
+              }
+            });
+          }, [location, advertisement, city, realty, region, getData, getArea, sortType, createItems, filterDataHandler, generalFilterProperties, realtySelectHandler]); 
 
         return (
           <div className="app-screen">

@@ -33,11 +33,11 @@ export default function Chat({socket}) {
     setEditText({text: text, id: id, type: type});
   }
 
-  const deleteHandler = (id, file = '') => {
+  const deleteHandler = useCallback((id, file = '') => {
     socket.emit('delete_message', {id: id, inbox: location.hash.replace('#', ''), file: file});
-  }
+  }, [location, socket])
 
-  const messageClick = (e, className, text, file, id) => {
+  const messageClick = useCallback ((e, className, text, file, id) => {
     e.preventDefault()
     let x = e.clientX;
     let y = e.clientY;
@@ -61,7 +61,7 @@ export default function Chat({socket}) {
       menu = <MessageMenu cX={x} cY={y} options socket={socket} text={text} id={id} menu={setMenu} editHandler={editHandler}/>
     }
     setMenu(menu);
-  }
+  }, [socket, deleteHandler])
 
   
   const createUserCards = useCallback((data) => {
@@ -72,7 +72,7 @@ export default function Chat({socket}) {
       cards.push(<UserChat active={location.hash.replace('#', '') === card.inbox_id ? true : false} socket={socket} key={card.inbox_id} user={card}/>);
     }
     return cards;
-  }, [location])
+  }, [location, socket])
 
   const createMessages = useCallback((data) => {
     let messages = [];
@@ -91,7 +91,7 @@ export default function Chat({socket}) {
       messages.push(<Message key={message.id} handleClick={messageClick} id={message.id} text={message.message} file={message.file !== '' ? JSON.parse(message.file) : ''} date={message.date} avatar={avatar} class={(message.user_id === store.getState().user.id ? 'my' : '') + margin} answear={message.answear} amessage={message.answear_message} socket={socket}/>);
     }
     return messages;
-  }, []);
+  }, [socket, messageClick]);
 
   useEffect(()=>{
     
@@ -117,7 +117,7 @@ export default function Chat({socket}) {
     fetch('/messages?inbox='+location.hash.replace('#', '')).then((res) => res.json()).then((data) => {
       setMessages(createMessages(data));
     })
-  }, [location, createMessages])
+  }, [location, createMessages, socket])
 
   useEffect(()=>{
     setScroll(false)
@@ -174,7 +174,7 @@ export default function Chat({socket}) {
   })
 
   if (scroll) scrollToBottom();
- },[message, lastUser, scroll])
+ },[message, lastUser, scroll, socket, messageClick, lastDate])
 
 const sendHandler = () => {
   if (document.getElementById("input-div").textContent.trim() === '') {

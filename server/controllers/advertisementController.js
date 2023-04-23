@@ -649,7 +649,7 @@ if (params.top) {
   SELECT info.id, info.realtyType, info.city, info.street, info.description, info.price, info.currency, info.auction, info.date, info.slug, info.views, info.phones, info.select, 
       ${realty} as params
     FROM info, user, region
-    WHERE info.region = region.id AND info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? 'AND info.user = ' + params.user : ''} ${filter} 
+    WHERE info.region = region.id AND info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? `AND info.user = '${params.user}'` : ''} ${filter} 
     HAVING params IS NOT NULL
   ` + sort + ` LIMIT ${limit}, ${advetisementsCount}`);
 
@@ -657,7 +657,7 @@ if (params.top) {
   SELECT COUNT(*) as count,
   ${realty} as params
 FROM info, user, region
-WHERE info.region = region.id AND info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? 'AND info.user = ' + params.user : ''} ${filter} 
+WHERE info.region = region.id AND info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? `AND info.user = 'params.user'` : ''} ${filter} 
 HAVING params IS NOT NULL
   `);
 return {rows: rows, count: count};
