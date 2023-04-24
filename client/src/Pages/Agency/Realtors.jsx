@@ -41,7 +41,7 @@ export default function Realtors ({ id, user, dialog, socket}) {
 
     document.title = 'Рієлтори агентства';
 
-    if (!user) return
+    //if (!user) return
 
     return (
         <div className="realtors-agency-container">

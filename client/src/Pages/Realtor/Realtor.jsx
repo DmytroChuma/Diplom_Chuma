@@ -34,7 +34,7 @@ export default function Realtor () {
             page = <Advertisements id={id}/>
             break;
         default:
-            page = <Info data={data}/>
+            page = <Info data={data} id={id}/>
             break;
     }
 

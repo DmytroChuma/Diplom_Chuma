@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { Link } from 'react-router-dom';
 
 export default function UserCard(props) {
     let phone = `(${props.user.phone.substring(0,3)}) ${props.user.phone.substring(3,6)} ${props.user.phone.substring(6)}`
@@ -37,7 +38,6 @@ export default function UserCard(props) {
             mode: 'cors',
             body: JSON.stringify({id: props.user.id})
         }).then(res=>res.json()).then(data=>{
-            console.log(data)
             navigate(`/user/chat/#${data.inbox}`)
         })
     }
@@ -48,7 +48,7 @@ export default function UserCard(props) {
             <div className='user-card-info'>
                 <img className='user-avatar-card' src={'http://localhost:3001/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt=''/>
                 <div className='user-info-container'>
-                    <span className='userName'>{`${props.user.firstName} ${props.user.lastName}`}</span>
+                    {props.user.type === 'Рієлтор' ? <Link className='userName' to={`/realtor/${props.user.id}/realtor`}>{`${props.user.firstName} ${props.user.lastName}`}</Link> : <span className='userName'>{`${props.user.firstName} ${props.user.lastName}`}</span>}
                     <span className='userType'>{props.user.type}</span>
                 </div>
             </div>

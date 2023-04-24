@@ -1,25 +1,41 @@
 import React from "react";
 import Title from "../../Components/Title";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-export default function Info ({data}) {
-
+export default function Info ({data, id}) {
+    const navigate = useNavigate()
+ 
     if (!data) return
 
-    console.log(data)
+    const writeHandler = () => {
+        fetch('/create_inbox',
+        {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            mode: 'cors',
+            body: JSON.stringify({id: parseInt(id)})
+        }).then(res=>res.json()).then(data=>{
+            navigate(`/user/chat/#${data.inbox}`)
+        })
+    }
 
     return (
         <div className="realtor-info-container">
-            <div className="realtor-user-info">
-                <div className="image-realtor">
-                    <img className='realtor-avatar' src={`http://localhost:3001/users/${data.avatar === '' ? 'avatar.png' : data.avatar}`} alt=''/>
+            <div className="realtor-info-c">
+                <div className="realtor-user-info">
+                    <div className="image-realtor">
+                        <img className='realtor-avatar' src={`http://localhost:3001/users/${data.avatar === '' ? 'avatar.png' : data.avatar}`} alt=''/>
+                    </div>
+                    <div className="realtor-info-container">
+                        <div className="realtor-name">{`${data.first_name} ${data.last_name}`}</div>
+                        <div className="realtor-info-i">Область: {data.region === "" ? 'Не вказано' : data.region }</div>
+                        <div className="realtor-info-i">Місто: {data.city === "" ? 'Не вказано' : data.city }</div>
+                    </div>
                 </div>
-                <div className="realtor-info-container">
-                    <div className="realtor-name">{`${data.first_name} ${data.last_name}`}</div>
-                    <div className="realtor-info-i">Область: {data.region === "" ? 'Не вказано' : data.region }</div>
-                    <div className="realtor-info-i">Місто: {data.city === "" ? 'Не вказано' : data.city }</div>
-
-                </div>
+                <button className="btn" onClick={writeHandler}>Написати</button>
             </div>
             <Title type='agency-t' text='Агентство' />
             <div className="agency-info-realtor">

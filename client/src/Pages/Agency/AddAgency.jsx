@@ -165,7 +165,6 @@ export default function AddAgency({dialog, text, id, data, dataHandler}) {
                     emails: JSON.stringify(email),
                     oldLogo: logo ? data.logo : ''
                 }).then((res) => {
-                    console.log(res.data)
                     if (res.data.success === 1) {
                         let phonesArr = [];
                         for (let phone of phones) {
@@ -179,7 +178,7 @@ export default function AddAgency({dialog, text, id, data, dataHandler}) {
                         dialog("Успіх", "Інформацію оновлено", 1)
                         dataHandler({
                             name: name,
-                            logo: path !== '' ? path.split('/')[1] : '',
+                            logo: path !== '' ? path.split('/')[1] : data.logo,
                             description: description,
                             region: region,
                             city: city,
