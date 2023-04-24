@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import Header from '../../Components/Header/Header';
 import Archive from './Archive';
@@ -11,7 +11,7 @@ import AddAgency from '../Agency/AddAgency';
 import store from '../../Store/Store';
 
 export default function Cabinet ({dialog, socket}) {
-
+    const navigate = useNavigate()
     const location = useLocation();
     let slug = location.pathname.split('/');
     slug = slug[slug.length - 1];
@@ -20,6 +20,10 @@ export default function Cabinet ({dialog, socket}) {
     useEffect(()=>{
         if (store.getState()) {
             setUser(store.getState().user)
+        }
+        if (!store.getState()) {
+            navigate(`/`);
+            return;
         }
     }, [user])
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Header from '../../Components/Header/Header';
 import UserChat from '../../Components/Chat/UserChat';
@@ -27,6 +27,7 @@ export default function Chat({socket}) {
     messagesEnd.current.scrollIntoView({ behavior: "smooth" });
   };
 
+  const navigate = useNavigate()
   const location = useLocation(); 
 
   const editHandler = (text, id, type) => {
@@ -65,6 +66,9 @@ export default function Chat({socket}) {
 
   
   const createUserCards = useCallback((data) => {
+    if (location.hash === '') {
+      setMessages('')
+    }
     let cards = [];
     for (let card of data) {
       if (!card.message) 
@@ -94,7 +98,10 @@ export default function Chat({socket}) {
   }, [socket, messageClick]);
 
   useEffect(()=>{
-    
+    if (!store.getState()) {
+      navigate('/')
+      return
+    }
     fetch('/chat').then((res) => res.json()).then((data) => {
       setUsers(createUserCards(data));
     })
@@ -233,6 +240,7 @@ const attachHandler = (e) => {
             {message}
             <div ref={messagesEnd} />
           </div>
+          {location.hash !== '' &&  
           <div className='chat-input-row'>
             <div className='input-div-cont'>
               {editText.text && <div className='input-div-edit'>
@@ -252,6 +260,7 @@ const attachHandler = (e) => {
             </div>
             <button onClick={sendHandler} className='btn btn-chat fa fa-send'></button>
           </div>
+        }
       </div>
     </div>
     </div>

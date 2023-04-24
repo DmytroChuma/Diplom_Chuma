@@ -88,5 +88,6 @@ exports.loadGarageInfo = async (req, res) => {
 
 exports.loadRegion = async (req, res) =>{
     let rows = await con.execute("SELECT city FROM region WHERE region ='"+req.params.reg.substring(1)+"'");
-    res.json({cities: rows[0].city.split(",")});
+    if (rows[0])
+      res.json({cities: rows[0].city.split(",")});
 }
