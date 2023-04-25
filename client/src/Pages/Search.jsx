@@ -217,7 +217,7 @@ export default function Search (){
             return data;
           }
 
-          const filterDataHandler = useCallback((name, value) => {
+          const filterDataHandler = (name, value) => {
             let objName = name.includes('[]') ? name.substring(0, name.length - 2) : name;
             let property = filter[`${objName}`] ? [...filter[`${objName}`]] : [];
             let index = property.indexOf(value);
@@ -237,7 +237,7 @@ export default function Search (){
               ...prev,
               [`${objName}`] : property
             }))
-          }, [filter])
+          }
 
           const realtySelectHandler = useCallback(async (type, params = '') =>{
             if (params === '' && type !== realty) setFilter({});
@@ -498,7 +498,7 @@ export default function Search (){
                 setFilterOptions([...generalFilterProperties]);
                 break;
             }
-          }, [advertisement, city, filterDataHandler, generalFilterProperties, navigate, realty, region, sortType])
+          }, [advertisement, city, generalFilterProperties, navigate, realty, region, sortType])
 
           const pagesHandler = (activePage) => {
             setActivePage(activePage);
@@ -624,7 +624,7 @@ export default function Search (){
                 setShowPages(true);
               }
             });
-          }, [location, advertisement, city, realty, region, getData, getArea, sortType, createItems, filterDataHandler, generalFilterProperties, realtySelectHandler]); 
+          }, [location, advertisement, city, realty, region, getData, getArea, sortType, createItems, generalFilterProperties, realtySelectHandler]); 
 
         return (
           <div className="app-screen">
