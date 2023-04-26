@@ -1,9 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Title from "../../Components/Title";
 import { Link, useNavigate } from "react-router-dom";
 import store from "../../Store/Store";
 
 export default function Info ({data, id}) {
+
+    const [user, setUser] = useState();
+
+    useEffect(()=> {
+        if (store.getState()) {
+            setUser(store.getState().user)
+        }
+    }, [])
+
     const navigate = useNavigate()
  
     if (!data) return
@@ -36,7 +45,7 @@ export default function Info ({data, id}) {
                         <div className="realtor-info-i">Місто: {data.city === "" ? 'Не вказано' : data.city }</div>
                     </div>
                 </div>
-                {store.getState() && 
+                {(JSON.stringify(user) !== '{}' && user) && 
                     <button className="btn" onClick={writeHandler}>Написати</button>
                 }
             </div>
