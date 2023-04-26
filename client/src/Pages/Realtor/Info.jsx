@@ -1,6 +1,7 @@
 import React from "react";
 import Title from "../../Components/Title";
 import { Link, useNavigate } from "react-router-dom";
+import store from "../../Store/Store";
 
 export default function Info ({data, id}) {
     const navigate = useNavigate()
@@ -35,7 +36,9 @@ export default function Info ({data, id}) {
                         <div className="realtor-info-i">Місто: {data.city === "" ? 'Не вказано' : data.city }</div>
                     </div>
                 </div>
-                <button className="btn" onClick={writeHandler}>Написати</button>
+                {store.getState() && 
+                    <button className="btn" onClick={writeHandler}>Написати</button>
+                }
             </div>
             <Title type='agency-t' text='Агентство' />
             <div className="agency-info-realtor">
