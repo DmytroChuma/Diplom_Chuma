@@ -128,7 +128,6 @@ export default function DragAndDropFile(props){
                         (element) => `${props.slug}/${element}` !== data)
                 );  
         }
-        console.log(elements)
     }
 
     return(

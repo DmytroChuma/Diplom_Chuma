@@ -14,9 +14,7 @@ export default function Element(props){
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({file: props.path})
-          }).then(response => {
-            response.json().then(json => {alert(JSON.stringify(json))});
-          });
+          })
     }
     return(
         <div className='uploaded-element'>

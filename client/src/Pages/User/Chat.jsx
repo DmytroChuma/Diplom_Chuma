@@ -65,18 +65,20 @@ export default function Chat({socket}) {
   }, [socket, deleteHandler])
 
   
-  const createUserCards = useCallback((data) => {
+  const createUserCards = (data) => {
     if (location.hash === '') {
       setMessages('')
     }
     let cards = [];
     for (let card of data) {
+      socket.emit("join_room", `inbox_${card.inbox_id}`)
       if (!card.message) 
         card.message='' 
       cards.push(<UserChat active={location.hash.replace('#', '') === card.inbox_id ? true : false} socket={socket} key={card.inbox_id} user={card}/>);
+
     }
     return cards;
-  }, [location, socket])
+  }
 
   const createMessages = useCallback((data) => {
     let messages = [];
@@ -113,10 +115,15 @@ export default function Chat({socket}) {
 
     document.addEventListener("mouseup",(e) =>  closeHandler(e));
       return () => document.removeEventListener("mouseup",(e) => closeHandler(e));
-  }, [createUserCards])
+  }, [])
 
   useEffect(()=>{
-    if (location.hash === '') return
+    if (location.hash === '') {
+      for(let user of users) {
+        socket.emit('leave_room', user.key)
+      }
+      return
+    }
     if (location.hash !== '') {
       let hash = location.hash.replace('#', '')
       socket.emit("join_room", hash);
@@ -124,28 +131,27 @@ export default function Chat({socket}) {
     fetch('/messages?inbox='+location.hash.replace('#', '')).then((res) => res.json()).then((data) => {
       setMessages(createMessages(data));
     })
-  }, [location, createMessages, socket])
+  }, [location, createMessages, socket, users])
 
   useEffect(()=>{
     setScroll(false)
-   socket.on('receive_message', (data)=> {
-    let avatar = false;
-    let margin = ' margin'
-    
-    if (data.user_id !== store.getState().user.id && data.user_id !== lastUser ) {avatar = data.avatar; margin = '';}
-    setLastUser(data.user_id);
-    let messageDate = new Date(Date.parse(data.date)).toLocaleDateString()
+    socket.on('receive_message', (data)=> {
+      if (location.hash.replace('#', '') === '') return
+      let avatar = false
+      let margin = ' margin'
+      
+      if (data.user_id !== store.getState().user.id && data.user_id !== lastUser ) {avatar = data.avatar; margin = '';}
+      setLastUser(data.user_id);
+      let messageDate = new Date(Date.parse(data.date)).toLocaleDateString()
 
-    console.log(data)
-
-    let mess = <Message key={data.id} id={data.id} socket={socket} handleClick={messageClick} text={data.message} file={data.file !== '' ? data.file : ''} date={data.date} avatar={avatar} class={(data.user_id === store.getState().user.id ? 'my' : '') + margin} answear={data.answear} amessage={data.a_message} />
-    if (messageDate !== lastDate) 
-      setMessages([...message, <DateMessage key={messageDate} date={messageDate}/>, mess]);
-    else
-      setMessages([...message, mess]);
-    if (messageDate !== lastDate)
-      setLastDate(messageDate);
-      if (data.user_id === store.getState().user.id)  setScroll(true)
+      let mess = <Message key={data.id} id={data.id} socket={socket} handleClick={messageClick} text={data.message} file={data.file !== '' ? data.file : ''} date={data.date} avatar={avatar} class={(data.user_id === store.getState().user.id ? 'my' : '') + margin} answear={data.answear} amessage={data.a_message} />
+      if (messageDate !== lastDate) 
+        setMessages([...message, <DateMessage key={messageDate} date={messageDate}/>, mess]);
+      else
+        setMessages([...message, mess]);
+      if (messageDate !== lastDate)
+        setLastDate(messageDate);
+        if (data.user_id === store.getState().user.id)  setScroll(true)
   })
 
   socket.on('edit_message', (data) => {

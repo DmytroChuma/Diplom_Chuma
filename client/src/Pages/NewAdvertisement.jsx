@@ -108,6 +108,27 @@ export default function NewAdvertisement ({dialog}) {
 
     document.title = 'Додати оголошення';
 
+    useEffect(()=>{ 
+        const unloadCallback = () => {
+            for (let file of files) {
+                fetch('/delete_file', {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                      Accept: 'application/json',
+                      'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({file: file})
+                  })
+            }
+          };
+  
+          window.addEventListener("beforeunload", unloadCallback);
+            return () => {
+              window.removeEventListener('beforeunload', unloadCallback)
+            }
+    }, [files])
+
     useEffect(() => {
         
         if (!load) {
@@ -210,16 +231,6 @@ export default function NewAdvertisement ({dialog}) {
             })
         }
 
-        const unloadCallback = (event) => {
-          event.preventDefault();
-          event.returnValue = "";
-          return "";
-        };
-
-        window.addEventListener("beforeunload", unloadCallback);
-          return () => {
-            window.removeEventListener('beforeunload', unloadCallback)
-          }
       }, [load, realtyType]);
 
     const getData = (data) => {
@@ -665,7 +676,6 @@ export default function NewAdvertisement ({dialog}) {
             body: JSON.stringify(Object.fromEntries(formData))
           }).then(response => {
             response.json().then(data => {
-                console.log(data)
                 if (data.success === 1){
                     dialog('Успіх','Оголошення створено',1)
                     navigate(`/advertisement/${data.slug}`)

@@ -1,17 +1,21 @@
-import React, { forwardRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { useNavigate, useLocation } from 'react-router-dom';
 
- const UserChat = forwardRef((props, ref) => {
+ function UserChat ({socket, ...props}) {
     let mess = props.user.message.split(',')
-    const [message, setMessage] = useState({
-        message: mess[0],
-        date: mess[1],
-        file: mess[2] === '""' ? '' : mess[2]
-    })
+
+    const [message, setMessage] = useState(mess[0])
+    const [date, setDate] = useState(mess[1])
+    const [file, setFile] = useState(mess[2] === '""' ? '' : mess[2])
 
     useEffect(() => {
-        props.socket.on(props.user.inbox_id, (data) => setMessage({message: data.message, date: data.date === null ? message.date : data.date, file: ''}));
+ 
+        socket.on(`inbox_${props.user.inbox_id}`, (data) => {
+            setMessage(data.message)
+            setDate(data.date ? data.date : date)
+            setFile('')
+        });
     })
 
     const navigate = useNavigate();
@@ -23,8 +27,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
       }
 
     const clickHandler = (e) => {
-        if (location.hash !== '') props.socket.emit("leave_room", location.hash.replace('#', ''));
-        props.socket.emit("join_room", props.user.inbox_id);
+        if (location.hash !== '') socket.emit("leave_room", location.hash.replace('#', ''));
+        socket.emit("join_room", props.user.inbox_id);
         navigate(`/user/chat/?#${props.user.inbox_id}`);
         let elements = document.getElementsByClassName("user-chat-card");
         for (let element of elements){
@@ -34,19 +38,19 @@ import { useNavigate, useLocation } from 'react-router-dom';
     }
 
     return (
-        <div ref={ref} className={"user-chat-card " + (props.active ? 'active' : '')} onClick={clickHandler}>
+        <div className={"user-chat-card " + (props.active ? 'active' : '')} onClick={clickHandler}>
             <div className="user-chat-image">
                 <img className="user-chat-avatar" src={'http://localhost:3001/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt='' />
             </div>
             <div className="user-chat-info">
                 <span className="user-chat-name">{`${props.user.first_name} ${props.user.last_name}`}</span>
                 <div className="user-chat-message-info">
-                    <span className="user-chat-last">{message.file === '' ? message.message.length > 25 ? message.message.substring(0, 25) + '...' : message.message : 'Файлове повідомлення'}</span>
-                    <span className="user-chat-time">{message.date ? isToday(new Date(Date.parse(message.date))) ? new Date(Date.parse(message.date)).toLocaleTimeString().substring(0, 5) : new Date(Date.parse(message.date)).toLocaleDateString() : ''}</span>
+                    <span className="user-chat-last">{file === '' ? message.length > 25 ? message.substring(0, 25) + '...' : message : (message === '' && !file) ? '' : 'Файлове повідомлення'}</span>
+                    <span className="user-chat-time">{date ? isToday(new Date(Date.parse(date))) ? new Date(Date.parse(date)).toLocaleTimeString().substring(0, 5) : new Date(Date.parse(date)).toLocaleDateString() : ''}</span>
                 </div>
             </div>
         </div>
     );
-})
+}
 
 export default UserChat

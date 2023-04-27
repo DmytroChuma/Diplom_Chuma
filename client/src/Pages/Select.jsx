@@ -8,8 +8,6 @@ import TableCard from "../Components/Cards/TableCard";
 import NoResult from "../Components/NoResult";
 import Pages from "../Components/Pages";
 
-import store from "../Store/Store";
-import userSelect from "../Store/ActionsCreators/UserSelect";
 import handleSelect from "../Utils/HandleSelect";
 
 export default function Select () {

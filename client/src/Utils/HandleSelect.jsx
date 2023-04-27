@@ -3,9 +3,6 @@ import userSelect from "../Store/ActionsCreators/UserSelect";
 
 const handleSelect = (id) => {
     if (store.getState().select) {
-        // if localStorage != empty
-        // and DB != empty
-        // concat arrays
        
         let items = store.getState().select;
        

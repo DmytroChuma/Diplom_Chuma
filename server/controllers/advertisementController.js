@@ -657,9 +657,10 @@ if (params.top) {
   SELECT COUNT(*) as count,
   ${realty} as params
 FROM info, user, region
-WHERE info.region = region.id AND info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? `AND info.user = 'params.user'` : ''} ${filter} 
+WHERE info.region = region.id AND info.user = user.id AND info.archive = ${params.archive ? `'${params.archive}'` : '0'} ${params.user ? `AND info.user = '${params.user}'` : ''} ${filter} 
 HAVING params IS NOT NULL
   `);
+
 return {rows: rows, count: count};
 }
 

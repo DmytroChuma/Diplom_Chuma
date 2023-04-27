@@ -112,9 +112,8 @@ io.on('connection',(socket)=>{
 
   socket.on('send_message', async (data) => {
     let id = await Chat.createMessage(data.user_id, data.message, data.inbox, data.answear, JSON.stringify(data.file))
-  
+    io.to(`inbox_${data.inbox}`).emit(`inbox_${data.inbox}`, {message: data.file !== '' ? 'Файлове повідомлення' : data.message, date: data.date})
     io.to(data.inbox).emit('receive_message', {message: data.message, date: data.date, avatar: data.avatar, user_id: data.user_id, id: id, answear: data.answear, a_message: data.a_message, file: data.file});
-    socket.emit(data.inbox, {message: data.file !== '' ? 'Файлове повідомлення' : data.message, date: data.date})
   })
 
   socket.on('delete_message', (data) => {
@@ -130,7 +129,7 @@ io.on('connection',(socket)=>{
     Chat.updateMessage(data.message, data.id);
     io.to(data.inbox).emit('edit_message', {id: data.id, message: data.message})
     if (data.last) {
-      socket.emit(data.inbox, {message: data.message, date: null})
+      io.to(`inbox_${data.inbox}`).emit(`inbox_${data.inbox}`, {message: data.message, date: null})
     }
   })
 
