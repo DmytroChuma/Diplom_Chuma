@@ -166,3 +166,16 @@ exports.accept = async (req, res) => {
 exports.find = async (req, res) => {
   res.json(await User.find(req.body.phone))
 }
+
+exports.hasNew = async (req, res) => {
+  res.json(await User.hasNew(req.session.userId))
+}
+
+exports.hasNewMessages = async (req, res) => {
+  res.json(await User.hasNewMessages(req.session.userId))
+}
+
+exports.setReadMessages = (req, res) => {
+  User.setRead(req.session.userId)
+  res.json(1)
+}

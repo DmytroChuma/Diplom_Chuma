@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import store from "../../Store/Store";
@@ -7,9 +7,11 @@ import userSelect from "../../Store/ActionsCreators/UserSelect";
 
 import logo from './logo.png'
 
-export default function Header() {
+export default function Header (props) {
 
     const [user, setUser] = useState(typeof store.getState() !== 'undefined' ? store.getState().user : {});
+    const [newChat, setNewChat] = useState(false)
+    const [newMessage, setNewMessages] = useState(false)
 
     const navigate = useNavigate();
 
@@ -24,6 +26,24 @@ export default function Header() {
         store.dispatch(userSelect([]));
         navigate('/')
       }
+
+      useEffect(()=>{
+        if (store.getState())
+            fetch('/new_chat').then((res)=>res.json()).then((data)=>{
+                if (data.length > 0) {
+                    setNewChat(true)
+                    if (props.newChatHandler)
+                        props.newChatHandler(true)
+                }
+            })
+            fetch('/new_messages').then((res)=>res.json()).then((data)=>{
+                if (data.length > 0) {
+                    setNewMessages(true)
+                    if (props.newMessageHandler)
+                        props.newMessageHandler(true)
+                }
+            })
+      }, [user])
 
     return (
         <div className="navArea">
@@ -49,8 +69,8 @@ export default function Header() {
                         }
                         <Link className="drop-down-item my-advertisements" to='/user/cabinet/advertisements'>Мої оголошення</Link>
                         <Link className="drop-down-item archive" to='/user/cabinet/archive'>Архів</Link>
-                        <Link className="drop-down-item messages" to='/user/cabinet/messages'>Повідомлення</Link>
-                        <Link className="drop-down-item chat" to='/user/chat'>Спілкування</Link>
+                        <Link className="drop-down-item messages" to='/user/cabinet/messages'>Повідомлення{newMessage ? <div className="newMessage">!</div> : ''}</Link>
+                        <Link className="drop-down-item chat" to='/user/chat'>Спілкування{newChat ? <div className="newMessage">!</div> : ''}</Link>
                         <Link className="drop-down-item settings" to='/user/cabinet/settings'>Налаштування</Link>
                         <div className="drop-down-item exit" onClick={logoutHandler} >Вихід</div>
                     </div>

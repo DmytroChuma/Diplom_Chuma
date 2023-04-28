@@ -235,7 +235,7 @@ class User{
     }
 
     static async getMessage (id) {
-        let sql = `SELECT id, text, agency, accepted, user FROM user_message WHERE user = '${id}' ORDER BY id DESC`
+        let sql = `SELECT id, text, agency, accepted, user, date FROM user_message WHERE user = '${id}' ORDER BY id DESC`
         return await con.execute(sql)
     }
 
@@ -249,6 +249,27 @@ class User{
             SELECT id FROM user WHERE phone = '${phone}'
         `
         return await con.execute(sql)
+    }
+
+    static async hasNew (id) {
+        let sql = `
+        SELECT DISTINCT (SELECT inbox.inbox_id FROM inbox WHERE inbox.id = messages.inbox_id) as inbox FROM messages WHERE readed = 0 AND user_id != '${id}' AND inbox_id IN (SELECT inbox_participants.inbox_id FROM inbox_participants WHERE inbox_participants.user_id = '${id}');
+        `
+        return await con.execute(sql)
+    }
+
+    static async hasNewMessages (id) {
+        let sql = `
+        SELECT readed FROM user_message WHERE user = '${id}' AND readed = '0'
+        `
+        return await con.execute(sql)
+    }
+    
+    static setRead (id) {
+        let sql = `
+            UPDATE user_message SET readed = '1' WHERE user = '${id}'
+        `
+        con.execute(sql)
     }
 }
 

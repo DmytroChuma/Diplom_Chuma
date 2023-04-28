@@ -23,3 +23,8 @@ exports.files = (req, res) => {
     });
     res.json(1)
 }
+
+exports.setRead = (req, res) => {
+    Chat.setRead(req.session.userId, req.body.inbox)
+    res.json(1)
+}

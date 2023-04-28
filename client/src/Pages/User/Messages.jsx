@@ -4,7 +4,7 @@ import store from '../../Store/Store';
 import MessageCard from "../../Components/Cards/MessageCard";
 import NoResult from "../../Components/NoResult";
 
-export default function Messages({dialog, socket}) {
+export default function Messages({dialog, socket, ...props}) {
 
     const [load, setLoad] = useState(true)
     const [messages, setMessages] = useState([])
@@ -20,11 +20,17 @@ export default function Messages({dialog, socket}) {
     }, [])
 
     useEffect(()=>{
+        props.newMessageHandler(false)
+        fetch('/set_messages_read')
+    }, [props])
+
+    useEffect(()=>{
         if (store.getState())
             setUser(store.getState().user)
             setLoad(true)
             setMessages([])
             loadMessages()
+
     }, [user, loadMessages])
 
     document.title = 'Повідомлення';
@@ -41,7 +47,7 @@ export default function Messages({dialog, socket}) {
             }
             {messages.map((element, index) => {
                 return(
-                    <MessageCard key={index} dialog={dialog} user={user.name} socket={socket} load={loadMessages} text={element.text} accepted={element.accepted} agency={element.agency} id={element.id}/>
+                    <MessageCard key={index} dialog={dialog} user={user.name} socket={socket} load={loadMessages} text={element.text} accepted={element.accepted} date={element.date} agency={element.agency} id={element.id}/>
                 )
             })}
         </div>

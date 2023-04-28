@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import Header from '../../Components/Header/Header';
@@ -16,6 +16,8 @@ export default function Cabinet ({dialog, socket}) {
     let slug = location.pathname.split('/');
     slug = slug[slug.length - 1];
     const [user, setUser] = useState({});
+    const [newChat, setNewChat] = useState(false)
+    const [newMessage, setNewMessage] = useState(false)
     store.subscribe(() => setUser(store.getState().user))
     useEffect(()=>{
         if (store.getState()) {
@@ -36,7 +38,7 @@ export default function Cabinet ({dialog, socket}) {
             page = <Archive dialog={dialog}/>
             break;
         case 'messages':
-            page = <Messages dialog={dialog} socket={socket}/>
+            page = <Messages newMessageHandler={setNewMessage} dialog={dialog} socket={socket}/>
             break;
         case 'settings':
             page = <Settings dialog={dialog}/>
@@ -53,7 +55,7 @@ export default function Cabinet ({dialog, socket}) {
 
     return (
         <div className="app-screen">
-            <Header />
+            <Header newChatHandler={setNewChat} newMessageHandler={setNewMessage}/>
             <div className='container cabinet'>
                 <div className='cabinet-menu'>
                     <Link className={'cabinet-item personally ' + (slug === 'cabinet' ? 'active-i-c' : '')}  to='/user/cabinet'>
@@ -69,10 +71,10 @@ export default function Cabinet ({dialog, socket}) {
                         Архів
                     </Link>
                     <Link className={'cabinet-item messages ' + (slug === 'messages' ? 'active-i-c' : '')} to='/user/cabinet/messages'>
-                        Повідомлення
+                        Повідомлення{newMessage && <div className='newMessageCabinet'>!</div>}
                     </Link>
                     <Link className='cabinet-item chat' to='/user/chat'>
-                        Спілкування
+                        Спілкування{newChat && <div className='newMessageCabinet'>!</div>}
                     </Link>
                     <Link className={'cabinet-item settings ' + (slug === 'settings' ? 'active-i-c' : '')} to='/user/cabinet/settings'>
                         Налаштування

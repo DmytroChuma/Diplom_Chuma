@@ -19,6 +19,7 @@ export default function Chat({socket}) {
   const [modal, setModal] = useState('')
   const [scroll, setScroll] = useState(false)
   const [menu, setMenu] = useState('');
+  const [newChat, setNewChat] = useState([])
   const messagesEnd = useRef(null);
 
   document.title = 'Спілкування';
@@ -65,16 +66,22 @@ export default function Chat({socket}) {
   }, [socket, deleteHandler])
 
   
-  const createUserCards = (data) => {
+  const createUserCards = (data, inbox) => {
     if (location.hash === '') {
       setMessages('')
     }
     let cards = [];
     for (let card of data) {
       socket.emit("join_room", `inbox_${card.inbox_id}`)
+      let newC = false;
+      for (let i of inbox) {
+        if (i.inbox === card.inbox_id){
+          newC = true;
+        }
+      }
       if (!card.message) 
         card.message='' 
-      cards.push(<UserChat active={location.hash.replace('#', '') === card.inbox_id ? true : false} socket={socket} key={card.inbox_id} user={card}/>);
+      cards.push(<UserChat active={location.hash.replace('#', '') === card.inbox_id ? true : false} newMessages={newC} socket={socket} key={card.inbox_id} user={card}/>);
 
     }
     return cards;
@@ -104,9 +111,17 @@ export default function Chat({socket}) {
       navigate('/')
       return
     }
-    fetch('/chat').then((res) => res.json()).then((data) => {
-      setUsers(createUserCards(data));
-    })
+    const load = async() => {
+      await fetch('/new_chat').then((res)=>res.json()).then((inbox)=>{
+        if (inbox.length > 0) {
+          setNewChat(inbox)
+        }
+        fetch('/chat').then((res) => res.json()).then((data) => {
+          setUsers(createUserCards(data, inbox.length > 0 ? inbox : []));
+        })
+      })
+    }
+    load();
     const closeHandler = (e) => {
       if(!e.target.classList.contains('contex-menu') && !e.target.classList.contains('context-menu-item')){
         setMenu('');
@@ -119,6 +134,11 @@ export default function Chat({socket}) {
 
   useEffect(()=>{
     if (location.hash === '') {
+      setMessages('')
+      let elements = document.getElementsByClassName("user-chat-card");
+        for (let element of elements){
+           element.classList.remove("active");
+        }
       for(let user of users) {
         socket.emit('leave_room', user.key)
       }

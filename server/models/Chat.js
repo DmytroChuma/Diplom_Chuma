@@ -95,6 +95,13 @@ class Chat{
         `;
         con.execute(sql);
     }
+
+    static setRead(user, inbox) {
+        let sql = `
+        UPDATE messages SET readed ='1' WHERE messages.user_id != '${user}' AND messages.inbox_id = (SELECT id FROM inbox WHERE inbox_id = '${inbox}')
+        `
+        con.execute(sql)
+    }
 }
 
 module.exports = Chat;

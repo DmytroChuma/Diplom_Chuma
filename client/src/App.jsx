@@ -74,7 +74,6 @@ function App() {
           if (data.agency !== 0)
             socket.emit("join_room", data.agency);
         });
-
       }
       authUser();
     }, [])

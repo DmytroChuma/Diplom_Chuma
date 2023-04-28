@@ -76,7 +76,11 @@ export default function MessageCard (props) {
         <div className="message-card">
             <div className="message-span-cont">
                 <span className="message-span-card-p">{props.text}</span>
-                <button className="delete-btn" onClick={deleteHandler}></button>
+                <div className="me-c">
+                    <span className="me-d">{`${new Date(Date.parse(props.date)).toLocaleDateString()} ${new Date(Date.parse(props.date)).toLocaleTimeString()}`}</span>
+                    <button className="delete-btn" onClick={deleteHandler}></button>
+                </div>
+
             </div>
             
             {props.agency > 0 &&

@@ -122,7 +122,7 @@ io.on('connection',(socket)=>{
   })
 
  socket.on('last_mess', (data) => {
-  socket.emit(data.inbox, {message: data.message, date: data.date});
+  io.to(`inbox_${data.inbox}`).emit(`inbox_${data.inbox}`, {message: data.message, date: data.date});
  })
 
   socket.on('edit_message', (data) => {
@@ -185,6 +185,12 @@ app.post('/add_select', advertisementController.addSelect)
 
 app.get('/auth', userController.auth)
 
+app.get('/new_chat', userController.hasNew)
+
+app.get('/new_messages', userController.hasNewMessages)
+
+app.get('/set_messages_read', userController.setReadMessages)
+
 app.get('/logout', userController.logout)
 
 app.get('/user_info', userController.getInfo)
@@ -244,6 +250,8 @@ app.get('/messages', chatController.getMessages)
 app.post('/create_inbox', chatController.createInbox)
 
 app.post('/save_files', chatController.files)
+
+app.post('/set_read', chatController.setRead)
 
 //EMAIL
 

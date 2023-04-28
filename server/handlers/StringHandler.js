@@ -3,8 +3,15 @@ function capitalize(string) {
 }
 
 function morph(count, array) {
-    var cases = [2, 0, 1, 1, 1, 2];
-    return array[(count % 100 > 4 && count % 100 < 20) ? 2 : cases[(count % 10 < 5) ? count % 10 : 5]];
+    if (count % 100 >= 5 && count %100 <= 20) {
+        return array[2]
+    }
+    else if (count % 10 === 1){
+        return array[0]
+    }
+    else {
+        return array[1]
+    }
 }
 
 function formatDate (date) {
