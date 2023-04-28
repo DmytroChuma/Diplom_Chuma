@@ -57,8 +57,8 @@ export default function Pages(props) {
 
     useEffect( () => {
         let buttons = [];
-         
-        buttons.push(<PageButton handler={backHandler} key='back' text='&#60;'/>);
+        if (parseInt(active) !== 1) 
+            buttons.push(<PageButton handler={backHandler} key='back' text='&#60;'/>);
         if (props.pages <= 10) {
             buttons.push(createButton(1,props.pages));
         }
@@ -80,7 +80,8 @@ export default function Pages(props) {
             buttons.push(<PageButton class='other' key='other' text='...'/>);
             buttons.push(createButton(active === parseInt(props.pages) ? active - 3 : active - 2,props.pages));
         }
-        buttons.push(<PageButton handler={nextHandler} key='next' text='&#62;'/>);
+        if (parseInt(active) !== props.pages)
+            buttons.push(<PageButton handler={nextHandler} key='next' text='&#62;'/>);
         setButtons(buttons);
     }, [props, active])  
 
