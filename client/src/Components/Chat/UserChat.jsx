@@ -49,7 +49,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
           })
           setNewMessages(false)
     }
-    console.log(props.newMessages)
     return (
         <div className={"user-chat-card " + (props.active ? 'active' : '')} onClick={clickHandler}>
             <div className="user-chat-image">

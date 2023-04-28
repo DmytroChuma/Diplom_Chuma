@@ -9,9 +9,10 @@ import DateMessage from '../../Components/Chat/DateMessage';
 import MessageMenu from '../../Components/Chat/MessageMenu';
 import Files from '../../Components/Dialogs/Files';
 
+
 export default function Chat({socket}) {
 
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>);
   const [message, setMessages] = useState([]);
   const [lastUser, setLastUser] = useState(0);
   const [lastDate, setLastDate] = useState('');
@@ -19,7 +20,7 @@ export default function Chat({socket}) {
   const [modal, setModal] = useState('')
   const [scroll, setScroll] = useState(false)
   const [menu, setMenu] = useState('');
-  const [newChat, setNewChat] = useState([])
+ 
   const messagesEnd = useRef(null);
 
   document.title = 'Спілкування';
@@ -113,11 +114,9 @@ export default function Chat({socket}) {
     }
     const load = async() => {
       await fetch('/new_chat').then((res)=>res.json()).then((inbox)=>{
-        if (inbox.length > 0) {
-          setNewChat(inbox)
-        }
         fetch('/chat').then((res) => res.json()).then((data) => {
-          setUsers(createUserCards(data, inbox.length > 0 ? inbox : []));
+         let users = createUserCards(data, inbox.length > 0 ? inbox : [])
+          setUsers(users.length === 0 ? <div className='user-c-m'>У вас немає повідомлень</div> : users);
         })
       })
     }
@@ -139,9 +138,10 @@ export default function Chat({socket}) {
         for (let element of elements){
            element.classList.remove("active");
         }
-      for(let user of users) {
-        socket.emit('leave_room', user.key)
-      }
+        if (Array.isArray(users))
+          for(let user of users) {
+            socket.emit('leave_room', user.key)
+          }
       return
     }
     if (location.hash !== '') {

@@ -2082,6 +2082,11 @@ a.logo {
   cursor: default;
 }
 
+.user-c-m {
+  text-align: center;
+  font-size: 20px;
+}
+
 span.me-d {
   display: flex;
   align-items: center;
