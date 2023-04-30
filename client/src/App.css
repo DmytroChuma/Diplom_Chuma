@@ -3506,7 +3506,7 @@ span.filt-text {
 }
 
 a.file-dummy-span {
-  color: white;
+  color: black;
   display: flex;
   gap: 10px;
   align-items: center;
@@ -3514,7 +3514,7 @@ a.file-dummy-span {
 }
 
 a.file-dummy-span:before{
-  color: white;
+  color: black;
   font-size: 26px;
 }
 
@@ -3604,3 +3604,7 @@ span.home-text {
   margin-left: auto;
   transition: 0.5s;
 }
+
+.message.my.margin a.file-dummy-span, .message.my.margin a.file-dummy-span:before{
+  color: white;
+} 

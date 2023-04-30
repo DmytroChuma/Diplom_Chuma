@@ -95,7 +95,8 @@ const server = app.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);
 });
 
-const socketIo = require('socket.io')
+const socketIo = require('socket.io');
+const { createGunzip } = require("zlib");
 const io = socketIo(server,{ 
   cors: {
     origin: 'http://localhost:3000'
@@ -252,6 +253,8 @@ app.post('/create_inbox', chatController.createInbox)
 app.post('/save_files', chatController.files)
 
 app.post('/set_read', chatController.setRead)
+
+app.post('/set_read_message', chatController.setReadMessage)
 
 //EMAIL
 

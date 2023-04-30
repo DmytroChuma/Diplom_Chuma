@@ -166,6 +166,16 @@ export default function Chat({socket}) {
       let messageDate = new Date(Date.parse(data.date)).toLocaleDateString()
 
       let mess = <Message key={data.id} id={data.id} socket={socket} handleClick={messageClick} text={data.message} file={data.file !== '' ? data.file : ''} date={data.date} avatar={avatar} class={(data.user_id === store.getState().user.id ? 'my' : '') + margin} answear={data.answear} amessage={data.a_message} />
+      fetch('/set_read_message', {
+        method: 'POST',
+        headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+        },
+        credentials : "include",
+        mode: 'cors',
+        body: JSON.stringify({id: data.id})
+      })
       if (messageDate !== lastDate) 
         setMessages([...message, <DateMessage key={messageDate} date={messageDate}/>, mess]);
       else

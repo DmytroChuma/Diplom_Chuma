@@ -102,6 +102,13 @@ class Chat{
         `
         con.execute(sql)
     }
+
+    static setReadMessage(id) {
+        let sql = `
+        UPDATE messages SET readed ='1' WHERE id = '${id}'
+        `
+        con.execute(sql)
+    }
 }
 
 module.exports = Chat;

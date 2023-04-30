@@ -28,3 +28,8 @@ exports.setRead = (req, res) => {
     Chat.setRead(req.session.userId, req.body.inbox)
     res.json(1)
 }
+
+exports.setReadMessage = (req, res) => {
+    Chat.setReadMessage(req.body.id)
+    res.json(1)
+}
