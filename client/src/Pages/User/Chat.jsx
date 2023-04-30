@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom';
+import parse from 'html-react-parser'
 
 import Header from '../../Components/Header/Header';
 import UserChat from '../../Components/Chat/UserChat';
@@ -273,13 +274,13 @@ const attachHandler = (e) => {
                 <div className={'edit-chat-mess ' + editText.type}>
                     <span className='chat-span'>
                       <span>{editText.type === 'edit' ? 'Редагування' : 'Відповісти' }</span>
-                      <span>{editText.text}</span>
+                      <span>{parse(editText.text)}</span>
                     </span>
                 </div>
                 <button className='edit-chat-mess-btn' onClick={() => setEditText({})}></button>
               </div>}
               <div className='input-div-message'>
-                <div className='input-div' id='input-div' contentEditable suppressContentEditableWarning={true}>{editText.type === 'edit' ? editText.text : ''}</div>
+                <div className='input-div' id='input-div' contentEditable suppressContentEditableWarning={true}>{editText.type === 'edit' ? parse(editText.text) : ''}</div>
                 <input type='file' id='file-attach' style={{display: 'none'}} onChange={attachHandler} onClick={(e) => e.target.value = null} multiple/>
                 <label htmlFor='file-attach' className="btn btn-chat-attach fa fa-paperclip"></label>
               </div>

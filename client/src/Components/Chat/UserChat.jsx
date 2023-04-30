@@ -60,7 +60,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
                     {(newMessages) && <div className="newMessage">!</div>}
                 </div>
                 <div className="user-chat-message-info">
-                    <span className="user-chat-last">{file === '' ? message.length > 25 ? message.substring(0, 25) + '...' : message : (message === '' && !file) ? '' : 'Файлове повідомлення'}</span>
+                    <span className="user-chat-last">{file === '' ? message.length > 25 ? message.replace(/(<([^>]+)>)/gi, "").substring(0, 25) + '...' : message : (message === '' && !file) ? '' : 'Файлове повідомлення'}</span>
                     <span className="user-chat-time">{date ? isToday(new Date(Date.parse(date))) ? new Date(Date.parse(date)).toLocaleTimeString().substring(0, 5) : new Date(Date.parse(date)).toLocaleDateString() : ''}</span>
                 </div>
             </div>
