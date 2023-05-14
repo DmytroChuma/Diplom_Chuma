@@ -68,10 +68,16 @@ app.use(cookieParser());
 async function authentiphicateToken(req, res, next) {
   if (req.originalUrl.split('/')[1] === 'editor') {
     let result = await con.execute(`SELECT user FROM info WHERE slug = '${req.params.slug}'`)
+    if (result.length === 0) {
+      res.sendStatus(404)
+      return
+    }
+
     if (req.session.userId !== result[0].user){
       res.sendStatus(403)
       return;
     }
+   
   }
   const token = req.cookies['access']
   token === null? res.sendStatus(401) :
@@ -233,6 +239,10 @@ app.post('/accept', authentiphicateToken, userController.accept)
 app.get('/get_agency_info', agencyController.getInfo)
 
 app.get('/get_realtors', agencyController.realtors)
+
+app.get('/getAgencies', agencyController.getAgencies)
+
+app.get('/getAgenciesInfo', agencyController.getAgenciesInfo)
 
 app.post('/create_agency', upload.single("file"), agencyController.create)
 

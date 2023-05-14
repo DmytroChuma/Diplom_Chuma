@@ -14,6 +14,7 @@ exports.createUser = async (req, res) => {
 }
 
 exports.login = async (req, res) => {
+  try{
     let access = jwt.sign(req.body.login, token.tokens.main)
     let refresh = jwt.sign(req.body.login, token.tokens.refresh)
     let user = await User.login(req.body.login, req.body.password);
@@ -39,9 +40,11 @@ exports.login = async (req, res) => {
       }
     } 
     res.json({status: user.status, user: user});
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.auth = async (req, res) => {
+  try{
     if (req.cookies['remember']) {
       let user = await User.loginAuth(req.cookies['remember']);
       req.session.userId = user.id;
@@ -65,117 +68,169 @@ exports.auth = async (req, res) => {
         });
         return;
     }
-    res.json('');
+  }catch(e){res.sendStatus(400)}
+    res.sendStatus(400);
 }
 
 exports.addSelect = async (req, res) => {
-  User.setSelect(req.body.user, req.body.select);
-  res.json({success: 1});
+  try{
+    User.setSelect(req.body.user, req.body.select);
+    res.json({success: 1});
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.permission = (req, res) => {
-  User.setPermission(req.session.userId, req.body.permission);
-  res.json({success: 1})
+  try{
+    User.setPermission(req.session.userId, req.body.permission);
+    res.json({success: 1})
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.getInfo = async (req, res) => {
-  let user = await User.getInfo(req.session.userId);
-  res.json(user);
+  try{
+    let user = await User.getInfo(req.session.userId);
+    res.json(user);
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.logout = async (req, res) => {
+  if (!req.session.userId) {
+    res.sendStatus(400)
+    return
+  }
+  try{
   User.setToken(req.session.userId, '');
   req.session.destroy();
   res.cookie('access', '')
   res.cookie('refresh', '')
   res.json({success: 1})
+  }catch(e) {res.sendStatus(400)}
 }
 
 exports.getRealtorInfo = async (req, res) => {
-  res.json(await User.getRealtor(req.query.id));
+  try{
+    res.json(await User.getRealtor(req.query.id));
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.updateUser = async (req, res) => {
   const {
     body: {id, avatar, name, region, city, description, phone, email, surname, oldAvatar, defaultAvatar}
   } = req;
-
-  User.updateUser(id, name, surname, phone, email, avatar, region, city, description, oldAvatar, defaultAvatar);
-  req.session.name = `${name} ${surname}`
-  req.session.avatar = avatar
-  res.json({success: 1})
+  try{
+    if (!id || !name || !region || !city || !phone || !email || !surname || phone.length < 10 || !/^\S+@\S+\.\S+$/.test(email)) {res.sendStatus(400); return}
+    User.updateUser(id, name, surname, phone, email, avatar, region, city, description, oldAvatar, defaultAvatar);
+    req.session.name = `${name} ${surname}`
+    req.session.avatar = avatar
+    res.json({success: 1})
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.getCards = async (req, res) => {
-  res.json(await User.getCards(req.session.userId));
+  if (!req.session.userId) {res.sendStatus(400); return}
+  try{
+    res.json(await User.getCards(req.session.userId));
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.checkCode = async (req, res) => {
-  res.json({success: req.body.code === req.session.code})
+  try{
+    res.json({success: req.body.code === req.session.code})
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.cancel = async (req, res) => {
-  req.session.code = '';
-  res.json({success: 1})
+  try{
+    req.session.code = '';
+    res.json({success: 1})
+  }catch(e) {res.sendStatus(500)}
 }
 
 exports.change = async (req, res) => {
-  req.session.code = '';
-  if (req.body.email) {
-    User.changePass(req.body.email, req.body.password);
-  }
-  else {
-    User.change(req.session.userId, req.body.password);
-  }
-  res.json({success: 1})
+  if (!req.body.email || !req.body.password || !req.session.userId) {res.sendStatus(400); return}
+  try{
+    req.session.code = '';
+    if (req.body.email) {
+      User.changePass(req.body.email, req.body.password);
+    }
+    else {
+      User.change(req.session.userId, req.body.password);
+    }
+    res.json({success: 1})
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.leave = async (req, res) => {
-  User.leave(req.session.userId);
-  let users = await User.getRealtors(req.body.agency)
-  message.createMulti(users, `Рієлтор ${req.body.name}, вийшов з агентства`, req.session.userId)
-  req.session.agency = 0
-  req.session.permission = 0
-  res.json({success: 1})
+  if (!req.session.userId || !req.body.agency) {res.sendStatus(400); return}
+  try{
+    User.leave(req.session.userId);
+    let users = await User.getRealtors(req.body.agency)
+    message.createMulti(users, `Рієлтор ${req.body.name}, вийшов з агентства`, req.session.userId)
+    req.session.agency = 0
+    req.session.permission = 0
+    res.json({success: 1})
+  }catch(e){res.sendStatus(400)}
 } 
 
 exports.getMessages = async (req, res) => {
-    res.json(await User.getMessage(req.session.userId))
+    if (!req.session.userId) {res.sendStatus(400); return}
+    try{
+      res.json(await User.getMessage(req.session.userId))
+    }catch(e){res.sendStatus(400)}
 }
 
 exports.deleteMessage = async (req, res) => {
-  message.delete(req.body.message)
-  res.json({success: 1})
+  try{
+    message.delete(req.body.message)
+    res.json({success: 1})
+  }catch(e){res.sendStatus(500)}
 }
 
 exports.reject = (req, res) => {
-  message.reject(req.body.message)
-  res.json({success: 1})
+  try{
+    message.reject(req.body.message)
+    res.json({success: 1})
+  }catch(e){res.sendStatus(500)}
 }
 
 exports.accept = async (req, res) => {
-  let users = await User.getRealtors(req.body.agency)
-  message.createMulti(users, `Користувач ${req.body.name}, приєднався до агентства`, req.session.userId)
-  User.accept(req.session.userId, req.body.agency)
-  message.accept(req.body.message)
-  req.session.permission = 1
-  req.session.agency = req.body.agency
-  res.json({success: 1})
+  if (!req.body.agency || req.session.userId) {res.sendStatus(400); return}
+  try {
+    let users = await User.getRealtors(req.body.agency)
+    message.createMulti(users, `Користувач ${req.body.name}, приєднався до агентства`, req.session.userId)
+    User.accept(req.session.userId, req.body.agency)
+    message.accept(req.body.message)
+    req.session.permission = 1
+    req.session.agency = req.body.agency
+    res.json({success: 1})
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.find = async (req, res) => {
-  res.json(await User.find(req.body.phone))
+  if (!req.body.phone) {res.sendStatus(400); return}
+  try{
+    res.json(await User.find(req.body.phone))
+  }catch(e){res.sendStatus(400); return}
 }
 
 exports.hasNew = async (req, res) => {
-  res.json(await User.hasNew(req.session.userId))
+  if (!req.session.userId) {res.sendStatus(400); return}
+  try{
+    res.json(await User.hasNew(req.session.userId))
+  }catch(e){res.sendStatus(400); return}
 }
 
 exports.hasNewMessages = async (req, res) => {
-  res.json(await User.hasNewMessages(req.session.userId))
+  if (!req.session.userId) {res.sendStatus(400); return}
+  try{
+    res.json(await User.hasNewMessages(req.session.userId))
+  }catch(e){res.sendStatus(400); return}
 }
 
 exports.setReadMessages = (req, res) => {
-  User.setRead(req.session.userId)
-  res.json(1)
+  if (!req.session.userId) {res.sendStatus(400); return}
+  try{
+    User.setRead(req.session.userId)
+    res.sendStatus(200)
+  }catch(e){res.sendStatus(400); return}
 }

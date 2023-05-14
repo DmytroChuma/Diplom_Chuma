@@ -15,26 +15,35 @@ request(
 )
 
 exports.publicate = (req, res) => {
-  Advertisement.publicate(req.body.slug);
-  res.json({success: 1});
+  try{
+    Advertisement.publicate(req.body.slug);
+    res.json({success: 1});
+  }catch(e){res.sendStatus(500)}
 }
 
 exports.addView = (req, res) => {
-  Advertisement.addView(req.body.id)
-  res.json({success: 1})
+  try{
+    Advertisement.addView(req.body.id)
+    res.json({success: 1})
+  }catch(e){res.sendStatus(500)}
 }
 
 exports.addPhone = (req, res) => {
-  Advertisement.addPhone(req.body.id)
-  res.json({success: 1})
+  try{
+    Advertisement.addPhone(req.body.id)
+    res.json({success: 1})
+  }catch(e){res.sendStatus(500)}
 }
 
 exports.addSelect = (req, res) => {
-  Advertisement.addSelect(req.body.id, req.body.type)
-  res.json({success: 1});
+  try{
+    Advertisement.addSelect(req.body.id, req.body.type)
+    res.json({success: 1});
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.option = (req, res) => {
+  try{
   let text = '';
   for (let value of req.body.data) {
     if (req.body.option === 'Додати в архів') {
@@ -52,12 +61,15 @@ exports.option = (req, res) => {
     }
   }
   res.json({success: 1, text: text});
+}catch(e){res.sendStatus(400)}
 }
 
 exports.deletePost = (req, res) => {
-  fs.rmSync("./public/" + req.body.slug, { recursive: true, force: true });
-  Advertisement.delete(req.body.slug);
-  res.json({success: 1});
+  try{
+    fs.rmSync("./public/" + req.body.slug, { recursive: true, force: true });
+    Advertisement.delete(req.body.slug);
+    res.json({success: 1});
+  }catch(e){res.sendStatus(500)}
 }
 
 function getFiles (folderPath) {
@@ -204,41 +216,43 @@ function createRealtyArray(rows){
 
 
 exports.getAllAdvertisements = async (req, res) => {
-  let rows;
-  let data;
-  let count;
-  if(!isEmpty(req.query)){
-    data = await filter(req.query);
-    rows = data.rows;
-    count = data.count;
-  }
-  else {
-    let sql = `
-    SELECT info.id, info.realtyType, info.city, info.street, info.description, info.price, info.currency, info.auction, info.date, info.slug, info.views, info.phones, info.select,
-    CASE 
-      WHEN info.realtyType = 'Будинок' OR info.realtyType = 'Дача' OR info.realtyType = 'Частина будинку' THEN (SELECT CONCAT_WS(',', house.general_square, house.house_type, house.dwelling_type) FROM house WHERE house.info = info.id)
-      WHEN info.realtyType = 'Квартира' THEN (SELECT CONCAT_WS(',', flat.general_square, flat.type, flat.rooms_count, flat.floor_count) FROM flat WHERE flat.info = info.id)
-      WHEN info.realtyType = 'Гараж' THEN (SELECT CONCAT_WS(',', garage.square, garage.type, garage.car) FROM garage WHERE garage.info = info.id)
-      WHEN info.realtyType = 'Ділянка' THEN (SELECT CONCAT_WS(',', area.square, area.unit) FROM area WHERE area.info = info.id)
-    END as params
-    FROM info 
-    WHERE info.archive = '0'
-    ORDER BY date DESC
-    LIMIT 0, 5`;
-    rows = await con.execute(sql);
-    count = await con.execute(`SELECT count(*) as count FROM info WHERE info.archive = '0'`);
- 
-  }
+  try{
+    let rows;
+    let data;
+    let count;
+    if(!isEmpty(req.query)){
+      data = await filter(req.query);
+      rows = data.rows;
+      count = data.count;
+    }
+    else {
+      let sql = `
+      SELECT info.id, info.realtyType, info.city, info.street, info.description, info.price, info.currency, info.auction, info.date, info.slug, info.views, info.phones, info.select,
+      CASE 
+        WHEN info.realtyType = 'Будинок' OR info.realtyType = 'Дача' OR info.realtyType = 'Частина будинку' THEN (SELECT CONCAT_WS(',', house.general_square, house.house_type, house.dwelling_type) FROM house WHERE house.info = info.id)
+        WHEN info.realtyType = 'Квартира' THEN (SELECT CONCAT_WS(',', flat.general_square, flat.type, flat.rooms_count, flat.floor_count) FROM flat WHERE flat.info = info.id)
+        WHEN info.realtyType = 'Гараж' THEN (SELECT CONCAT_WS(',', garage.square, garage.type, garage.car) FROM garage WHERE garage.info = info.id)
+        WHEN info.realtyType = 'Ділянка' THEN (SELECT CONCAT_WS(',', area.square, area.unit) FROM area WHERE area.info = info.id)
+      END as params
+      FROM info 
+      WHERE info.archive = '0'
+      ORDER BY date DESC
+      LIMIT 0, 5`;
+      rows = await con.execute(sql);
+      count = await con.execute(`SELECT count(*) as count FROM info WHERE info.archive = '0'`);
+  
+    }
 
-  if (count.length === 0) {
-    count = 0;
-  }
-  else {
-    count = count[0].count
-  }
+    if (count.length === 0) {
+      count = 0;
+    }
+    else {
+      count = count[0].count
+    }
 
-  let realty = createRealtyArray(rows); 
-  res.json({realty: realty, count: count});
+    let realty = createRealtyArray(rows); 
+    res.json({realty: realty, count: count});
+  }catch(e){res.sendStatus(400)}
 }
 
 function createFilterString (values, table) {
@@ -671,6 +685,9 @@ const loadInfoAboutRealty = async (slug) => {
         INNER JOIN user
         WHERE info.slug = '${slug}' AND region.id = info.region AND region.id = info.region AND user.id = info.user;
     `);
+    if (advertisement.length === 0) {
+      return
+    }
     let sql;
     switch (advertisement[0].realtyType) {
         case 'Будинок':
@@ -715,14 +732,20 @@ const loadInfoAboutRealty = async (slug) => {
 }
 
 exports.loadAdvertisement = async (req, res) => {
-
+  try{
     let result = await loadInfoAboutRealty(req.params.slug)
+
+    if (!result) {
+      res.sendStatus(404)
+      return
+    }
 
     let realtyParams = await con.execute(result.sql);
 
     let realty = loadAdvertisementInfo(result.advertisement[0], realtyParams[0]);
   
     res.json(realty);
+  }catch(e){res.sendStatus(400)}
 }
 
 function loadEditor (advertisement, realtyParams) {
@@ -750,15 +773,15 @@ function loadEditor (advertisement, realtyParams) {
 }
 
 exports.loadAdvertisementForEditor = async (req, res) => {
+  try{
+    let result = await loadInfoAboutRealty(req.params.slug)
 
-  let result = await loadInfoAboutRealty(req.params.slug)
+    let realtyParams = await con.execute(result.sql);
 
-  let realtyParams = await con.execute(result.sql);
+    let realty = loadEditor(result.advertisement[0], realtyParams[0])
 
-  let realty = loadEditor(result.advertisement[0], realtyParams[0])
-
-  res.json(realty)
-
+    res.json(realty)
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.createAdvertisement = async (req, res) => {
@@ -846,6 +869,8 @@ exports.updateAdvertisement = async (req, res) => {
 }
 
 exports.addToArchive = (req, res) => {
-  Advertisement.addToArchive(req.body.slug);
-  res.json({success: 1});
+  try{
+    Advertisement.addToArchive(req.body.slug);
+    res.json({success: 1});
+  }catch(e){res.sendStatus(400)}
 }
