@@ -22,6 +22,10 @@ export default function Messages({dialog, socket, ...props}) {
     useEffect(()=>{
         props.newMessageHandler(false)
         fetch('/set_messages_read')
+        let item = document.getElementsByClassName('drop-down-item messages')
+        let newMess = item[0].getElementsByClassName('newMessage')
+        if (newMess.length !== 0) newMess[0].remove();
+        
     }, [props])
 
     useEffect(()=>{
