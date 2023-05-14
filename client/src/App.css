@@ -2525,6 +2525,7 @@ span.chat-date-span {
   min-width: 150px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 2px black;
+  z-index: 2;
 }
 
 .context-menu-item {
@@ -3393,6 +3394,7 @@ span.modal-text {
   border-radius: 10px;
   animation-name: showMess;
   animation-duration: 5s;
+  box-shadow: 0px 0px 10px 2px white;
 }
 
 @keyframes showMess {
@@ -3608,3 +3610,92 @@ span.home-text {
 .message.my.margin a.file-dummy-span, .message.my.margin a.file-dummy-span:before{
   color: white;
 } 
+
+img.agency-small-img {
+  border-radius: 10px;
+  height: 50px;
+}
+
+.agency-small {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: black;
+  text-decoration: none;
+  font-size: 24px;
+  padding: 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 10px;
+  transition: 0.5s;
+  flex: 1 1;
+  max-width: 422px;
+}
+
+.agency-small:hover{
+  box-shadow: 1px 1px 10px black;
+}
+
+.agencies {
+  color: black;
+  font-size: 20px;
+  text-decoration: none;
+  padding: 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 10px;
+  width: 300px;
+  transition: 0.5s;
+}
+
+.agencies:hover{
+  box-shadow: 1px 1px 10px black;
+}
+
+.agencies::after{
+  margin-left: 20px;
+  font-family: 'FontAwesome';
+  content: '\f061'
+}
+
+img.agency-card-img {
+  height: 100px;
+  border-radius: 10px;
+}
+
+.agency-card {
+  border-radius: 10px;
+  border: 1px solid #dbdbdb;
+  color: black;
+  text-decoration: none;
+  font-size: 20px;
+  transition: 0.5s;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.agency-card:hover{
+  box-shadow: 1px 1px 10px black;
+}
+
+.agency-card-container {
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.agency-card-text {
+  padding: 10px;
+  padding-top: 0px;
+}
+
+.agency-card-info-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.agency-card-name {
+  font-size: 24px;
+  font-weight: bold;
+}

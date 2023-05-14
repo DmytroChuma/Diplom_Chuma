@@ -69,7 +69,7 @@ exports.auth = async (req, res) => {
         return;
     }
   }catch(e){res.sendStatus(400)}
-    res.sendStatus(400);
+    res.sendStatus(204);
 }
 
 exports.addSelect = async (req, res) => {
@@ -210,21 +210,19 @@ exports.find = async (req, res) => {
   if (!req.body.phone) {res.sendStatus(400); return}
   try{
     res.json(await User.find(req.body.phone))
-  }catch(e){res.sendStatus(400); return}
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.hasNew = async (req, res) => {
-  if (!req.session.userId) {res.sendStatus(400); return}
   try{
     res.json(await User.hasNew(req.session.userId))
-  }catch(e){res.sendStatus(400); return}
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.hasNewMessages = async (req, res) => {
-  if (!req.session.userId) {res.sendStatus(400); return}
   try{
     res.json(await User.hasNewMessages(req.session.userId))
-  }catch(e){res.sendStatus(400); return}
+  }catch(e){res.sendStatus(400)}
 }
 
 exports.setReadMessages = (req, res) => {
@@ -232,5 +230,5 @@ exports.setReadMessages = (req, res) => {
   try{
     User.setRead(req.session.userId)
     res.sendStatus(200)
-  }catch(e){res.sendStatus(400); return}
+  }catch(e){res.sendStatus(400)}
 }

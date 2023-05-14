@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import Header from "../Components/Header/Header";
 import Title from "../Components/Title";
@@ -13,6 +13,8 @@ import {FacebookShareButton, FacebookIcon, TelegramIcon, TelegramShareButton, Tw
 import handleSelect from "../Utils/HandleSelect";
 
 export default function Advertisement({dialog}) {
+
+    const navigate = useNavigate()
 
     const [data, setData] = useState("");
     const [advertisementTitle, setTitle] = useState('');
@@ -33,8 +35,13 @@ export default function Advertisement({dialog}) {
     useEffect(() => {
         
         fetch(location.pathname)
-            .then((res) => res.json())
+            .then((res) => {
+                if (res.status === 404) {navigate('/404')}
+                return res.json()
+            })
+
             .then((data) => {
+
                 if (JSON.parse(localStorage.getItem('select').includes(data.id))) {
                     setSelectBtn(true)
                 }

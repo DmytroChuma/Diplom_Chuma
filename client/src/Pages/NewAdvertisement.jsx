@@ -137,7 +137,14 @@ export default function NewAdvertisement ({dialog}) {
         if (slug !== 'add-new-advertisement' && load) {
 
             fetch(`/editor/${slug}`)
-            .then((res) => {if (res.status === 403) {navigate('/403')}; return res.json()})
+            .then((res) => {
+                if (res.status === 403) 
+                    {navigate('/403')
+                } 
+                if (res.status === 404) {
+                    navigate('/404')
+                } 
+                return res.json()})
             .then((data) => {
                 setRealtyType(data.realtyType)
                 switch(data.realtyType){

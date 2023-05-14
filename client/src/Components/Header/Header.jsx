@@ -36,13 +36,14 @@ export default function Header (props) {
                         props.newChatHandler(true)
                 }
             })
-            fetch('/new_messages').then((res)=>res.json()).then((data)=>{
-                if (data.length > 0) {
-                    setNewMessages(true)
-                    if (props.newMessageHandler)
-                        props.newMessageHandler(true)
-                }
-            })
+            fetch('/new_messages').then((res)=>res.json())
+                .then((data)=>{
+                    if (data.length > 0) {
+                        setNewMessages(true)
+                        if (props.newMessageHandler)
+                            props.newMessageHandler(true)
+                    }
+                })
       }, [user])
 
     return (

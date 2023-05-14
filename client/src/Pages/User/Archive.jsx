@@ -9,9 +9,8 @@ import queryString from 'query-string'
 import NoResult from '../../Components/NoResult';
 import store from '../../Store/Store';
 import Pages from '../../Components/Pages';
-import Dialog from '../../Components/Dialogs/Dialog';
 
-export default function Archive() {
+export default function Archive(props) {
 
     const [data, setData] = useState('');
     const [user, setUser] = useState(store.getState() ? store.getState().user : '');
@@ -21,7 +20,6 @@ export default function Archive() {
     const [showPages, setShowPages] = useState(false);
     const [activePage, setActivePage] = useState(1);
     const [option, setOption] = useState('');
-    const [dialog, setDialog] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
     const check = [];
@@ -29,7 +27,7 @@ export default function Archive() {
     const [all, setAll] = useState(false);
     store.subscribe(() => setUser(store.getState().user))
     document.title = 'Архів';
-    let timeOut;
+ 
 
     const allClickHandle = () => {
         let checks = document.getElementsByName("card");
@@ -85,7 +83,7 @@ export default function Archive() {
         }
 
         if (success === 1){
-            handleDialog('Успіх', messageText, 1);
+            props.dialog('Успіх', messageText, 1);
         }
 
         setCards(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>);
@@ -127,11 +125,11 @@ export default function Archive() {
 
       const clickHandle = () => {
         if (option === '') {
-            handleDialog('Помилка', 'Оберіть операцію');
+            props.dialog('Помилка', 'Оберіть операцію');
             return;
         }
         if (checked.length === 0) {
-            handleDialog('Помилка', 'Потрібно обрати оголошення');
+            props.dialog('Помилка', 'Потрібно обрати оголошення');
             return;
         }
 
@@ -151,22 +149,9 @@ export default function Archive() {
           });
       }
 
-      function clearDialog(){
-        setDialog('');
-        clearTimeout( timeOut );
-    }
-    
-    const handleDialog = (title, text, type=0) => {
-        setDialog(<Dialog clickHandler={clearDialog} title={title} text={text} type={type} />);
-        clearTimeout( timeOut );
-        timeOut = setTimeout(() => {
-            setDialog('');
-        }, 10000);  
-      }
-
     return (
         <div className='my-advertisement'>
-        {dialog}
+ 
         {data.length > 0 && <div className='advetisements-info-operation'>
             <div className='advertisement-count'>Всього оголошень в архіві: {count}</div>
             <div className='options'>
