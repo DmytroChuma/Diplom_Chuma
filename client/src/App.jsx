@@ -25,6 +25,7 @@ import userSelect from "./Store/ActionsCreators/UserSelect";
 import Agency from "./Pages/Agency/Agency";
 import Message from "./Message";
 import Forbidden from "./Pages/Forbidden";
+import Agencies from "./Pages/Agencies";
 
 const socket = io('http://localhost:3001')
 
@@ -55,6 +56,16 @@ function App() {
           }, 5000);  
         })
 
+        socket.on('exit', () => {
+          setMessage(
+            <div className="messages-time-container" >
+                <Message text={"Вас виключили з агентства"} />
+            </div>)
+            setTimeout(() => {
+              setMessage('');
+            }, 5000);  
+        })
+
         socket.on('leave_agency', (data) => {
           socket.emit("leave_room", data);
           let user = store.getState().user
@@ -66,7 +77,8 @@ function App() {
 
     useEffect(() => {
       const authUser = async () => {
-        await fetch('/auth').then((res) => res.json()).then((data) => {
+        await fetch('/auth').then((res) => {if (res.status === 200) { return res.json()}}).then((data) => {
+          if (!data) return
           let user = {id: data.id, name: data.name, avatar: data.avatar, permission: data.permission, agency: data.agency}
           store.dispatch(UserLogin(user));
           store.dispatch(userSelect(data.select))
@@ -113,6 +125,7 @@ const handleDialog = (title, text, type=0) => {
             <Route exact path="/agency/:id/:slug" element={<Agency dialog={handleDialog} socket={socket}/>}></Route>
             <Route exact path="/realtor/:id/:slug" element={<Realtor />}></Route>
             <Route exact path="/user/chat" element={<Chat socket={socket} />}></Route>
+            <Route exact path="/agencies" element={<Agencies />}></Route>
             <Route exact path="/403" element={<Forbidden />}></Route>
             <Route exact path="*" element={<NotFoundPage />} />
         </Routes>

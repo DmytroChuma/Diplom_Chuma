@@ -140,6 +140,12 @@ io.on('connection',(socket)=>{
     }
   })
 
+  socket.on('del_realtor', (data) => {
+    io.to(data.realtor).emit('leave_agency', data.agency)
+    io.to(data.realtor).emit('exit')
+  //  io.to(data.agency).emit('message_body', {text: `Рієлтор ${data.name}, вийшов з агентства`})
+  })
+
   socket.on('leave_agency', (data) => {
     io.to(data).emit('leave_agency', data)
   })
@@ -243,6 +249,8 @@ app.get('/get_realtors', agencyController.realtors)
 app.get('/getAgencies', agencyController.getAgencies)
 
 app.get('/getAgenciesInfo', agencyController.getAgenciesInfo)
+
+app.post('/del_realtor', agencyController.delRealtor)
 
 app.post('/create_agency', upload.single("file"), agencyController.create)
 

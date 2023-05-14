@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function RealtorCard({realtor}) {
+export default function RealtorCard({realtor, ...props}) {
 
     const [open, setOpen] = useState(false);
     const [showHint, setShowHint] = useState(false)
 
     return (
-        <div className="realtor-card">
+        <div className="realtor-card" onContextMenu={(e) => props.handleClick(e, realtor.id, `${realtor.first_name} ${realtor.last_name}`)}>
             <div className="realtor-info">
                 <div className="realtor-card-image">
                     <img className="realtor-avatar" src={`http://localhost:3001/users/${realtor.avatar === '' ? 'avatar.png' : realtor.avatar}`} alt=''/>

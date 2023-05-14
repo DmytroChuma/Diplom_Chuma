@@ -130,6 +130,34 @@ class Agency{
         `
         con.execute(sql)
     }
+
+    static async getRandomAgency () {
+        let sql = `
+            SELECT id, name, logo FROM agency ORDER BY RAND() LIMIT 4
+        `
+        return await con.execute(sql)
+    }
+
+    static async getAgencies (page) {
+        let limit = (page-1)*10;
+        if (isNaN(limit)){
+            limit = 0;
+        }
+        let sql = `
+            SELECT agency.id, agency.name, agency.logo, region.region, agency.city, agency.description FROM agency, region WHERE agency.region = region.id ORDER BY agency.id LIMIT ${limit}, 10
+        `
+        let count = `
+            SELECT COUNT(*) as count FROM agency
+        `
+        return {agencies: await con.execute(sql), count: await con.execute(count)}
+    }
+
+    static async checkOwner (id) {
+        let sql = `
+            SELECT id FROM user WHERE id = '${id}' AND permission = '2' 
+        `
+        return await con.execute(sql)
+    }
 }
 
 module.exports = Agency;

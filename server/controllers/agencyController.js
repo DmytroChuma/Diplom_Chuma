@@ -96,6 +96,18 @@ exports.getAgencies = async (req, res) => {
 
 exports.getAgenciesInfo = async (req, res) => {
     try{
-        res.json(await Agency.getAgencies(page))
+        res.json(await Agency.getAgencies(req.query.page))
+    }catch(e){res.sendStatus(400)}
+}
+
+exports.delRealtor = async (req, res) => {
+    try{
+        if (!await Agency.checkOwner(req.session.userId)) {res.sendStatus(403); return}
+        if (req.session.userId === req.body.realtor) {res.sendStatus(400); return}
+        await User.leave(req.body.realtor)
+        let users = await User.getRealtors(req.body.agency)
+        message.createMulti(users, `Рієлтор ${req.body.name}, вийшов з агентства`, req.session.userId)
+        message.create(req.body.realtor, 'Вас виключили з агентства')
+        res.sendStatus(200)
     }catch(e){res.sendStatus(400)}
 }

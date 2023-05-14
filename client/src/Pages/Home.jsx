@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Header from "../Components/Header/Header";
 import Select from "../Components/Inputs/Select";
 
 import regions from "../Utils/Regions";
 import { useNavigate } from "react-router";
 import TableCard from "../Components/Cards/TableCard";
+import AgencySmallCard from "../Components/Cards/AgencySmallCard";
+import { Link } from "react-router-dom";
 
 export default function Home () {
 
@@ -16,6 +18,7 @@ export default function Home () {
     const [realty, setRealty] = useState('')
     const [advertisement, setAdvertisement] = useState('')
     const [data, setData] = useState([])
+    const [agencies, setAgencies] = useState([])
     const [count, setCount] = useState('')
 
     document.title = 'Головна'
@@ -28,10 +31,15 @@ export default function Home () {
         });
       }
 
-      fetch('/search?realty=Вся нерухомість&advertisement=Всі оголошення&proposition=Всі варіанти&map=Всі варіанти&auction=Всі варіанти&sort=Спочатку нові&count=4&top=1').then(res=>res.json()).then(data=>{
-        setData(data.realty)
-        setCount(data.count)
-      })
+    useEffect(() => {
+        fetch('/search?realty=Вся нерухомість&advertisement=Всі оголошення&proposition=Всі варіанти&map=Всі варіанти&auction=Всі варіанти&sort=Спочатку нові&count=4&top=1').then(res=>res.json()).then(data=>{
+            setData(data.realty)
+            setCount(data.count)
+        })
+        fetch('/getAgencies').then(res=>res.json()).then(data=>{
+            setAgencies(data)
+        })
+     }, []) 
 
         return (
             <div className="app-screen">
@@ -57,6 +65,15 @@ export default function Home () {
                         )
                     })}
                     </div>
+                    <span className="home-text">Агентства нерухомості</span>
+                    <div className="home-card">
+                        {agencies.map((element, index) => {
+                            return(
+                                <AgencySmallCard key={index} name={element.name} id={element.id} logo={element.logo} />
+                            )
+                        })}
+                    </div>
+                    <Link className="agencies" to='/agencies?page=1'>Переглянути всі агентства</Link>
                 </div>
             </div>
         )
