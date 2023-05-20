@@ -92,7 +92,7 @@ export default function InfoUser ({userInfo, socket, dialog}) {
             <div className="user-info-card">
                 <div className="user-i-n">
                     <div className="user-image-cabinet-container">
-                        <img className="user-image-cabinet" src={user.avatar === '' || !user.avatar ? 'http://localhost:3001/users/avatar.png' : `http://localhost:3001/users/${user.avatar}`} alt=''/>
+                        <img className="user-image-cabinet" src={user.avatar === '' || !user.avatar ? 'http://192.168.0.105:3001/users/avatar.png' : `http://192.168.0.105:3001/users/${user.avatar}`} alt=''/>
                     </div>
                     <div className="user-cabinet-name">
                         {user.name}
@@ -123,7 +123,7 @@ export default function InfoUser ({userInfo, socket, dialog}) {
                         {(cards.name && user.permission > 0) && <div className="digit">
                             <div className="cards-logo-agency">
                                 <div className="cards-logo-img-container">
-                                    <img className="cards-logo-img" src={cards.logo === '' ? 'http://localhost:3001/images/default.png' : `http://localhost:3001/images/agency/${cards.logo}`} alt=''/>
+                                    <img className="cards-logo-img" src={cards.logo === '' ? 'http://192.168.0.105:3001/images/default.png' : `http://192.168.0.105:3001/images/agency/${cards.logo}`} alt=''/>
                                 </div>
                                 <div className="cards-logo-name">
                                     {cards.name}

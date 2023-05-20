@@ -12,7 +12,7 @@ export default function AddAgency({dialog, text, id, data, dataHandler}) {
     const [phones, setPhones] = useState([{phone: ''}]);
     const [email, setEmail] = useState([{email: ''}]);
     const [logo, setLogo] = useState(null);
-    const [url, setURL] = useState('http://localhost:3001/images/default.png');
+    const [url, setURL] = useState('http://192.168.0.105:3001/images/default.png');
     const [cities, SetCities] = useState("");
     const [region, setRegion] = useState('');
     const [city, SetCity] = useState("");
@@ -48,7 +48,7 @@ export default function AddAgency({dialog, text, id, data, dataHandler}) {
             setDescription(data.description)
             setPhones(data.phones.split(',').map((element) => {return {phone: element}}))
             setEmail(data.emails.split(',').map((element) => {return {email: element}}))
-            setURL(data.logo === '' ? 'http://localhost:3001/images/default.png' : `http://localhost:3001/images/agency/${data.logo}`)
+            setURL(data.logo === '' ? 'http://192.168.0.105:3001/images/default.png' : `http://192.168.0.105:3001/images/agency/${data.logo}`)
         }
     }, [])
 

@@ -52,7 +52,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
     return (
         <div className={"user-chat-card " + (props.active ? 'active' : '')} onClick={clickHandler}>
             <div className="user-chat-image">
-                <img className="user-chat-avatar" src={'http://localhost:3001/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt='' />
+                <img className="user-chat-avatar" src={'http://192.168.0.105:3001/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt='' />
             </div>
             <div className="user-chat-info">
                 <div className="chat-u-c">

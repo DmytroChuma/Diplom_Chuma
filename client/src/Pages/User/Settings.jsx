@@ -11,7 +11,7 @@ import Code from "../../Components/Dialogs/Code";
 export default function Settings({dialog}) {
 
     const [avatar, setAvatar] = useState(null);
-    const [url, setURL] = useState('http://localhost:3001/users/avatar.png');
+    const [url, setURL] = useState('http://192.168.0.105:3001/users/avatar.png');
     
     const [name, setName] = useState('')
     const [surname, setSurname] = useState('');
@@ -48,7 +48,7 @@ export default function Settings({dialog}) {
             }
             if (data.avatar !== '') {
                 setShowBtn(true);
-                setURL(`http://localhost:3001/users/${data.avatar}`);
+                setURL(`http://192.168.0.105:3001/users/${data.avatar}`);
             }
             if (data.region !== '')
                 getData(data.region, false)
@@ -155,7 +155,7 @@ export default function Settings({dialog}) {
             <div className="user-form">
                 <div className="user-avatar-input-cont">
                     <div className="image-user">
-                        {showBtn && <div className="avatar-delete" onClick={() => {setShowBtn(false); setAvatar(null); setURL('http://localhost:3001/users/avatar.png'); setDefault(true)}}></div>}
+                        {showBtn && <div className="avatar-delete" onClick={() => {setShowBtn(false); setAvatar(null); setURL('http://192.168.0.105:3001/users/avatar.png'); setDefault(true)}}></div>}
                         <input type='file' accept='image/*' id='user-avatar' style={{display: 'none'}} onChange={handleImage}/>
                         <label htmlFor='user-avatar' className="user-form-img-container">
                             <img className="user-form-img" src={url} alt=''/>

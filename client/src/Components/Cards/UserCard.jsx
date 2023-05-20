@@ -46,7 +46,7 @@ export default function UserCard(props) {
         <div className='user-card'>
             <span className='user-card-text'>Контактні дані продавця</span>
             <div className='user-card-info'>
-                <img className='user-avatar-card' src={'http://localhost:3001/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt=''/>
+                <img className='user-avatar-card' src={'http://192.168.0.105:3001/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt=''/>
                 <div className='user-info-container'>
                     {props.user.type === 'Рієлтор' ? <Link className='userName' to={`/realtor/${props.user.id}/realtor`}>{`${props.user.firstName} ${props.user.lastName}`}</Link> : <span className='userName'>{`${props.user.firstName} ${props.user.lastName}`}</span>}
                     <span className='userType'>{props.user.type}</span>

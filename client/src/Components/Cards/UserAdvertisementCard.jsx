@@ -57,7 +57,7 @@ export default function UserAdvertisementCard (props) {
            
             <div className="card-info">
                 <div className="userA-img">
-                    <img className="userA-card-photo" src={"http://localhost:3001/"+ props.slug +"/"+ props.images[0]} alt='' />
+                    <img className="userA-card-photo" src={"http://192.168.0.105:3001/"+ props.slug +"/"+ props.images[0]} alt='' />
                 </div>
                 <div className="user-advertisement-card-info">
                     {props.link &&

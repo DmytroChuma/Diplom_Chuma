@@ -10,7 +10,7 @@ export default function RealtorCard({realtor, ...props}) {
         <div className="realtor-card" onContextMenu={(e) => props.handleClick(e, realtor.id, `${realtor.first_name} ${realtor.last_name}`)}>
             <div className="realtor-info">
                 <div className="realtor-card-image">
-                    <img className="realtor-avatar" src={`http://localhost:3001/users/${realtor.avatar === '' ? 'avatar.png' : realtor.avatar}`} alt=''/>
+                    <img className="realtor-avatar" src={`http://192.168.0.105:3001/users/${realtor.avatar === '' ? 'avatar.png' : realtor.avatar}`} alt=''/>
                 </div>
                 <div className="realtor-card-info">
                     <span className="realtor-card-name">{`${realtor.first_name} ${realtor.last_name}`}</span>

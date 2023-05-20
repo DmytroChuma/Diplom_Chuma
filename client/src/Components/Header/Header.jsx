@@ -59,7 +59,7 @@ export default function Header (props) {
                  <div className="drop-down">
                     <div className="drop-down-user-info">
                         <div className="user-header-avatar">
-                            <img className="avatar-header" src={user.avatar === '' ? `http://localhost:3001/users/avatar.png` : `http://localhost:3001/users/${user.avatar}`} alt=''/>
+                            <img className="avatar-header" src={user.avatar === '' ? `http://192.168.0.105:3001/users/avatar.png` : `http://192.168.0.105:3001/users/${user.avatar}`} alt=''/>
                         </div>
                         <span>{user.name}</span>
                         </div>

@@ -37,7 +37,7 @@ export default function Info ({data, id}) {
             <div className="realtor-info-c">
                 <div className="realtor-user-info">
                     <div className="image-realtor">
-                        <img className='realtor-avatar' src={`http://localhost:3001/users/${data.avatar === '' ? 'avatar.png' : data.avatar}`} alt=''/>
+                        <img className='realtor-avatar' src={`http://192.168.0.105:3001/users/${data.avatar === '' ? 'avatar.png' : data.avatar}`} alt=''/>
                     </div>
                     <div className="realtor-info-container">
                         <div className="realtor-name">{`${data.first_name} ${data.last_name}`}</div>
@@ -52,7 +52,7 @@ export default function Info ({data, id}) {
             <Title type='agency-t' text='Агентство' />
             <div className="agency-info-realtor">
                 <div className="agency-logo-info-realtor">
-                    <img className="image-agency-logo" src={data.logo === '' ? 'http://localhost:3001/images/default.png' : `http://localhost:3001/images/agency/${data.logo}`} alt=''/>
+                    <img className="image-agency-logo" src={data.logo === '' ? 'http://192.168.0.105:3001/images/default.png' : `http://192.168.0.105:3001/images/agency/${data.logo}`} alt=''/>
                 </div>
                 <div className="agency-info-basic">
                     <Link className="agency-name-info" to={`/agency/${data.id}/agency`}>{data.name}</Link>
