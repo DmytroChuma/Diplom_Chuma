@@ -101,7 +101,7 @@ class Agency{
         if (oldLogo !== '') {
             try {
                 fs.unlinkSync('./public/images/agency/'+oldLogo);
-            }catch(error){}
+            }catch(error){console.log(error)}
         }
 
         let phonesArr = [];

@@ -9,7 +9,7 @@ const transporter  = nodemailer.createTransport({
   });
 
   async function wrapedSendMail(mailOptions){
-    return new Promise((resolve,reject)=>{
+    return new Promise((resolve)=>{
      
 
     transporter.sendMail(mailOptions, function(error, info){

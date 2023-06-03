@@ -1,5 +1,4 @@
 const bcrypt = require("bcrypt")
-const session = require('express-session')
 const jwt = require('jsonwebtoken')
 
 let message = require('../models/Message')

@@ -1,10 +1,10 @@
 const fs = require('fs');
 const path = require('path');
 const con = require('../config/db_connector');
+request = require("request");
 
 let Advertisement = require("../models/Advertisement");
 const stringHandler = require('../handlers/StringHandler');
-const { permission } = require('./userController');
 
 let cours;
 request(
