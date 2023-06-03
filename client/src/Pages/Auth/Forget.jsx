@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import store from "../../Store/Store";
 import Input from "../../Components/Inputs/Input";
 import Background from "./Background";
 import Header from "../../Components/Header/Header";
@@ -10,6 +11,18 @@ export default function Forget ({dialog}) {
     const [modal, setModal] = useState('')
 
     document.title = 'Відновлення паролю';
+
+    const [user, setUser] = useState({});
+    const navigate = useNavigate(); 
+    store.subscribe(() => setUser(store.getState().user))
+    useEffect(()=>{
+        if (store.getState()) {
+            if (store.getState().user && JSON.stringify(store.getState().user) !== '{}') {
+                navigate(`/`)
+                return
+            }
+        }
+    }, [user])
 
     function formValidation() {
         if (email.trim() === '') {

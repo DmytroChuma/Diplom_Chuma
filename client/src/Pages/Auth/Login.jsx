@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 import Input from "../../Components/Inputs/Input";
@@ -23,6 +23,17 @@ export default function Login (props) {
     const navigate = useNavigate(); 
 
     document.title = 'Вхід';
+
+    const [user, setUser] = useState({});
+    store.subscribe(() => setUser(store.getState().user))
+    useEffect(()=>{
+        if (store.getState()) { 
+            if (store.getState().user && JSON.stringify(store.getState().user) !== '{}') {
+                navigate(`/`)
+                return
+            }
+        }
+    }, [user])
 
     const formValidation = () => {
         if (login === '') {
