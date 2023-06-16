@@ -252,7 +252,10 @@ exports.getAllAdvertisements = async (req, res) => {
 
     let realty = createRealtyArray(rows); 
     res.json({realty: realty, count: count});
-  }catch(e){res.sendStatus(400)}
+  }catch(e){
+    console.log(e)
+    res.sendStatus(400)
+  }
 }
 
 function createFilterString (values, table) {
