@@ -5,7 +5,7 @@ const cors = require("cors");
 const con = require("./config/db_connector");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const session = require("express-session");
+const session = require("cookie-session");
 const jwt = require("jsonwebtoken");
 
 const { PORT, SESSION_KEY } = require("./config/config");
@@ -54,9 +54,9 @@ let sess = {
  
   app.set('trust proxy', 1)  
  
- 
+app.use(cookieParser());
 
-app.use(session(sess))
+app.use(session({ secret: 'tobo!', cookie: { maxAge: 60 * 60 * 1000 }}))
 
 /*app.use(
   session({ 
@@ -76,7 +76,6 @@ app.use(cors({ credentials: true, origin: "https://house-32s.pages.dev" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.use(cookieParser());
 
 async function authentiphicateToken(req, res, next) {
   if (req.originalUrl.split("/")[1] === "editor") {
