@@ -8,7 +8,7 @@ export default function MessageCard (props) {
     const [accept, setAccept] = useState(props.accepted)
 
     const acceptHandler = () => {
-        fetch('/accept', {
+        fetch('https://house-f621.onrender.com/accept', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -35,7 +35,7 @@ export default function MessageCard (props) {
     }
 
     const rejectHandler = () => {
-        fetch('/reject', {
+        fetch('https://house-f621.onrender.com/reject', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -56,7 +56,7 @@ export default function MessageCard (props) {
     }
 
     const deleteHandler = () => {
-        fetch('/delete_message', {
+        fetch('https://house-f621.onrender.com/delete_message', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

@@ -78,7 +78,7 @@ export default function Registration (props){
                 return false;
             }
 
-            fetch('/add_user', {
+            fetch('https://house-f621.onrender.com/add_user', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

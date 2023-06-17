@@ -10,7 +10,7 @@ export default function Area(props) {
     const [relief, setRelief] = useState('');
 
     useEffect(() => {
-        fetch('/area')
+        fetch('https://house-f621.onrender.com/area')
           .then((res) => res.json())
           .then((data) => {
                 data = JSON.parse(data);

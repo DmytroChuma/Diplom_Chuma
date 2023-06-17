@@ -25,7 +25,7 @@ export default function Agencies () {
         }
 
         setAgencies(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>)
-        fetch(`/getAgenciesInfo?page=${page}`).then(res=>res.json()).then(data=>{
+        fetch(`https://house-f621.onrender.com/getAgenciesInfo?page=${page}`).then(res=>res.json()).then(data=>{
             setAgencies(data.agencies)
             setPage(Math.ceil(data.count[0].count / 10));
             setShowPages(true)

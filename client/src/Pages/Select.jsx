@@ -93,7 +93,7 @@ export default function Select () {
             }
         setItems(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>);
             setShowPages(false);
-              fetch(`/search?count=12&page=${page}&select=${localStorage.getItem('select')}`).then((res) => res.json()).then((data) => {
+              fetch(`https://house-f621.onrender.com/search?count=12&page=${page}&select=${localStorage.getItem('select')}`).then((res) => res.json()).then((data) => {
               setData(data.realty);
               setPage(Math.ceil(data.count / 12 ));
               if(data.length === 0) {

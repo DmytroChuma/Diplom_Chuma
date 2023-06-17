@@ -14,7 +14,7 @@ export default function Realtors ({ id, user, dialog, socket}) {
 
     useEffect(() => {
         
-        fetch(`/get_realtors?agency=${id}`).then((res) => res.json()).then((data)=>{
+        fetch(`https://house-f621.onrender.com/get_realtors?agency=${id}`).then((res) => res.json()).then((data)=>{
             if (data.length > 0) {
                 setData(data)
                 setLoad(false)
@@ -32,7 +32,7 @@ export default function Realtors ({ id, user, dialog, socket}) {
                 }
             }
         })
-        fetch(`/get_agency_info?id=${id}`).then((res) => res.json()).then((data) => {
+        fetch(`https://house-f621.onrender.com/get_agency_info?id=${id}`).then((res) => res.json()).then((data) => {
             setName(data.name);
         })
     }, [id, user])
@@ -44,7 +44,7 @@ export default function Realtors ({ id, user, dialog, socket}) {
     const removeRealtor = (realtorId, name) => {
         let obj = {realtor: realtorId, agency: parseInt(id), name: name}
         socket.emit('del_realtor', obj)
-        fetch('/del_realtor', 
+        fetch('https://house-f621.onrender.com/del_realtor', 
         {
             method: 'POST',
             headers: {

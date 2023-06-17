@@ -114,8 +114,8 @@ export default function Chat({socket}) {
       return
     }
     const load = async() => {
-      await fetch('/new_chat').then((res)=>res.json()).then((inbox)=>{
-        fetch('/chat').then((res) => res.json()).then((data) => {
+      await fetch('https://house-f621.onrender.com/new_chat').then((res)=>res.json()).then((inbox)=>{
+        fetch('https://house-f621.onrender.com/chat').then((res) => res.json()).then((data) => {
          let users = createUserCards(data, inbox.length > 0 ? inbox : [])
           setUsers(users.length === 0 ? <div className='user-c-m'>У вас немає повідомлень</div> : users);
         })
@@ -149,7 +149,7 @@ export default function Chat({socket}) {
       let hash = location.hash.replace('#', '')
       socket.emit("join_room", hash);
     }
-    fetch('/messages?inbox='+location.hash.replace('#', '')).then((res) => res.json()).then((data) => {
+    fetch('https://house-f621.onrender.com/messages?inbox='+location.hash.replace('#', '')).then((res) => res.json()).then((data) => {
       setMessages(createMessages(data));
     })
   }, [location, createMessages, socket, users])
@@ -166,7 +166,7 @@ export default function Chat({socket}) {
       let messageDate = new Date(Date.parse(data.date)).toLocaleDateString()
 
       let mess = <Message key={data.id} id={data.id} socket={socket} handleClick={messageClick} text={data.message} file={data.file !== '' ? data.file : ''} date={data.date} avatar={avatar} class={(data.user_id === store.getState().user.id ? 'my' : '') + margin} answear={data.answear} amessage={data.a_message} />
-      fetch('/set_read_message', {
+      fetch('https://house-f621.onrender.com/set_read_message', {
         method: 'POST',
         headers: {
             Accept: 'application/json',

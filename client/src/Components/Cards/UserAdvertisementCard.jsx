@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function UserAdvertisementCard (props) {
 
     const archiveHandler = () => {
-        fetch('/archive', {
+        fetch('https://house-f621.onrender.com/archive', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -20,7 +20,7 @@ export default function UserAdvertisementCard (props) {
     }
 
     const showHandler = () => {
-        fetch('/show', {
+        fetch('https://house-f621.onrender.com/show', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -36,7 +36,7 @@ export default function UserAdvertisementCard (props) {
     }
 
    const deleteHandler = () => {
-        fetch('/delete_post', {
+        fetch('https://house-f621.onrender.com/delete_post', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -57,7 +57,7 @@ export default function UserAdvertisementCard (props) {
            
             <div className="card-info">
                 <div className="userA-img">
-                    <img className="userA-card-photo" src={"http://192.168.0.105:3001/"+ props.slug +"/"+ props.images[0]} alt='' />
+                    <img className="userA-card-photo" src={"https://house-f621.onrender.com/"+ props.slug +"/"+ props.images[0]} alt='' />
                 </div>
                 <div className="user-advertisement-card-info">
                     {props.link &&

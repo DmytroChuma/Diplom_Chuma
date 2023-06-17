@@ -15,7 +15,7 @@ export default function House(props) {
      
 
     useEffect(() => {
-        fetch('/house')
+        fetch('https://house-f621.onrender.com/house')
           .then((res) => res.json())
           .then((data) => {
                 data = JSON.parse(data);

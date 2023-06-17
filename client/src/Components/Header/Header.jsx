@@ -20,7 +20,7 @@ export default function Header (props) {
     })
 
       const logoutHandler = () => {
-        fetch('/logout');
+        fetch('https://house-f621.onrender.com/logout');
         localStorage.setItem('select', '[]')
         store.dispatch(UserLogin({}));
         store.dispatch(userSelect([]));
@@ -29,14 +29,14 @@ export default function Header (props) {
 
       useEffect(()=>{
         if (store.getState())
-            fetch('/new_chat').then((res)=>res.json()).then((data)=>{
+            fetch('https://house-f621.onrender.com/new_chat').then((res)=>res.json()).then((data)=>{
                 if (data.length > 0) {
                     setNewChat(true)
                     if (props.newChatHandler)
                         props.newChatHandler(true)
                 }
             })
-            fetch('/new_messages').then((res)=>res.json())
+            fetch('https://house-f621.onrender.com/new_messages').then((res)=>res.json())
                 .then((data)=>{
                     if (data.length > 0) {
                         setNewMessages(true)
@@ -59,7 +59,7 @@ export default function Header (props) {
                  <div className="drop-down">
                     <div className="drop-down-user-info">
                         <div className="user-header-avatar">
-                            <img className="avatar-header" src={user.avatar === '' ? `http://192.168.0.105:3001/users/avatar.png` : `http://192.168.0.105:3001/users/${user.avatar}`} alt=''/>
+                            <img className="avatar-header" src={user.avatar === '' ? `https://house-f621.onrender.com/users/avatar.png` : `https://house-f621.onrender.com/users/${user.avatar}`} alt=''/>
                         </div>
                         <span>{user.name}</span>
                         </div>

@@ -25,7 +25,7 @@ export default function Password ({dialog, cancel, modalHandle, forget, email = 
 
     const sendHandle = () => {
         if (validate()){
-            fetch('/change_password', {
+            fetch('https://house-f621.onrender.com/change_password', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
