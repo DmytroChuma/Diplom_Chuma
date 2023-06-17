@@ -5,7 +5,8 @@ const cors = require("cors");
 const con = require("./config/db_connector");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const session = require("cookie-session");
+const session = require("express-session");
+const MemoryStore = require('memorystore')(session)
 const jwt = require("jsonwebtoken");
 
 const { PORT, SESSION_KEY } = require("./config/config");
@@ -46,7 +47,7 @@ if (!fs.existsSync("./public/files")) {
 const app = express();
 
 app.use(
-  session({ secret: SESSION_KEY, resave: true, saveUninitialized: true })
+  session({ cookie: { maxAge: 86400000 }, store: new MemoryStore({checkPeriod: 86400000}), secret: SESSION_KEY, resave: true, saveUninitialized: true })
 );
 
 app.use(express.static(path.join(__dirname, "public")));
