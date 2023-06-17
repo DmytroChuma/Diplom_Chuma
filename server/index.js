@@ -5,7 +5,7 @@ const cors = require("cors");
 const con = require("./config/db_connector");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const session = require("express-session");
+const session = require("cookie-session");
 const jwt = require("jsonwebtoken");
 
 const { PORT, SESSION_KEY } = require("./config/config");
