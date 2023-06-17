@@ -64,7 +64,7 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "uploads")));
 
-app.use(cors({ credentials: true, origin: "https://house-32s.pages.dev" }));
+app.use(cors({ credentials: true, origin: "https://housesell.onrender.com" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -110,7 +110,7 @@ const socketIo = require("socket.io");
 const { createGunzip } = require("zlib");
 const io = socketIo(server, {
   cors: {
-    origin: "https://house-32s.pages.dev",
+    origin: "https://housesell.onrender.com",
   },
 });
 io.on("connection", (socket) => {
