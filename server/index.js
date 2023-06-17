@@ -6,7 +6,6 @@ const con = require("./config/db_connector");
 const path = require("path");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
-const RedisStore = require('redisstore')(session)
 const jwt = require("jsonwebtoken");
 
 const { PORT, SESSION_KEY } = require("./config/config");
@@ -52,7 +51,7 @@ app.use(
       secure: true,
       maxAge:60000 * 24
     },
-    store: new RedisStore(),
+
     secret: SESSION_KEY, 
     resave: flase, 
     saveUninitialized: true })
