@@ -44,30 +44,22 @@ if (!fs.existsSync("./public/files")) {
 }
 
 const app = express();
-
-let sess = { 
-  cookie:{secure: true},
-  secret: SESSION_KEY, 
-  resave: false, 
-  saveUninitialized: true }
-
  
-  app.set('trust proxy', 1)  
+app.set('trust proxy', 1)  
  
 app.use(cookieParser());
 
-app.use(session({ secret: 'tobo!', cookie: { maxAge: 60 * 60 * 1000 }}))
-
-/*app.use(
+app.use(
   session({ 
     cookie:{
       secure: true,
-      maxAge:60000 * 24
+      maxAge:60000 * 24,
+      sameSite:"none"
     },
     secret: SESSION_KEY, 
     resave: false, 
     saveUninitialized: true })
-);*/
+);
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "uploads")));
