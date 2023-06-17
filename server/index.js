@@ -53,7 +53,7 @@ app.use(
     },
 
     secret: SESSION_KEY, 
-    resave: flase, 
+    resave: false, 
     saveUninitialized: true })
 );
 
