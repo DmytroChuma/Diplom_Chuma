@@ -47,23 +47,19 @@ const app = express();
  
 app.set('trust proxy', 1)  
  
-app.use(cookieParser());
+app.use(cookieParser(SESSION_KEY));
 
 app.use(
   session({ 
-    cookie:{
-      secure: true,
-      maxAge:60000 * 24
-    },
     secret: SESSION_KEY, 
-    resave: false, 
+    resave: true, 
     saveUninitialized: true }) 
 );
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "uploads")));
 
-app.use(cors({ credentials: true, origin: "https://housesell.onrender.com" }));
+app.use(cors({ credentials: true, origin: "diplomchuma-production-4b62.up.railway.app" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -109,7 +105,7 @@ const socketIo = require("socket.io");
 const { createGunzip } = require("zlib");
 const io = socketIo(server, {
   cors: {
-    origin: "https://housesell.onrender.com",
+    origin: "diplomchuma-production-4b62.up.railway.app",
   },
 });
 io.on("connection", (socket) => {
