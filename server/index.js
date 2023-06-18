@@ -59,7 +59,7 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "uploads")));
 
-app.use(cors({ credentials: true, origin: "diplomchuma-production-4b62.up.railway.app" }));
+app.use(cors({ credentials: true, origin: "house-f621.onrender.com" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -105,7 +105,7 @@ const socketIo = require("socket.io");
 const { createGunzip } = require("zlib");
 const io = socketIo(server, {
   cors: {
-    origin: "diplomchuma-production-4b62.up.railway.app",
+    origin: "house-f621.onrender.com",
   },
 });
 io.on("connection", (socket) => {
