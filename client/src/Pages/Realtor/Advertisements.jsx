@@ -27,7 +27,7 @@ export default function Advertisements (props) {
 
         setData(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>)
         setShowPages(false);
-        fetch(`https://house-f621.onrender.com/search?user=${props.id}&page=${page}`).then((res) => res.json()).then((data) => {
+        fetch(`https://diplomchuma-production.up.railway.app/search?user=${props.id}&page=${page}`).then((res) => res.json()).then((data) => {
             setData(data.realty);
             setCount(data.count);
             setPage(Math.ceil(data.count / 5));

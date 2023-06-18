@@ -111,7 +111,7 @@ export default function NewAdvertisement ({dialog}) {
     useEffect(()=>{ 
         const unloadCallback = () => {
             for (let file of files) {
-                fetch('https://house-f621.onrender.com/delete_file', {
+                fetch('https://diplomchuma-production.up.railway.app/delete_file', {
                     method: 'POST',
                     mode: 'cors',
                     headers: {
@@ -136,7 +136,7 @@ export default function NewAdvertisement ({dialog}) {
         }
         if (slug !== 'add-new-advertisement' && load) {
 
-            fetch(`https://house-f621.onrender.com/editor/${slug}`)
+            fetch(`https://diplomchuma-production.up.railway.app/editor/${slug}`)
             .then((res) => {
                 if (res.status === 403) 
                     {navigate('/403')
@@ -242,7 +242,7 @@ export default function NewAdvertisement ({dialog}) {
 
     const getData = (data) => {
         setRegion(data);
-        fetch('https://house-f621.onrender.com/region/:'+data).then((res) => res.json()).then((data) => {
+        fetch('https://diplomchuma-production.up.railway.app/region/:'+data).then((res) => res.json()).then((data) => {
           SetCities(data.cities);
           if (slug === 'add-new-advertisement')
             SetCity("");
@@ -394,7 +394,7 @@ export default function NewAdvertisement ({dialog}) {
         let phoneNumber = '';
         phoneNumber = phone ? phone : number.substring(0,10)
         if (phoneNumber.length < 10) return
-        fetch('https://house-f621.onrender.com/find_user', {
+        fetch('https://diplomchuma-production.up.railway.app/find_user', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -650,7 +650,7 @@ export default function NewAdvertisement ({dialog}) {
 
         if (slug !== 'add-new-advertisement'){
             formData.append('slug', slug)
-            fetch('https://house-f621.onrender.com/update_advertisement', {
+            fetch('https://diplomchuma-production.up.railway.app/update_advertisement', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -673,7 +673,7 @@ export default function NewAdvertisement ({dialog}) {
 
         formData.append('user', user.id);
 
-        fetch('https://house-f621.onrender.com/save_advertisement', {
+        fetch('https://diplomchuma-production.up.railway.app/save_advertisement', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

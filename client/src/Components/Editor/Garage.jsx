@@ -14,7 +14,7 @@ export default function Garage(props) {
     const [communication, setCommunication] = useState('');
 
     useEffect(() => {
-        fetch('https://house-f621.onrender.com/garage')
+        fetch('https://diplomchuma-production.up.railway.app/garage')
           .then((res) => res.json())
           .then((data) => {
                 data = JSON.parse(data);

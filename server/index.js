@@ -57,7 +57,7 @@ app.use(
     },
     secret: SESSION_KEY, 
     resave: false, 
-    saveUninitialized: true })
+    saveUninitialized: true }) 
 );
 
 app.use(express.static(path.join(__dirname, "public")));

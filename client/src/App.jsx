@@ -27,7 +27,7 @@ import Message from "./Message";
 import Forbidden from "./Pages/Forbidden";
 import Agencies from "./Pages/Agencies";
 
-const socket = io('https://house-f621.onrender.com')
+const socket = io('https://diplomchuma-production.up.railway.app')
 
 function App() {
   
@@ -77,7 +77,7 @@ function App() {
 
     useEffect(() => {
       const authUser = async () => {
-        await fetch('https://house-f621.onrender.com/auth').then((res) => {if (res.status === 200) { return res.json()}}).then((data) => {
+        await fetch('https://diplomchuma-production.up.railway.app/auth').then((res) => {if (res.status === 200) { return res.json()}}).then((data) => {
           if (!data) return
           let user = {id: data.id, name: data.name, avatar: data.avatar, permission: data.permission, agency: data.agency}
           store.dispatch(UserLogin(user));

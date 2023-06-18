@@ -8,7 +8,7 @@ export default function MessageCard (props) {
     const [accept, setAccept] = useState(props.accepted)
 
     const acceptHandler = () => {
-        fetch('https://house-f621.onrender.com/accept', {
+        fetch('https://diplomchuma-production.up.railway.app/accept', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -35,7 +35,7 @@ export default function MessageCard (props) {
     }
 
     const rejectHandler = () => {
-        fetch('https://house-f621.onrender.com/reject', {
+        fetch('https://diplomchuma-production.up.railway.app/reject', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -56,7 +56,7 @@ export default function MessageCard (props) {
     }
 
     const deleteHandler = () => {
-        fetch('https://house-f621.onrender.com/delete_message', {
+        fetch('https://diplomchuma-production.up.railway.app/delete_message', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

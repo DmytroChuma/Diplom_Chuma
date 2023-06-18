@@ -15,10 +15,10 @@ export default function InfoUser ({userInfo, socket, dialog}) {
     useEffect(() => {
         if (store.getState())
             setUser(store.getState().user)
-        fetch('https://house-f621.onrender.com/user_info',{credentials : "include"}).then((res) => res.json()).then((data) => {
+        fetch('https://diplomchuma-production.up.railway.app/user_info',{credentials : "include"}).then((res) => res.json()).then((data) => {
             setDate(data)
         })
-        fetch('https://house-f621.onrender.com/user_cards_info',{credentials : "include"}).then((res) => res.json()).then((data) => {
+        fetch('https://diplomchuma-production.up.railway.app/user_cards_info',{credentials : "include"}).then((res) => res.json()).then((data) => {
             setCards(data[0])
         })  
     },[user])
@@ -35,7 +35,7 @@ export default function InfoUser ({userInfo, socket, dialog}) {
             let userInfo = user
             userInfo.permission = 0
             userInfo.agency = 0
-            fetch('https://house-f621.onrender.com/delete_agency',{
+            fetch('https://diplomchuma-production.up.railway.app/delete_agency',{
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -63,7 +63,7 @@ export default function InfoUser ({userInfo, socket, dialog}) {
             let userInfo = user
             userInfo.permission = 0
             userInfo.agency = 0
-            fetch('https://house-f621.onrender.com/leave_agency',{
+            fetch('https://diplomchuma-production.up.railway.app/leave_agency',{
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',
@@ -92,7 +92,7 @@ export default function InfoUser ({userInfo, socket, dialog}) {
             <div className="user-info-card">
                 <div className="user-i-n">
                     <div className="user-image-cabinet-container">
-                        <img className="user-image-cabinet" src={user.avatar === '' || !user.avatar ? 'https://house-f621.onrender.com/users/avatar.png' : `https://house-f621.onrender.com/users/${user.avatar}`} alt=''/>
+                        <img className="user-image-cabinet" src={user.avatar === '' || !user.avatar ? 'https://diplomchuma-production.up.railway.app/users/avatar.png' : `https://diplomchuma-production.up.railway.app/users/${user.avatar}`} alt=''/>
                     </div>
                     <div className="user-cabinet-name">
                         {user.name}
@@ -123,7 +123,7 @@ export default function InfoUser ({userInfo, socket, dialog}) {
                         {(cards.name && user.permission > 0) && <div className="digit">
                             <div className="cards-logo-agency">
                                 <div className="cards-logo-img-container">
-                                    <img className="cards-logo-img" src={cards.logo === '' ? 'https://house-f621.onrender.com/images/default.png' : `https://house-f621.onrender.com/images/agency/${cards.logo}`} alt=''/>
+                                    <img className="cards-logo-img" src={cards.logo === '' ? 'https://diplomchuma-production.up.railway.app/images/default.png' : `https://diplomchuma-production.up.railway.app/images/agency/${cards.logo}`} alt=''/>
                                 </div>
                                 <div className="cards-logo-name">
                                     {cards.name}

@@ -13,7 +13,7 @@ export default function Messages({dialog, socket, ...props}) {
 
 
     const loadMessages = useCallback(() => {
-        fetch('https://house-f621.onrender.com/get_user_messages',{credentials : "include"}).then((res) => res.json()).then((data) => {
+        fetch('https://diplomchuma-production.up.railway.app/get_user_messages',{credentials : "include"}).then((res) => res.json()).then((data) => {
             setMessages(data)
             setLoad(false)
         })
@@ -21,7 +21,7 @@ export default function Messages({dialog, socket, ...props}) {
 
     useEffect(()=>{
         props.newMessageHandler(false)
-        fetch('https://house-f621.onrender.com/set_messages_read')
+        fetch('https://diplomchuma-production.up.railway.app/set_messages_read')
         let item = document.getElementsByClassName('drop-down-item messages')
         let newMess = item[0].getElementsByClassName('newMessage')
         if (newMess.length !== 0) newMess[0].remove();

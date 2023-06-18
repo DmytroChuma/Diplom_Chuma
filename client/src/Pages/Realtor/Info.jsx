@@ -18,7 +18,7 @@ export default function Info ({data, id}) {
     if (!data) return
 
     const writeHandler = () => {
-        fetch('https://house-f621.onrender.com/create_inbox',
+        fetch('https://diplomchuma-production.up.railway.app/create_inbox',
         {
             method: 'POST',
             headers: {
@@ -37,7 +37,7 @@ export default function Info ({data, id}) {
             <div className="realtor-info-c">
                 <div className="realtor-user-info">
                     <div className="image-realtor">
-                        <img className='realtor-avatar' src={`https://house-f621.onrender.com/users/${data.avatar === '' ? 'avatar.png' : data.avatar}`} alt=''/>
+                        <img className='realtor-avatar' src={`https://diplomchuma-production.up.railway.app/users/${data.avatar === '' ? 'avatar.png' : data.avatar}`} alt=''/>
                     </div>
                     <div className="realtor-info-container">
                         <div className="realtor-name">{`${data.first_name} ${data.last_name}`}</div>
@@ -52,7 +52,7 @@ export default function Info ({data, id}) {
             <Title type='agency-t' text='Агентство' />
             <div className="agency-info-realtor">
                 <div className="agency-logo-info-realtor">
-                    <img className="image-agency-logo" src={data.logo === '' ? 'https://house-f621.onrender.com/images/default.png' : `https://house-f621.onrender.com/images/agency/${data.logo}`} alt=''/>
+                    <img className="image-agency-logo" src={data.logo === '' ? 'https://diplomchuma-production.up.railway.app/images/default.png' : `https://diplomchuma-production.up.railway.app/images/agency/${data.logo}`} alt=''/>
                 </div>
                 <div className="agency-info-basic">
                     <Link className="agency-name-info" to={`/agency/${data.id}/agency`}>{data.name}</Link>

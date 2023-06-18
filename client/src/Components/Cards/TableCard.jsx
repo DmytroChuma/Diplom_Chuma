@@ -21,7 +21,7 @@ export default function TableCard (props) {
         return (
             <div className="tableCard">
                 <Link className="table-card-image-container" to={'/advertisement/'+ props.slug}>
-                    <img className="table-card-photo" src={"https://house-f621.onrender.com/"+ props.slug +"/"+props.images[0]} alt=""/>
+                    <img className="table-card-photo" src={"https://diplomchuma-production.up.railway.app/"+ props.slug +"/"+props.images[0]} alt=""/>
                     {props.images.length > 1 &&
                         <div className="table-photo-count-info">+ {props.images.length - 1} Фото</div>
                     } 

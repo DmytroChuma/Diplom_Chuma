@@ -45,7 +45,7 @@ export default function Registration ({dialog, modalHandle, phone, user}) {
 
     const sendHandle = () => {
         if (validate()){
-            fetch('https://house-f621.onrender.com/add_user', {
+            fetch('https://diplomchuma-production.up.railway.app/add_user', {
                 method: 'POST',
                 headers: {
                     Accept: 'application/json',

@@ -10,7 +10,7 @@ export default function AgencyInfo ({data}) {
         <div className="agency-info-container">
             <div className="agency-info">
                 <div className="agency-logo-info">
-                    <img className="image-agency-logo" src={data.logo === '' ? 'https://house-f621.onrender.com/images/default.png' : `https://house-f621.onrender.com/images/agency/${data.logo}`} alt=''/>
+                    <img className="image-agency-logo" src={data.logo === '' ? 'https://diplomchuma-production.up.railway.app/images/default.png' : `https://diplomchuma-production.up.railway.app/images/agency/${data.logo}`} alt=''/>
                 </div>
                 <div className="agency-info-basic">
                     <span className="agency-name-info">Агентство: {data.name}</span>

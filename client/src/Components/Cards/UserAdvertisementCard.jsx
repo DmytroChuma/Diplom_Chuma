@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 export default function UserAdvertisementCard (props) {
 
     const archiveHandler = () => {
-        fetch('https://house-f621.onrender.com/archive', {
+        fetch('https://diplomchuma-production.up.railway.app/archive', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -20,7 +20,7 @@ export default function UserAdvertisementCard (props) {
     }
 
     const showHandler = () => {
-        fetch('https://house-f621.onrender.com/show', {
+        fetch('https://diplomchuma-production.up.railway.app/show', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -36,7 +36,7 @@ export default function UserAdvertisementCard (props) {
     }
 
    const deleteHandler = () => {
-        fetch('https://house-f621.onrender.com/delete_post', {
+        fetch('https://diplomchuma-production.up.railway.app/delete_post', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -57,7 +57,7 @@ export default function UserAdvertisementCard (props) {
            
             <div className="card-info">
                 <div className="userA-img">
-                    <img className="userA-card-photo" src={"https://house-f621.onrender.com/"+ props.slug +"/"+ props.images[0]} alt='' />
+                    <img className="userA-card-photo" src={"https://diplomchuma-production.up.railway.app/"+ props.slug +"/"+ props.images[0]} alt='' />
                 </div>
                 <div className="user-advertisement-card-info">
                     {props.link &&

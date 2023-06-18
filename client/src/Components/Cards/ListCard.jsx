@@ -9,7 +9,7 @@ export default function ListCard (props) {
     let images = [];
     for (let i = 1; i < props.images.length && i < 4; i++) {
         images.push(<div key={i} className="small-image-box">
-            <img className="small-image" alt="" src={"https://house-f621.onrender.com/"+props.slug+"/"+props.images[i]}/>
+            <img className="small-image" alt="" src={"https://diplomchuma-production.up.railway.app/"+props.slug+"/"+props.images[i]}/>
             {(i === 3 && props.images.length > 4) &&
                 <div className="photo-count-info">+ {props.images.length - 4} Фото</div>
             }
@@ -32,7 +32,7 @@ export default function ListCard (props) {
             <div className="list-images-container">
                 <div className="list-preview-container">
                     <Link to={'/advertisement/'+ props.slug}>
-                        <img className="list-preview" src={"https://house-f621.onrender.com/"+props.slug+"/"+props.images[0]} alt=""/>
+                        <img className="list-preview" src={"https://diplomchuma-production.up.railway.app/"+props.slug+"/"+props.images[0]} alt=""/>
                     </Link>
                 </div>
                 {props.images.length > 2 && 

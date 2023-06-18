@@ -23,7 +23,7 @@ export default function Files ({ modalHandler, files, socket, user }) {
                 loaded.push(path)
             })
         }
-        await fetch('https://house-f621.onrender.com/save_files', {
+        await fetch('https://diplomchuma-production.up.railway.app/save_files', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

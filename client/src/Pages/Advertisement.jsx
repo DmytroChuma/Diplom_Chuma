@@ -34,7 +34,7 @@ export default function Advertisement({dialog}) {
     
     useEffect(() => {
         
-        fetch('https://house-f621.onrender.com'+location.pathname)
+        fetch('https://diplomchuma-production.up.railway.app'+location.pathname)
             .then((res) => {
                 if (res.status === 404) {navigate('/404')}
                 return res.json()
@@ -52,7 +52,7 @@ export default function Advertisement({dialog}) {
                 if (!viewsArr.includes(data.id)){
                     viewsArr.push(data.id);
                     setViews(data.view + 1);
-                    fetch('https://house-f621.onrender.com/add_view', {
+                    fetch('https://diplomchuma-production.up.railway.app/add_view', {
                         method: 'POST',
                         headers: {
                             Accept: 'application/json',

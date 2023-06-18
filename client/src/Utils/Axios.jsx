@@ -1,6 +1,6 @@
 import axios from "axios"
 const axiosInstance = axios.create({
-  baseURL: "https://house-f621.onrender.com",
+  baseURL: "https://diplomchuma-production.up.railway.app",
   withCredentials: true,
 })
 export default axiosInstance

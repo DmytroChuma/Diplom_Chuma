@@ -25,18 +25,18 @@ export default function Home () {
 
     const regionHandler = (data) => {
         setRegion(data);
-        fetch('https://house-f621.onrender.com/region/:'+data).then((res) => res.json()).then((data) => {
+        fetch('https://diplomchuma-production.up.railway.app/region/:'+data).then((res) => res.json()).then((data) => {
             SetCities(data.cities);
             SetCity("");
         });
       }
 
     useEffect(() => {
-        fetch('https://house-f621.onrender.com/search?realty=Вся нерухомість&advertisement=Всі оголошення&proposition=Всі варіанти&map=Всі варіанти&auction=Всі варіанти&sort=Спочатку нові&count=4&top=1').then(res=>res.json()).then(data=>{
+        fetch('https://diplomchuma-production.up.railway.app/search?realty=Вся нерухомість&advertisement=Всі оголошення&proposition=Всі варіанти&map=Всі варіанти&auction=Всі варіанти&sort=Спочатку нові&count=4&top=1').then(res=>res.json()).then(data=>{
             setData(data.realty)
             setCount(data.count)
         })
-        fetch('https://house-f621.onrender.com/getAgencies').then(res=>res.json()).then(data=>{
+        fetch('https://diplomchuma-production.up.railway.app/getAgencies').then(res=>res.json()).then(data=>{
             setAgencies(data)
         })
      }, []) 

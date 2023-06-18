@@ -13,7 +13,7 @@ export default function UserCard(props) {
     const clickhandler = () => {
         setPhoneShow(phone)
         if (!open) {
-            fetch('https://house-f621.onrender.com/add_phone',
+            fetch('https://diplomchuma-production.up.railway.app/add_phone',
                 {
                     method: 'POST',
                     headers: {
@@ -28,7 +28,7 @@ export default function UserCard(props) {
     }
 
     const writeHandler = () => {
-        fetch('https://house-f621.onrender.com/create_inbox',
+        fetch('https://diplomchuma-production.up.railway.app/create_inbox',
         {
             method: 'POST',
             headers: {
@@ -46,7 +46,7 @@ export default function UserCard(props) {
         <div className='user-card'>
             <span className='user-card-text'>Контактні дані продавця</span>
             <div className='user-card-info'>
-                <img className='user-avatar-card' src={'https://house-f621.onrender.com/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt=''/>
+                <img className='user-avatar-card' src={'https://diplomchuma-production.up.railway.app/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt=''/>
                 <div className='user-info-container'>
                     {props.user.type === 'Рієлтор' ? <Link className='userName' to={`/realtor/${props.user.id}/realtor`}>{`${props.user.firstName} ${props.user.lastName}`}</Link> : <span className='userName'>{`${props.user.firstName} ${props.user.lastName}`}</span>}
                     <span className='userType'>{props.user.type}</span>

@@ -86,7 +86,7 @@ export default function MyAdvertisements (props) {
 
         setCards(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>);
         setShowPages(false);
-        fetch(`https://house-f621.onrender.com/search?user=${user.id}&page=${page}`).then((res) => res.json()).then((data) => {
+        fetch(`https://diplomchuma-production.up.railway.app/search?user=${user.id}&page=${page}`).then((res) => res.json()).then((data) => {
             setData(data.realty);
             setCount(data.count);
             setPage(Math.ceil(data.count / 5));
@@ -131,7 +131,7 @@ export default function MyAdvertisements (props) {
             return;
         }
 
-        fetch('https://house-f621.onrender.com/option', {
+        fetch('https://diplomchuma-production.up.railway.app/option', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
