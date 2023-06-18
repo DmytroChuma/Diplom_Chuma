@@ -7,7 +7,7 @@ export default function Code ({dialog, modalHandle, email, forget = false}) {
     const [code, setCode] = useState('');
 
     useEffect(() => {
-        fetch('https://diplomchuma-production.up.railway.app/send_code', {
+        fetch('https://house-f621.onrender.com/send_code', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -31,7 +31,7 @@ export default function Code ({dialog, modalHandle, email, forget = false}) {
     }
 
     const cancel = () => {
-        fetch('https://diplomchuma-production.up.railway.app/cancel', {credentials : "include"}).then((res) => res.json()).then((data)=>{
+        fetch('https://house-f621.onrender.com/cancel', {credentials : "include"}).then((res) => res.json()).then((data)=>{
             if (data.success === 1) {
                 dialog('Відміна', 'Операцію відмінено', 1)
             }
@@ -39,7 +39,7 @@ export default function Code ({dialog, modalHandle, email, forget = false}) {
     }
 
     const sendHandle = () => {
-        fetch('https://diplomchuma-production.up.railway.app/check_code', {
+        fetch('https://house-f621.onrender.com/check_code', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

@@ -5,7 +5,7 @@ export default function AgencyCard (props) {
     return (
         <Link className="agency-card" to={`/agency/${props.id}/agency`}>
             <div className="agency-card-container">
-                <img className="agency-card-img" src={props.logo === '' ? 'https://diplomchuma-production.up.railway.app/images/default.png' : `https://diplomchuma-production.up.railway.app/images/agency/${props.logo}`} alt=''/>
+                <img className="agency-card-img" src={props.logo === '' ? 'https://house-f621.onrender.com/images/default.png' : `https://house-f621.onrender.com/images/agency/${props.logo}`} alt=''/>
                 <div className="agency-card-info-container">
                     <span className="agency-card-name">{props.name}</span>
                     <span className="agency-card-info">{props.region}</span>

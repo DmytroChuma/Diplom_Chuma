@@ -6,7 +6,7 @@ export default function Element(props){
 
     const handleClick = (e) => {
         props.deleteHandler(props.path);
-        fetch('https://diplomchuma-production.up.railway.app/delete_file', {
+        fetch('https://house-f621.onrender.com/delete_file', {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -19,7 +19,7 @@ export default function Element(props){
     return(
         <div className='uploaded-element'>
             {props.path !== undefined && 
-            <img alt='' src={"https://diplomchuma-production.up.railway.app/" + props.path} className='element-img'/>}
+            <img alt='' src={"https://house-f621.onrender.com/" + props.path} className='element-img'/>}
             {props.text !== undefined && 
             <div className='element-name'>{props.text}</div>}
             <div className={'delete-element ' + (props.path !== undefined ? "element-img-del" : '' )} onClick={handleClick}></div>

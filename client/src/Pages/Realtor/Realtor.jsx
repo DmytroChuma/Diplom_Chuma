@@ -21,7 +21,7 @@ export default function Realtor () {
     document.title = 'Інформація про рієлтора';
 
     useEffect(() => {
-        fetch(`https://diplomchuma-production.up.railway.app/get_realtor_info?id=${id}`).then((res) => res.json()).then((data) => {
+        fetch(`https://house-f621.onrender.com/get_realtor_info?id=${id}`).then((res) => res.json()).then((data) => {
             setData(data[0]);
             if (data.length === 0) {
                 setError(true)

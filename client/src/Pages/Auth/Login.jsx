@@ -55,7 +55,7 @@ export default function Login (props) {
         
         setDialog(<Loading text='' />);
         try{
-        fetch('https://diplomchuma-production.up.railway.app/login', {
+        fetch('https://house-f621.onrender.com/login', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

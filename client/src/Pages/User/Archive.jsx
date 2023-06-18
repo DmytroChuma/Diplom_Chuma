@@ -88,7 +88,7 @@ export default function Archive(props) {
 
         setCards(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>);
         setShowPages(false);
-        fetch(`https://diplomchuma-production.up.railway.app/search?archive=1&user=${user.id}&page=${page}`).then((res) => res.json()).then((data) => {
+        fetch(`https://house-f621.onrender.com/search?archive=1&user=${user.id}&page=${page}`).then((res) => res.json()).then((data) => {
             setData(data.realty);
             setCount(data.count);
             setPage(Math.ceil(data.count / 5));
@@ -133,7 +133,7 @@ export default function Archive(props) {
             return;
         }
 
-        fetch('https://diplomchuma-production.up.railway.app/option', {
+        fetch('https://house-f621.onrender.com/option', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

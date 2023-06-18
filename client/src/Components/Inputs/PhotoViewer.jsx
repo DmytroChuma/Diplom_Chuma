@@ -17,7 +17,7 @@ export default function PhotoViewer (props) {
         images.push(
             <div key={i} className={"small-photo " + (i === 0 ? "active" : "")} onClick={() => {clickHandler(i)}}>
                 <div className="viewer-active"></div>
-                <img className="viewer-photo small" src={"https://diplomchuma-production.up.railway.app/"+props.id+"/"+ props.images[i]} alt=''/>
+                <img className="viewer-photo small" src={"https://house-f621.onrender.com/"+props.id+"/"+ props.images[i]} alt=''/>
             </div>
         );
          
@@ -36,7 +36,7 @@ export default function PhotoViewer (props) {
             <div className="navigate-container">
                 <span className="navigate-arrow left" onClick={() => {clickHandler((count-1))}}></span>
                 <div className="viewer-main-photo">
-                    <img className="viewer-photo" src={"https://diplomchuma-production.up.railway.app/"+props.id+"/" + props.images[count]} alt='' />
+                    <img className="viewer-photo" src={"https://house-f621.onrender.com/"+props.id+"/" + props.images[count]} alt='' />
                 </div>
                 <span className="navigate-arrow right" onClick={() => {clickHandler((count+1))}}></span>
             </div>

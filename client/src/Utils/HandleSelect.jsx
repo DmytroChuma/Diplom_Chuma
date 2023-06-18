@@ -28,7 +28,7 @@ const handleSelect = (id) => {
       }
       localStorage.setItem('select', JSON.stringify(selectArr));
 
-      fetch('https://diplomchuma-production.up.railway.app/add_select', {
+      fetch('https://house-f621.onrender.com/add_select', {
           method: 'POST',
           headers: {
               Accept: 'application/json',
@@ -40,7 +40,7 @@ const handleSelect = (id) => {
 
       if (store.getState().user) {
           store.dispatch(userSelect(localStorage.getItem('select')));
-          fetch('https://diplomchuma-production.up.railway.app/add_select_user', {
+          fetch('https://house-f621.onrender.com/add_select_user', {
               method: 'POST',
               headers: {
                   Accept: 'application/json',

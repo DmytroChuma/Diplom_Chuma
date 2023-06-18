@@ -12,7 +12,7 @@ export default function AddAgency({dialog, text, id, data, dataHandler}) {
     const [phones, setPhones] = useState([{phone: ''}]);
     const [email, setEmail] = useState([{email: ''}]);
     const [logo, setLogo] = useState(null);
-    const [url, setURL] = useState('https://diplomchuma-production.up.railway.app/images/default.png');
+    const [url, setURL] = useState('https://house-f621.onrender.com/images/default.png');
     const [cities, SetCities] = useState("");
     const [region, setRegion] = useState('');
     const [city, SetCity] = useState("");
@@ -48,7 +48,7 @@ export default function AddAgency({dialog, text, id, data, dataHandler}) {
             setDescription(data.description)
             setPhones(data.phones.split(',').map((element) => {return {phone: element}}))
             setEmail(data.emails.split(',').map((element) => {return {email: element}}))
-            setURL(data.logo === '' ? 'https://diplomchuma-production.up.railway.app/images/default.png' : `https://diplomchuma-production.up.railway.app/images/agency/${data.logo}`)
+            setURL(data.logo === '' ? 'https://house-f621.onrender.com/images/default.png' : `https://house-f621.onrender.com/images/agency/${data.logo}`)
         }
     }, [])
 
@@ -78,7 +78,7 @@ export default function AddAgency({dialog, text, id, data, dataHandler}) {
 
     const getData = (data, city) => {
         setRegion(data);
-        fetch('https://diplomchuma-production.up.railway.app/region/:'+data).then((res) => res.json()).then((data) => {
+        fetch('https://house-f621.onrender.com/region/:'+data).then((res) => res.json()).then((data) => {
           SetCities(data.cities);
           if (city)
             SetCity("");
@@ -196,7 +196,7 @@ export default function AddAgency({dialog, text, id, data, dataHandler}) {
                 }).then((res) => {
                     if (res.data.success === 1) {
                         dialog("Успіх", "Агентство створено успішно", 1)
-                        fetch('https://diplomchuma-production.up.railway.app/permission', {
+                        fetch('https://house-f621.onrender.com/permission', {
                             method: 'POST',
                             mode: 'cors',
                             headers: {
@@ -211,7 +211,7 @@ export default function AddAgency({dialog, text, id, data, dataHandler}) {
                     }
                     else {
                         dialog("Помилка", "Не вдалося створити агентство", 1)
-                        fetch('https://diplomchuma-production.up.railway.app/delete_file', {
+                        fetch('https://house-f621.onrender.com/delete_file', {
                             method: 'POST',
                             mode: 'cors',
                             headers: {

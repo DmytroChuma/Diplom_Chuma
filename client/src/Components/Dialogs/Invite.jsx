@@ -11,7 +11,7 @@ export default function Invite ({dialog, modalHandle, agency, name, socket}) {
     }
 
     const sendHandle = () => {
-        fetch('https://diplomchuma-production.up.railway.app/invite', {
+        fetch('https://house-f621.onrender.com/invite', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',

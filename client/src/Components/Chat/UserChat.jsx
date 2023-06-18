@@ -37,7 +37,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
            element.classList.remove("active");
         }
         e.target.classList.add("active");
-        fetch('https://diplomchuma-production.up.railway.app/set_read', {
+        fetch('https://house-f621.onrender.com/set_read', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -52,7 +52,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
     return (
         <div className={"user-chat-card " + (props.active ? 'active' : '')} onClick={clickHandler}>
             <div className="user-chat-image">
-                <img className="user-chat-avatar" src={'https://diplomchuma-production.up.railway.app/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt='' />
+                <img className="user-chat-avatar" src={'https://house-f621.onrender.com/users/' + (props.user.avatar !== '' ? props.user.avatar : 'avatar.png')} alt='' />
             </div>
             <div className="user-chat-info">
                 <div className="chat-u-c">

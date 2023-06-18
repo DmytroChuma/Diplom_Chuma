@@ -155,7 +155,7 @@ export default function Search (){
 
           const getData = useCallback((data, clear = true) => {
             setRegion(data);
-            fetch('https://diplomchuma-production.up.railway.app/region/:'+data).then((res) => res.json()).then((data) => {
+            fetch('https://house-f621.onrender.com/region/:'+data).then((res) => res.json()).then((data) => {
               SetCities(data.cities);
               if (clear)
                 SetCity("");
@@ -261,7 +261,7 @@ export default function Search (){
               case 'Будинок':
               case 'Дача':
               case 'Частина будинку':
-                data = await fetchHandler('https://diplomchuma-production.up.railway.app/house');
+                data = await fetchHandler('https://house-f621.onrender.com/house');
                 setFilterOptions([
                   {
                     name: 'type',
@@ -341,7 +341,7 @@ export default function Search (){
                   filterDataHandler('auction', 'Всі варіанти');
                 break;
               case 'Квартира':
-                data = await fetchHandler('https://diplomchuma-production.up.railway.app/house');
+                data = await fetchHandler('https://house-f621.onrender.com/house');
                 setFilterOptions([
                 {
                   name: 'type',
@@ -409,7 +409,7 @@ export default function Search (){
                 filterDataHandler('auction', 'Всі варіанти');
                 break;
               case 'Гараж':
-                data = await fetchHandler('https://diplomchuma-production.up.railway.app/garage');
+                data = await fetchHandler('https://house-f621.onrender.com/garage');
                 setFilterOptions([
                   {
                     name: 'type',
@@ -468,7 +468,7 @@ export default function Search (){
                   filterDataHandler('auction', 'Всі варіанти');
                 break;
               case 'Ділянка':
-                data = await fetchHandler('https://diplomchuma-production.up.railway.app/area');
+                data = await fetchHandler('https://house-f621.onrender.com/area');
                 setFilterOptions([
                   {
                     name: 'relief',
@@ -609,7 +609,7 @@ export default function Search (){
 
             setItems(<div className="loading"><div className="fa fa-spinner fa-pulse fa-3x fa-fw"></div>Завантаження</div>);
             setShowPages(false);
-            let query = 'https://diplomchuma-production.up.railway.app'+location.pathname+location.search
+            let query = 'https://house-f621.onrender.com'+location.pathname+location.search
             if (!query.includes('count=12')){
               query.includes('?') ? query += '&count=12' : query += '?count=12'
             }

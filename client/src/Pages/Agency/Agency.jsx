@@ -43,7 +43,7 @@ export default function Agency({dialog, socket}) {
                 setUser(store.getState().user)
             }
         }
-        fetch(`https://diplomchuma-production.up.railway.app/get_agency_info?id=${id}`).then((res) => res.json()).then((data) => {
+        fetch(`https://house-f621.onrender.com/get_agency_info?id=${id}`).then((res) => res.json()).then((data) => {
             setData(data);
             if (!data) {
                 setError(true)
