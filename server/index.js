@@ -8,6 +8,13 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 const jwt = require("jsonwebtoken");
 
+
+const swaggerAutogen = require('swagger-autogen')();
+
+
+
+
+
 const { PORT, SESSION_KEY } = require("./config/config");
 const upload = require("./upload");
 
@@ -43,25 +50,99 @@ if (!fs.existsSync("./public/files")) {
   fs.mkdirSync("./public/files");
 }
 
+
 const app = express();
- 
-app.set('trust proxy', 1)  
- 
-app.use(cookieParser(SESSION_KEY));
 
 app.use(
-  session({ 
-    secret: SESSION_KEY, 
-    resave: true, 
-    saveUninitialized: true }) 
+  session({ secret: SESSION_KEY, resave: true, saveUninitialized: true })
 );
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.static(path.join(__dirname, "uploads")));
 
-app.use(cors({ credentials: true, origin: "https://housesell.onrender.com" }));
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use(cookieParser());
+
+
+
+
+/*const swaggerJsDoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+//const swaggerDocument = require('./swagger.json');
+const swaggerOptions = {
+  swaggerDefinition: {
+    info: {
+      version: "1.0.0",
+      title: "Customer API",
+      description: "Customer API Information",
+      contact: {
+        name: "Amazing Developer"
+      },
+      servers: ["http://localhost:3001"]
+    }
+  },
+  // ['.routes/*.js']
+  apis: ["index.js"]
+};
+
+const swaggerDocument = require('./swagger.json');
+var options = {
+  swaggerOptions: {
+      url: "/api-docs/swagger.json",
+  },
+}
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.get("/api-docs/swagger.json", (req, res) => res.json(swaggerDocument));
+app.use("/api-docs", swaggerUi.serveFiles(null, options), swaggerUi.setup(null, options));
+*/
+
+const swaggerUi = require('swagger-ui-express');
+const swaggerJSDoc = require('swagger-jsdoc');
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Diploma API',
+      version: '1.0.0',
+      description: 'API Description',
+      servers: ["http://localhost:3001"],
+    },
+    definitions:{
+      User: {
+        properties:{
+          user:{
+            id: '1',
+            name: 'test'
+          }
+        }
+      }
+    },
+    securityDefinitions: {
+      BasicAuth: 'basic'
+    },
+    externalDocs: {                 
+      description: "swagger.json",  
+      url: "swagger.json"        
+    }, 
+  },
+  apis: ['index.js'],  
+};
+
+const swaggerSpec = swaggerJSDoc(options);
+
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  app.get('/swagger.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerSpec);
+    console.log(JSON.stringify(swaggerSpec))
+  });
+
+
 
 
 async function authentiphicateToken(req, res, next) {
@@ -105,7 +186,7 @@ const socketIo = require("socket.io");
 const { createGunzip } = require("zlib");
 const io = socketIo(server, {
   cors: {
-    origin: "https://housesell.onrender.com",
+    origin: "http://localhost:3000",
   },
 });
 io.on("connection", (socket) => {
@@ -196,9 +277,227 @@ app.get("/garage", realtyController.loadGarageInfo);
 
 app.get("/house", realtyController.loadHouseInfo);
 
+/**
+ * @swagger
+ * /search:
+ *  get:
+ *    tags: 
+ *      - Advertisements
+ *    description: "Використовується для пошуку оголошень"
+ *    parameters:
+ *      - in: query
+ *        name: advertisement
+ *        required: false
+ *        schema:
+ *           type: string
+ *           default: "Продаж"
+ *        description: 'Тип оголошення'
+ *      - in: query
+ *        name: realty
+ *        required: false
+ *        schema:
+ *           type: string
+ *           default: "Вся нерухомість"
+ *        description: 'Тип нерухомості'
+ *      - in: query
+ *        name: sort
+ *        required: false
+ *        schema:
+ *           type: string
+ *           default: "Спочатку нові"
+ *        description: 'Тип сортування'
+ *      - in: query
+ *        name: region
+ *        required: false
+ *        schema:
+ *           type: string
+ *           default: ""
+ *        description: 'Область'
+ *      - in: query
+ *        name: city
+ *        required: false
+ *        schema:
+ *           type: string
+ *           default: ""
+ *        description: 'Місто'
+ *      - in: query
+ *        name: currency
+ *        required: false
+ *        schema:
+ *           type: string
+ *           default: "$"
+ *        description: 'Валюта'
+ *      - in: query
+ *        name: pricemin
+ *        required: false
+ *        schema:
+ *           type: integer
+ *           default: ""
+ *        description: 'Мінімальна ціна'
+ *      - in: query
+ *        name: pricemax
+ *        required: false
+ *        schema:
+ *           type: integer
+ *           default: ""
+ *        description: 'Максимальна ціна'
+ *      - in: query
+ *        name: unit
+ *        required: false
+ *        schema:
+ *           type: string
+ *           default: "Сотка"
+ *        description: 'Одиниця вимірювання'
+ *      - in: query
+ *        name: squaremin
+ *        required: false
+ *        schema:
+ *           type: integer
+ *           default: ""
+ *        description: 'Мінімальна площа'
+ *      - in: query
+ *        name: squaremax
+ *        required: false
+ *        schema:
+ *           type: integer
+ *           default: ""
+ *        description: 'Максимальна площа'
+ *      - in: query
+ *        name: proposition
+ *        required: false
+ *        schema:
+ *           type: string
+ *           default: "Всі варіанти"
+ *        description: 'Тип пропозиції'
+ *      - in: query
+ *        name: map
+ *        required: false
+ *        schema:
+ *           type: string
+ *           default: "Всі варіанти"
+ *        description: 'Позначено на мапі'
+ *      - in: query
+ *        name: auction
+ *        required: false
+ *        schema:
+ *           type: string
+ *           default: "Всі варіанти"
+ *        description: 'Торг'
+ *      - in: query
+ *        name: type
+ *        required: false
+ *        schema:
+ *           type: string
+ *           default: "Всі варіанти"
+ *        description: 'Тип житла (новобудова, вторинне)'
+ *      - in: query
+ *        name: houseType
+ *        required: false
+ *        schema:
+ *           type: array
+ *           default: [Окремий будинок, Дуплекс, Таунхаус]
+ *        description: 'Тип будинку'
+ *      - in: query
+ *        name: wall
+ *        required: false
+ *        schema:
+ *           type: array
+ *           default: [Цегла, Дерево, Дерево та цегла]
+ *        description: 'Стіна'
+ *      - in: query
+ *        name: roof
+ *        required: false
+ *        schema:
+ *           type: array
+ *           default: [Шифер, Металеві листи, Металошифер]
+ *        description: 'Дах'
+ *      - in: query
+ *        name: heating
+ *        required: false
+ *        schema:
+ *           type: array
+ *           default: [Централізоване, Комбіноване, Індивідуальне]
+ *        description: 'Опалення'
+ *      - in: query
+ *        name: plan
+ *        required: false
+ *        schema:
+ *           type: array
+ *           default: [Чорнова штукартурка, Без меблів]
+ *        description: 'Планування'
+ *      - in: query
+ *        name: advantages
+ *        required: false
+ *        schema:
+ *           type: array
+ *           default: [Гараж, Камін, Балкон]
+ *        description: 'Переваги'
+ *      - in: query
+ *        name: state
+ *        required: false
+ *        schema:
+ *           type: array
+ *           default: [Відмінний, Нормальний, Задовільний, Потребує ремонту]
+ *        description: 'Стан будинку / квартири'
+ *      - in: query
+ *        name: page
+ *        required: false
+ *        schema:
+ *           type: integer
+ *           default: "1"
+ *        description: 'Сторінка'
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ *      '404':
+ *        description: "Not found"
+ */
+
 app.get("/search", advertisementController.getAllAdvertisements);
 
+/**
+ * @swagger
+ * /region/{reg}:
+ *  get:
+ *    tags: 
+ *      - Advertisements
+ *    description: "Використовується для отримання інформації про область"
+ *    parameters:
+ *      - in: path
+ *        name: reg
+ *        required: true
+ *        schema:
+ *           type: string
+ *           default: ":Закарпатська область"
+ *        description: 'Назва області'
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ */
+
 app.get("/region/:reg", realtyController.loadRegion);
+
+/**
+ * @swagger
+ * /advertisement/{slug}:
+ *  get:
+ *    tags: 
+ *      - Advertisements
+ *    description: "Використовується для отримання інформації про оголошення"
+ *    parameters:
+ *      - in: path
+ *        name: slug
+ *        required: true
+ *        schema:
+ *           type: string
+ *           default: "budynok-prodazh-provulok-vesnyanyy-vinnytsya"
+ *        description: 'Назва оголошення'
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ *      '404':
+ *        description: 'This Advertisement not found'
+ */
 
 app.get("/advertisement/:slug", advertisementController.loadAdvertisement);
 
@@ -232,9 +531,126 @@ app.post("/option", authentiphicateToken, advertisementController.option);
 
 app.post("/show", authentiphicateToken, advertisementController.publicate);
 
+/**
+ * @swagger
+ * /add_view:
+ *  post:
+ *    tags: 
+ *      - Advertisements
+ *    description: "Додавання перегляду оголошення"
+ *    consumes:
+ *      - text/plain
+ *    parameters:
+ *      - in: body
+ *        name: id
+ *        required: true
+ *        schema:
+ *           type: integer
+ *    requestBody:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: "#/components/schemas/View"
+ *        required: true
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ *      '400':
+ *        description: "A bad request"
+ */
+
 app.post("/add_view", advertisementController.addView);
 
+/**
+ * @swagger
+ * /add_phone:
+ *  post:
+ *    tags: 
+ *      - Advertisements
+ *    description: "Додавання перегляду телефона власника оголошення"
+ *    consumes:
+ *      - text/plain
+ *    parameters:
+ *      - in: body
+ *        name: id
+ *        required: true
+ *        schema:
+ *           type: integer
+ *    requestBody:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: "#/components/schemas/View"
+ *        required: true
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ *      '400':
+ *        description: "A bad request"
+ */
+
 app.post("/add_phone", advertisementController.addPhone);
+
+/**
+ * @swagger
+ * /add_select:
+ *  post:
+ *    tags: 
+ *      - Advertisements
+ *    description: "Лічильник додавань в обране"
+ *    consumes:
+ *      - text/plain
+ *    parameters:
+ *      - in: body
+ *        name: id
+ *        required: true
+ *        schema:
+ *           type: integer
+ *      - in: body
+ *        name: type
+ *        required: true
+ *        schema:
+ *          type: integer
+ *    requestBody:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: "#/components/schemas/Select"
+ *        required: true
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ *      '400':
+ *        description: "A bad request"
+ */
+
+/**
+ * @swagger
+ * /area:
+ *  get:
+ *    tags: 
+ *      - Realty Info
+ *    description: "Використовується для отримання інформації про тип нерухомості"
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ * /garage:
+ *  get:
+ *    tags: 
+ *      - Realty Info
+ *    description: "Використовується для отримання інформації про тип нерухомості"
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ * /house:
+ *  get:
+ *    tags: 
+ *      - Realty Info
+ *    description: "Використовується для отримання інформації про тип нерухомості"
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ */
 
 app.post("/add_select", advertisementController.addSelect);
 
@@ -252,6 +668,28 @@ app.get("/logout", userController.logout);
 
 app.get("/user_info", userController.getInfo);
 
+/**
+ * @swagger
+ * /get_realtor_info:
+ *  get:
+ *    tags: 
+ *      - User
+ *    description: "Використовується для отримання інформації про рієлтора"
+ *    parameters:
+ *      - in: query
+ *        name: id
+ *        required: true
+ *        schema:
+ *           type: string
+ *           default: "7"
+ *        description: 'id рієлтора'
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ *      '404':
+ *        description: 'This Advertisement not found'
+ */
+
 app.get("/get_realtor_info", userController.getRealtorInfo);
 
 app.get("/user_cards_info", userController.getCards);
@@ -259,6 +697,41 @@ app.get("/user_cards_info", userController.getCards);
 app.get("/cancel", userController.cancel);
 
 app.get("/get_user_messages", userController.getMessages);
+
+/**
+ * @swagger
+ * /find_user:
+ *  post:
+ *    tags: 
+ *      - User
+ *    description: "Пошук користувача за номером телефону"
+ *    consumes:
+ *      - text/plain
+ *    parameters:
+ *      - in: body
+ *        name: phone
+ *        required: true
+ *        schema:
+ *           type: string
+ *    requestBody:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              properties:
+ *                phone:
+ *                  description: user phone
+ *                  type: string
+ *              default: {}
+ *              example:
+ *                phone: "0951114488"
+ *        required: true
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ *      '400':
+ *        description: "A bad request"
+ */
 
 app.post("/find_user", userController.find);
 
@@ -271,6 +744,39 @@ app.post("/permission", userController.permission);
 app.post("/add_user", userController.createUser);
 
 app.post("/update_user", authentiphicateToken, userController.updateUser);
+
+/**
+ * @swagger
+ * /login:
+ *  post:
+ *    tags: 
+ *      - User
+ *    description: "Логін"
+ *    consumes:
+ *      - text/plain
+ *    parameters:
+ *      - in: body
+ *        name: login
+ *        required: true
+ *        schema:
+ *          type: string
+ *      - in: body
+ *        name: password
+ *        required: true
+ *        schema:
+ *          type: string
+ *    requestBody:
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: "#/components/schemas/Login"
+ *        required: true
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ *      '400':
+ *        description: "A bad request"
+ */
 
 app.post("/login", userController.login);
 
@@ -286,9 +792,67 @@ app.post("/accept", authentiphicateToken, userController.accept);
 
 //AGENCY
 
+/**
+ * @swagger
+ * /get_agency_info:
+ *  get:
+ *    tags: 
+ *      - Agency
+ *    description: "Використовується для отримання інформації про агентство"
+ *    parameters:
+ *      - in: query
+ *        name: id
+ *        required: true
+ *        schema:
+ *           type: string
+ *           default: "13"
+ *        description: 'id агентства'
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ *      '404':
+ *        description: 'This Advertisement not found'
+ */
+
 app.get("/get_agency_info", agencyController.getInfo);
 
+/**
+ * @swagger
+ * /get_realtors:
+ *  get:
+ *    tags: 
+ *      - Agency
+ *    description: "Використовується для отримання інформації про рієлторів агентства"
+ *    parameters:
+ *      - in: query
+ *        name: id
+ *        required: true
+ *        schema:
+ *           type: string
+ *           default: "13"
+ *        description: 'id агентства'
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ *      '404':
+ *        description: 'This Advertisement not found'
+ */
+
 app.get("/get_realtors", agencyController.realtors);
+
+/**
+ * @swagger
+ * /getAgencies:
+ *  get:
+ *    tags: 
+ *      - Agency
+ *    description: "Використовується для отримання інформації про агентства"
+ *    responses:
+ *      '200':
+ *        description: "A successful response"
+ *      '404':
+ *        description: 'This Advertisement not found'
+ */
 
 app.get("/getAgencies", agencyController.getAgencies);
 
@@ -329,3 +893,151 @@ app.post("/send_code", emailController.sendCode);
 app.post("/delete_file", fileController.deleteFile);
 
 app.post("/upload_file", upload.single("file"), fileController.uploadFile);
+
+
+ 
+
+
+
+/*const doc = {
+  info: {
+    title: 'My API',
+    description: 'Description',
+  },
+  host: 'localhost:3001',
+  schemes: ['http'],
+};
+
+const outputFile = './swagger-output.json';
+//const endpointsFiles = ['endpointsUser.js', 'endpointsBook.js'];
+swaggerAutogen(outputFile, endpointsFiles, doc);*/
+
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Login:
+ *      required:
+ *      - "login"
+ *      - "password"
+ *      type: "object"
+ *      properties:
+ *        login:
+ *          description: user login
+ *          type: string
+ *        password:
+ *          description: user password
+ *          type: string
+ *      default: {}
+ *      example: 
+ *        login: "dimachuma1231@gmail.com"
+ *        password: "123456"
+ *     View:
+ *      required:
+ *      - "id"
+ *      type: "object"
+ *      properties:
+ *        id:
+ *          description: advertisement id
+ *          type: integer
+ *      default: {}
+ *      example: 
+ *        id: 88
+ *     Select:
+ *      required:
+ *      - "id"
+ *      - "type"
+ *      type: "object"
+ *      properties:
+ *        id:
+ *          description: advertisement id
+ *          type: integer
+ *        type:
+ *          description: operation type
+ *          type: integer
+ *      default: {}
+ *      example: 
+ *        id: "88"
+ *        type: "1"
+ *     User:
+ *      required:
+ *      - "id"
+ *      - "first_name"
+ *      - "last_name"
+ *      - "phone"
+ *      - "email"
+ *      - "avatar"
+ *      type: "object"
+ *      properties:
+ *        id:
+ *          description: user id
+ *          type: integer
+ *        first_name:
+ *          description: user first name
+ *          type: string
+ *        last_name:
+ *          description: user last name
+ *          type: string
+ *        phone:
+ *          description: user phone
+ *          type: string
+ *        email:
+ *          description: user email
+ *          type: string
+ *        avatar:
+ *          description: user avatar
+ *          type: string
+ *      default: {}
+ *      example: 
+ *        id: "6"
+ *        first_name: "Василь"
+ *        last_name: "Карбованець"
+ *        phone: 0992459546
+ *        email: example@gmail.com
+ *        avatar: default.jpg
+ */
+
+
+
+/*
+
+ *     User:
+ *      required:
+ *      - "id"
+ *      - "first_name"
+ *      - "last_name"
+ *      - "phone"
+ *      - "email"
+ *      - "avatar"
+ *      type: "object"
+ *      properties:
+ *        id:
+ *          description: user id
+ *          type: integer
+ *        first_name:
+ *          description: user first name
+ *          type: string
+ *        last_name:
+ *          description: user last name
+ *          type: string
+ *        phone:
+ *          description: user phone
+ *          type: string
+ *       email:
+ *          description: user email
+ *          type: string
+ *       avatar:
+ *          description: user avatar
+ *          type: string
+ *      default: {}
+ *      example: 
+ *        id: "6"
+ *        first_name: "Василь"
+ *        last_name: "Карбованець"
+ *        phone: 0992459546
+ *        email: example@gmail.com
+ *        avatar: default.jpg
+
+
+*/
